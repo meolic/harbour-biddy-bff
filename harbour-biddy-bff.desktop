@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Icon=harbour-biddy-bff
+Exec=harbour-biddy-bff
+Name=BFF
+X-Nemo-Application-Type=silica-qt5
+
+[X-Sailjail]
+Permissions=
+OrganizationName=com.meolic
+ApplicationName=BFF
+
+# optional translations
+#
+# app name in German locale (de)
+#Name[de]=biddy-bff
