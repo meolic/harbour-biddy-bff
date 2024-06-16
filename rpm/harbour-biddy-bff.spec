@@ -26,6 +26,27 @@ BuildRequires:  desktop-file-utils
 %description
 Boolean functions forever is a student's / researcher's tool to perform minimization of Boolean functions.
 
+# This description section includes metadata for SailfishOS:Chum, see
+# https://github.com/sailfishos-chum/main/blob/main/Metadata.md
+%if 0%{?_chum}
+Title: Boolean functions forever
+Type: desktop-application
+DeveloperName: meolic
+Categories:
+ - Other
+Custom:
+  Repo: https://github.com/meolic/harbour-biddy-bff
+PackageIcon: https://github.com/meolic/harbour-biddy-bff/raw/main/icons/172x172/harbour-biddy-bff.png
+Screenshots:
+ - https://github.com/meolic/harbour-biddy-bff/raw/main/screenshots/screenshot1.png
+ - https://github.com/meolic/harbour-biddy-bff/raw/main/screenshots/screenshot2.png
+ - https://github.com/meolic/harbour-biddy-bff/raw/main/screenshots/screenshot3.png
+Links:
+  Homepage: https://biddy.meolic.com/
+  Help: https://github.com/meolic/harbour-biddy-bff/discussions
+  Bugtracker: https://github.com/meolic/harbour-biddy-bff/issues
+  Donation: https://wise.com/invite/dic/robertm9954
+%endif
 
 %prep
 %setup -q -n %{name}-%{version}
