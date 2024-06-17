@@ -40,11 +40,11 @@
 #
 # CHANGE SAILJAIL PERMISSIONS
 #
-# Configuration for sailjail is given in file biddy-bff.desktop
+# Configuration for sailjail is given in file harbour-biddy-bff.desktop
 #
 # UPDATE BIDDY PACKAGE
 #
-# cd ~/SailfishOSProjects/biddy-bff/src/biddy
+# cd ~/SailfishOSProjects/harbour-biddy-bff/src/biddy
 # ./update-biddy.sh
 
 # The name of your application
@@ -114,4 +114,4 @@ QT_LOGGING_RULES = "*.debug=false;qml=false"
 # planning to localize your app, remember to comment out the
 # following TRANSLATIONS line. And also do not forget to
 # modify the localized app name in the the .desktop file.
-#TRANSLATIONS += translations/biddy-bff-de.ts
+#TRANSLATIONS += translations/harbour-biddy-bff-de.ts
