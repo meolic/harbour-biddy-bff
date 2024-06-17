@@ -1,7 +1,7 @@
-Name: biddy-bff
+Name: BFF
 Summary: Boolean functions forever
 Version: 0.9
-Release: 1
+Release: 2
 # The contents of the Group field should be one of the groups listed here:
 # https://github.com/mer-tools/spectacle/blob/master/data/GROUPS
 Group: Qt/Qt
@@ -12,7 +12,7 @@ License: GPL v2
 Sources:
 - '%{name}-%{version}.tar.bz2'
 Description: |
-  Boolean functions forever is a student's / researcher's tool to perform minimization of Boolean functions.
+  A tool for minimization of Boolean functions.
 Configure: none
 Builder: qmake5
 

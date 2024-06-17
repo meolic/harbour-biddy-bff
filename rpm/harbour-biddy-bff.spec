@@ -10,7 +10,7 @@ Name:       harbour-biddy-bff
 
 Summary:    Boolean functions forever
 Version:    0.9
-Release:    1
+Release:    2
 Group:      Qt/Qt
 License:    GPL v2
 URL:        https://biddy.meolic.com/
@@ -24,12 +24,12 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  desktop-file-utils
 
 %description
-Boolean functions forever is a student's / researcher's tool to perform minimization of Boolean functions.
+A tool for minimization of Boolean functions.
 
 # This description section includes metadata for SailfishOS:Chum, see
 # https://github.com/sailfishos-chum/main/blob/main/Metadata.md
 %if 0%{?_chum}
-Title: Boolean functions forever
+Title: BFF
 Type: desktop-application
 DeveloperName: meolic
 Categories:

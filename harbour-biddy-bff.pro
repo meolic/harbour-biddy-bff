@@ -76,6 +76,7 @@ SOURCES += \
     src/coveringtablemodel.cpp
 
 DISTFILES += \
+    _service \
     biddy/update-biddy.sh \
     harbour-biddy-bff.desktop \
     biddy/update-biddy.sh \
