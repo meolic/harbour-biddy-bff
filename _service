@@ -1,8 +1,5 @@
 <services>
   <service name="tar_git">
-  <param name="scm">git</param>
   <param name="url">https://github.com/meolic/harbour-biddy-bff.git</param>
-  <param name="versionformat">git</param>
-  <param name="version">git-master</param>
 </service>
 </services>
