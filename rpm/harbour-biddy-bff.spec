@@ -10,7 +10,7 @@ Name:       harbour-biddy-bff
 
 Summary:    Boolean functions forever
 Version:    0.9
-Release:    2
+Release:    3
 Group:      Qt/Qt
 License:    GPLv2
 URL:        https://biddy.meolic.com/
@@ -48,11 +48,6 @@ Links:
   Donation: https://wise.com/invite/dic/robertm9954
 %endif
 
-%changelog
-
-* Mon Jun 17 2024 Robert Meolic <robert@meolic.com> v2024-06-17
-- initial version of harbour package
-
 %prep
 %setup -q -n %{name}-%{version}
 
@@ -85,9 +80,12 @@ desktop-file-install --delete-original       \
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}
+%{_bindir}/*
 %{_datadir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 # >> files
 # << files
+
+%changelog
+%autochangelog

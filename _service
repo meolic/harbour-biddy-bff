@@ -1,5 +1,5 @@
 <services>
   <service name="tar_git">
-  <param name="url">https://github.com/meolic/harbour-biddy-bff.git</param>
-</service>
+    <param name="url">https://github.com/meolic/harbour-biddy-bff.git</param>
+  </service>
 </services>
