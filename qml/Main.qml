@@ -18,7 +18,7 @@ ApplicationWindow // Sailfish OS
     cover: Qt.resolvedUrl("cover/CoverPage.qml") // Sailfish OS
     allowedOrientations: defaultAllowedOrientations // Sailfish OS
 
-    property string version: "v2024-06-09"
+    property string version: "v2024-06-17"
 
     property int diagramCellSize: 120 // use 60 on Felgo, use 120 on Sailfish OS
     property int diagramCellBorder: 8 // // use 4 on Felgo, use 8 on Sailfish OS
