@@ -88,4 +88,5 @@ desktop-file-install --delete-original       \
 # << files
 
 %changelog
-%autochangelog
+* Mon Jun 17 2024 Robert Meolic <robert@meolic.com> 0.9
+- initial version of harbour package

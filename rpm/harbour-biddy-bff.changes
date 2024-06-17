@@ -5,11 +5,5 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
-* Mon Jun 17 2024 Robert Meolic <robert@meolic.com> 0.9-1
+* Mon Jun 17 2024 Robert Meolic <robert@meolic.com> 0.9
 - initial version of harbour package
-
-* Mon Jun 17 2024 Robert Meolic <robert@meolic.com> 0.9-2
-- cleaning for release
-
-* Mon Jun 17 2024 Robert Meolic <robert@meolic.com> 0.9-3
-- cleaning for release
