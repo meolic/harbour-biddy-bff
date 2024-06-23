@@ -10,7 +10,7 @@ Name:       harbour-biddy-bff
 
 Summary:    Boolean functions forever
 Version:    0.9
-Release:    3
+Release:    4
 Group:      Qt/Qt
 License:    GPLv2
 URL:        https://biddy.meolic.com/
@@ -45,7 +45,7 @@ Links:
   Homepage: https://biddy.meolic.com/
   Help: https://github.com/meolic/harbour-biddy-bff/discussions
   Bugtracker: https://github.com/meolic/harbour-biddy-bff/issues
-  Donation: https://wise.com/invite/dic/robertm9954
+  Donation: https://liberapay.com/meolic/donate
 %endif
 
 %prep
