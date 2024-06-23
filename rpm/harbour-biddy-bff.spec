@@ -16,6 +16,7 @@ License:    GPLv2
 URL:        https://biddy.meolic.com/
 Source0:    %{name}-%{version}.tar.bz2
 Source100:  harbour-biddy-bff.yaml
+Source101:  harbour-biddy-bff-rpmlintrc
 Requires:   sailfishsilica-qt5
 BuildRequires:  pkgconfig(sailfishapp)
 BuildRequires:  pkgconfig(Qt5Core)
@@ -47,6 +48,7 @@ Links:
   Bugtracker: https://github.com/meolic/harbour-biddy-bff/issues
   Donation: https://liberapay.com/meolic/donate
 %endif
+
 
 %prep
 %setup -q -n %{name}-%{version}
@@ -86,5 +88,3 @@ desktop-file-install --delete-original       \
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 # >> files
 # << files
-
-%changelog

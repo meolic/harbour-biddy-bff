@@ -1,3 +1,8 @@
+# If this file is changed then remove spec file and it will be rebuilded.
+#
+# For more information about yaml and what's supported in Sailfish OS
+# build system, please see https://wiki.merproject.org/wiki/Spectacle
+
 Name: harbour-biddy-bff
 Summary: Boolean functions forever
 Version: 0.9
@@ -7,14 +12,41 @@ Release: 4
 Group: Qt/Qt
 URL: https://biddy.meolic.com/
 License: GPLv2
+Configure: none
+Builder: qmake5
+
+Description: |
+  A tool for minimization of Boolean functions.
+
+  # This description section includes metadata for SailfishOS:Chum, see
+  # https://github.com/sailfishos-chum/main/blob/main/Metadata.md
+  %if 0%{?_chum}
+  Title: BFF
+  Type: desktop-application
+  DeveloperName: meolic
+  Categories:
+   - Other
+  Custom:
+    Repo: https://github.com/meolic/harbour-biddy-bff
+  PackageIcon: https://github.com/meolic/harbour-biddy-bff/raw/main/icons/172x172/harbour-biddy-bff.png
+  Screenshots:
+   - https://github.com/meolic/harbour-biddy-bff/raw/main/screenshots/screenshot1.png
+   - https://github.com/meolic/harbour-biddy-bff/raw/main/screenshots/screenshot2.png
+   - https://github.com/meolic/harbour-biddy-bff/raw/main/screenshots/screenshot3.png
+  Links:
+    Homepage: https://biddy.meolic.com/
+    Help: https://github.com/meolic/harbour-biddy-bff/discussions
+    Bugtracker: https://github.com/meolic/harbour-biddy-bff/issues
+    Donation: https://liberapay.com/meolic/donate
+  %endif
+
 # This must be generated before uploading a package to a remote build service.
 # Usually this line does not need to be modified.
 Sources:
-- '%{name}-%{version}.tar.bz2'
-Description: |
-  A tool for minimization of Boolean functions.
-Configure: none
-Builder: qmake5
+  - '%{name}-%{version}.tar.bz2'
+
+RpmLintIgnore:
+  - 'no-changelogname-tag'
 
 # This section specifies build dependencies that are resolved using pkgconfig.
 # This is the preferred way of specifying build dependencies for your package.
@@ -38,6 +70,3 @@ Files:
   - '%{_datadir}/%{name}'
   - '%{_datadir}/applications/%{name}.desktop'
   - '%{_datadir}/icons/hicolor/*/apps/%{name}.png'
-
-# For more information about yaml and what's supported in Sailfish OS
-# build system, please see https://wiki.merproject.org/wiki/Spectacle
