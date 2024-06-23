@@ -87,9 +87,4 @@ desktop-file-install --delete-original       \
 # >> files
 # << files
 
-#%changelog
-#* Sun Jun 23 2024 Robert Meolic <robert@meolic.com> 0.9
-#- icon changed
-#
-#* Mon Jun 17 2024 Robert Meolic <robert@meolic.com> 0.9
-#- initial version of harbour package
+%changelog
