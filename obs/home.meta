@@ -1,0 +1,14 @@
+<project name="home:meolic">
+  <title>BFF</title>
+  <description>A tool for minimization of Boolean functions.</description>
+  <person userid="meolic" role="bugowner"/>
+  <person userid="meolic" role="maintainer"/>
+  <repository name="sailfish_latest_armv7hl">
+    <path project="sailfishos:latest" repository="latest_armv7hl"/>
+    <arch>armv8el</arch>
+  </repository>
+  <repository name="sailfish_latest_aarch64">
+    <path project="sailfishos:latest" repository="latest_aarch64"/>
+    <arch>aarch64</arch>
+  </repository>
+</project>
