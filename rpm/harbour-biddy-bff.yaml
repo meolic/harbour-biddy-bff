@@ -5,8 +5,8 @@
 
 Name: harbour-biddy-bff
 Summary: Boolean functions forever
-Version: 0.9
-Release: 4
+Version: 0.91
+Release: 1
 # The contents of the Group field should be one of the groups listed here:
 # https://github.com/mer-tools/spectacle/blob/master/data/GROUPS
 Group: Qt/Qt

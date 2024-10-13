@@ -37,6 +37,19 @@
 #   - content of *.spec, *.yaml, and *.in file must be changed
 #   - translation filenames have to be changed
 #
+# PUBLISH ON CHUM
+#
+# 1. Write changes in rpm/harbour-biddy-bff.changes
+# 2. Remove file rpm/harbour-biddy-bff.spec
+# 3. Adapt file rpm/harbour-biddy-bff.yaml
+# 4. Build locally for target Sailfish OS Emulator, new rpm/harbour-biddy-bff.spec should be generated
+# 5. Push to git
+# 6. https://build.sailfishos.org/package/show/home:meolic/harbour-biddy-bff
+#
+# PUBLISH ON HARBOUR
+#
+# 1. Publish on Chum
+# 2. TO DO
 #
 # CHANGE SAILJAIL PERMISSIONS
 #

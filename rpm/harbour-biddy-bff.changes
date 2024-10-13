@@ -5,6 +5,9 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Sun Oct 13 2024 Robert Meolic <robert@meolic.com> 0.91
+- packaging adapted for harbour
+
 * Sun Jun 23 2024 Robert Meolic <robert@meolic.com> 0.9
 - icon changed
 

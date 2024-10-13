@@ -9,8 +9,8 @@ Name:       harbour-biddy-bff
 # << macros
 
 Summary:    Boolean functions forever
-Version:    0.9
-Release:    4
+Version:    0.91
+Release:    1
 Group:      Qt/Qt
 License:    GPLv2
 URL:        https://biddy.meolic.com/
