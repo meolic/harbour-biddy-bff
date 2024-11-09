@@ -24,6 +24,15 @@ class KarnaughMapModel : public QAbstractListModel
 {
     Q_OBJECT
 
+    // elements for KarnaughMapModel is not the same as elements for TruthTableModel
+    //
+    // This is for KarnaughMapModel:
+    // size(elements) = numMinterms
+    // numVariables == 2: size(elements) = 4, elements = "0000"
+    // numVariables == 3: size(elements) = 8, elements = "00000000"
+    // numVariables == 4: size(elements) = 16, elements = "0000000000000000"
+    // numVariables == 5: size(elements) = 32, elements = "00000000000000000000000000000000"
+
     private:
         BooleanFunction *booleanFunction;
         QList<QString> elements;

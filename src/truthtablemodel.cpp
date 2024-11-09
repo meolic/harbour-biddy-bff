@@ -22,21 +22,62 @@ TruthTableModel::TruthTableModel(QObject *parent, BooleanFunction *bf) : QAbstra
     //qDebug() << "TruthTableModel INIT";
 
     booleanFunction = bf;
-    variableNames << "a" << "b" << "c" << "d";
+    variableNames << "a" << "b" << "c" << "d" << "e";
     unsigned int i0 = 0;
     unsigned int i1 = 0;
     unsigned int i2 = 0;
     unsigned int i3 = 0;
-    for (unsigned int i=1; i<=16; i++) {
-        if (i0 == 0) elements << "0"; else elements << "1"; // legend
-        if (i1 == 0) elements << "0"; else elements << "1"; // legend
-        if (i2 == 0) elements << "0"; else elements << "1"; // legend
-        if (i3 == 0) elements << "0"; else elements << "1"; // legend
-        elements << " "; // value
-        if (i%8 == 0) i0 = 1 - i0;
-        if (i%4 == 0) i1 = 1 - i1;
-        if (i%2 == 0) i2 = 1 - i2;
-        if (i%1 == 0) i3 = 1 - i3;
+    unsigned int i4 = 0;
+    elements.clear();
+    if (booleanFunction->getNumVariables() == 2)
+    {
+        for (int i=1; i<=4; i++) {
+            if (i0 == 0) elements << "0"; else elements << "1"; // legend
+            if (i1 == 0) elements << "0"; else elements << "1"; // legend
+            elements << " "; // value
+            if (i%2 == 0) i0 = 1 - i0;
+            if (i%1 == 0) i1 = 1 - i1;
+        }
+    } else if (booleanFunction->getNumVariables() == 3)
+    {
+        for (int i=1; i<=9; i++) {
+            if (i0 == 0) elements << "0"; else elements << "1"; // legend
+            if (i1 == 0) elements << "0"; else elements << "1"; // legend
+            if (i2 == 0) elements << "0"; else elements << "1"; // legend
+            elements << " "; // value
+            if (i%4 == 0) i0 = 1 - i0;
+            if (i%2 == 0) i1 = 1 - i1;
+            if (i%1 == 0) i2 = 1 - i2;
+        }
+    } else if (booleanFunction->getNumVariables() == 4)
+    {
+        //qDebug() << "TruthTableModel booleanFunction->getNumVariables() == 4";
+        for (int i=1; i<=16; i++) {
+            if (i0 == 0) elements << "0"; else elements << "1"; // legend
+            if (i1 == 0) elements << "0"; else elements << "1"; // legend
+            if (i2 == 0) elements << "0"; else elements << "1"; // legend
+            if (i3 == 0) elements << "0"; else elements << "1"; // legend
+            elements << " "; // value
+            if (i%8 == 0) i0 = 1 - i0;
+            if (i%4 == 0) i1 = 1 - i1;
+            if (i%2 == 0) i2 = 1 - i2;
+            if (i%1 == 0) i3 = 1 - i3;
+        }
+    } else if (booleanFunction->getNumVariables() == 5)
+    {
+        for (int i=1; i<=25; i++) {
+            if (i0 == 0) elements << "0"; else elements << "1"; // legend
+            if (i1 == 0) elements << "0"; else elements << "1"; // legend
+            if (i2 == 0) elements << "0"; else elements << "1"; // legend
+            if (i3 == 0) elements << "0"; else elements << "1"; // legend
+            if (i4 == 0) elements << "0"; else elements << "1"; // legend
+            elements << " "; // value
+            if (i%16 == 0) i0 = 1 - i0;
+            if (i%8 == 0) i1 = 1 - i1;
+            if (i%4 == 0) i2 = 1 - i2;
+            if (i%2 == 0) i3 = 1 - i3;
+            if (i%1 == 0) i4 = 1 - i4;
+        }
     }
 }
 
@@ -80,10 +121,22 @@ QVariant TruthTableModel::data(const QModelIndex &index, int role) const
 void TruthTableModel::refreshCPP()
 {
     //qDebug() << "TruthTableModel::refreshCPP()";
+    qDebug() << "TruthTableModel::refreshCPP() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
+    qDebug() << "TruthTableModel::refreshCPP() elements.count() = " << elements.count() << " : " << elements;
 
-    for (unsigned int i=0; i<16; i++) {
-        booleanFunction->setMinterm(i,elements.at(static_cast<int>(5*i+4)).toStdString());
+    if (booleanFunction->getNumVariables() == 2)
+    {
+    } else if (booleanFunction->getNumVariables() == 3)
+    {
+    } else if (booleanFunction->getNumVariables() == 4)
+    {
+        for (unsigned int i=0; i<16; i++) {
+            booleanFunction->setMinterm(i,elements.at(static_cast<int>((4+1)*i+4)).toStdString());
+        }
+    } else if (booleanFunction->getNumVariables() == 5)
+    {
     }
+
     booleanFunction->update();
     emit modelChanged(); // notifies other classes about the change
 }
@@ -92,9 +145,20 @@ void TruthTableModel::refreshCPP()
 void TruthTableModel::onModelChanged()
 {
     //qDebug() << "TruthTableModel::onModelChanged()";
+    qDebug() << "TruthTableModel::onModelChanged() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
+    qDebug() << "TruthTableModel::onModelChanged() elements.count() = " << elements.count() << " : " << elements;
 
-    for (unsigned int i=0; i<16; i++) {
-        elements.replace(static_cast<int>(5*i+4),QString::fromStdString(booleanFunction->getMinterm(i)));
+    if (booleanFunction->getNumVariables() == 2)
+    {
+    } else if (booleanFunction->getNumVariables() == 3)
+    {
+    } else if (booleanFunction->getNumVariables() == 4)
+    {
+        for (unsigned int i=0; i<16; i++) {
+            elements.replace(static_cast<int>((4+1)*i+4),QString::fromStdString(booleanFunction->getMinterm(i)));
+        }
+    } else if (booleanFunction->getNumVariables() == 5)
+    {
     }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
 }
@@ -111,12 +175,6 @@ QString TruthTableModel::get(const int &row)
 
 QString TruthTableModel::string2html(const QString &text)
 {
-    /*
-    string vn = variableNames.at(0).toStdString() +
-                variableNames.at(1).toStdString() +
-                variableNames.at(2).toStdString() +
-                variableNames.at(3).toStdString();
-    */
     string vn = "";
     for (auto n: variableNames) {
       vn = vn + n.toStdString();
@@ -175,21 +233,48 @@ void TruthTableModel::setEmpty(const int &row)
 
 void TruthTableModel::allZero()
 {
-    for (int i=0; i<16; i++) elements[5*i+4] = "0";
+    if (booleanFunction->getNumVariables() == 2)
+    {
+    } else if (booleanFunction->getNumVariables() == 3)
+    {
+    } else if (booleanFunction->getNumVariables() == 4)
+    {
+        for (int i=0; i<16; i++) elements[5*i+4] = "0";
+    } else if (booleanFunction->getNumVariables() == 5)
+    {
+    }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
     refreshCPP();
 }
 
 void TruthTableModel::allOne()
 {
-    for (int i=0; i<16; i++) elements[5*i+4] = "1";
+    if (booleanFunction->getNumVariables() == 2)
+    {
+    } else if (booleanFunction->getNumVariables() == 3)
+    {
+    } else if (booleanFunction->getNumVariables() == 4)
+    {
+        for (int i=0; i<16; i++) elements[5*i+4] = "1";
+    } else if (booleanFunction->getNumVariables() == 5)
+    {
+    }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
     refreshCPP();
 }
 
 void TruthTableModel::allEmpty()
 {
-    for (int i=0; i<16; i++) elements[5*i+4] = " ";
+    if (booleanFunction->getNumVariables() == 2)
+    {
+    } else if (booleanFunction->getNumVariables() == 3)
+    {
+    } else if (booleanFunction->getNumVariables() == 4)
+    {
+        for (int i=0; i<16; i++) elements[5*i+4] = " ";
+    } else if (booleanFunction->getNumVariables() == 5)
+    {
+    }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
     refreshCPP();
 }

@@ -18,11 +18,10 @@ ApplicationWindow // Sailfish OS
     cover: Qt.resolvedUrl("cover/CoverPage.qml") // Sailfish OS
     allowedOrientations: defaultAllowedOrientations // Sailfish OS
 
-    property string version: "v2024-06-17"
+    property string version: "v2024-11-09"
 
     property int diagramCellSize: 120 // use 60 on Felgo, use 120 on Sailfish OS
     property int diagramCellBorder: 8 // // use 4 on Felgo, use 8 on Sailfish OS
-    property int diagramCellRadius: 40 // use 20 on Felgo, use 40 on Sailfish OS
     property int diagramBorderWidth: 2 // // use 2 on Felgo, use 2 on Sailfish OS
     property int tableRowSize: 60 // use 30 on Felgo, use 60 on Sailfish OS
     property int textSpacingSize: 8 // use 8 on Felgo, use 8 on Sailfish OS
@@ -45,24 +44,34 @@ ApplicationWindow // Sailfish OS
     property color diagramTextColor: '#2c1d07' // diagram text color
     property color disabledTextColor: '#888888' // diagram text color
 
-    property string variableA: inputA.text
-    property string variableB: inputB.text
-    property string variableC: inputC.text
-    property string variableD: inputD.text
-
-    property string variablePA: truthTableModel.string2html("a")
-    property string variablePB: truthTableModel.string2html("b")
-    property string variablePC: truthTableModel.string2html("c")
-    property string variablePD: truthTableModel.string2html("d")
-    property string variableNA: truthTableModel.string2html("*a")
-    property string variableNB: truthTableModel.string2html("*b")
-    property string variableNC: truthTableModel.string2html("*c")
-    property string variableND: truthTableModel.string2html("*d")
+    // ACTIVE TABS
 
     property bool pageKarnaughMap: true
     property bool pageTruthTable: true
     property bool pageBooleanExpression: false
     property bool pageQM: true
+
+    // NUMBER OF VARIABLES
+
+    property int numVariables: 4
+
+    // VARIABLE NAMES
+
+    property string variableA: inputA.text
+    property string variableB: inputB.text
+    property string variableC: inputC.text
+    property string variableD: inputD.text
+    property string variableE: inputE.text
+    property string variablePA: truthTableModel.string2html("a")
+    property string variablePB: truthTableModel.string2html("b")
+    property string variablePC: truthTableModel.string2html("c")
+    property string variablePD: truthTableModel.string2html("d")
+    property string variablePE: truthTableModel.string2html("e")
+    property string variableNA: truthTableModel.string2html("*a")
+    property string variableNB: truthTableModel.string2html("*b")
+    property string variableNC: truthTableModel.string2html("*c")
+    property string variableND: truthTableModel.string2html("*d")
+    property string variableNE: truthTableModel.string2html("*e")
 
     //x: Theme.horizontalPageMargin
     //color: Theme.secondaryHighlightColor
@@ -468,13 +477,12 @@ ApplicationWindow // Sailfish OS
                     anchors.left: mainContent.left
                     spacing: appwindow.textSpacingSize
 
-                    Rectangle {
+                    Button {
+                        id: numvar2
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: "transparent"
                         color: "transparent"
-                        radius: appwindow.diagramCellRadius
-                        border.width: appwindow.diagramCellBorder
                         // AppText { // Felgo
                         Label { // Sailfish OS
                             anchors.centerIn: parent
@@ -483,15 +491,21 @@ ApplicationWindow // Sailfish OS
                             font.family: "FreeSans"
                             font.pixelSize: appwindow.largeTextSize
                         }
+                        onClicked: {
+                            //console.log("BUTTON 2 variables")
+                            numvar2.border.color = appwindow.titleTextColor
+                            numvar3.border.color = "transparent"
+                            numvar4.border.color = "transparent"
+                            numvar5.border.color = "transparent"
+                        }
                     }
 
-                    Rectangle {
+                    Button {
+                        id: numvar3
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: "transparent"
                         color: "transparent"
-                        radius: appwindow.diagramCellRadius
-                        border.width: appwindow.diagramCellBorder
                         // AppText { // Felgo
                         Label { // Sailfish OS
                             anchors.centerIn: parent
@@ -500,15 +514,21 @@ ApplicationWindow // Sailfish OS
                             font.family: "FreeSans"
                             font.pixelSize: appwindow.largeTextSize
                         }
+                        onClicked: {
+                            //console.log("BUTTON 3 variables")
+                            numvar2.border.color = "transparent"
+                            numvar3.border.color = appwindow.titleTextColor
+                            numvar4.border.color = "transparent"
+                            numvar5.border.color = "transparent"
+                        }
                     }
 
-                    Rectangle {
+                    Button {
+                        id: numvar4
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.titleTextColor
                         color: "transparent"
-                        radius: appwindow.diagramCellRadius
-                        border.width: appwindow.diagramCellBorder
                         // AppText { // Felgo
                         Label { // Sailfish OS
                             anchors.centerIn: parent
@@ -517,15 +537,21 @@ ApplicationWindow // Sailfish OS
                             font.family: "FreeSans"
                             font.pixelSize: appwindow.largeTextSize
                         }
+                        onClicked: {
+                            //console.log("BUTTON 4 variables")
+                            numvar2.border.color = "transparent"
+                            numvar3.border.color = "transparent"
+                            numvar4.border.color = appwindow.titleTextColor
+                            numvar5.border.color = "transparent"
+                        }
                     }
 
-                    Rectangle {
+                    Button {
+                        id: numvar5
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: "transparent"
                         color: "transparent"
-                        radius: appwindow.diagramCellRadius
-                        border.width: appwindow.diagramCellBorder
                         // AppText { // Felgo
                         Label { // Sailfish OS
                             anchors.centerIn: parent
@@ -534,10 +560,18 @@ ApplicationWindow // Sailfish OS
                             font.family: "FreeSans"
                             font.pixelSize: appwindow.largeTextSize
                         }
+                        onClicked: {
+                            //console.log("BUTTON 5 variables")
+                            numvar2.border.color = "transparent"
+                            numvar3.border.color = "transparent"
+                            numvar4.border.color = "transparent"
+                            numvar5.border.color = appwindow.titleTextColor
+                        }
                     }
 
                 }
 
+                /*
                 Row {
                     anchors.left: mainContent.left
                     height: appwindow.regularTextSize
@@ -550,6 +584,7 @@ ApplicationWindow // Sailfish OS
                         font.pixelSize: appwindow.tinyTextSize
                     }
                 }
+                */
 
                 Row {
                     Item {
@@ -581,8 +616,8 @@ ApplicationWindow // Sailfish OS
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
                         color: "transparent"
-                        radius: appwindow.diagramCellRadius
-                        border.width: appwindow.diagramCellBorder
+                        radius: 12
+                        border.width: 4 //appwindow.diagramCellBorder
 
                         TextField {
                             id: inputA
@@ -615,8 +650,8 @@ ApplicationWindow // Sailfish OS
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
                         color: "transparent"
-                        radius: appwindow.diagramCellRadius
-                        border.width: appwindow.diagramCellBorder
+                        radius: 12
+                        border.width: 4 //appwindow.diagramCellBorder
 
                         TextField {
                             id: inputB
@@ -649,8 +684,8 @@ ApplicationWindow // Sailfish OS
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
                         color: "transparent"
-                        radius: appwindow.diagramCellRadius
-                        border.width: appwindow.diagramCellBorder
+                        radius: 12
+                        border.width: 4 //appwindow.diagramCellBorder
 
                         TextField {
                             id: inputC
@@ -683,8 +718,8 @@ ApplicationWindow // Sailfish OS
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
                         color: "transparent"
-                        radius: appwindow.diagramCellRadius
-                        border.width: appwindow.diagramCellBorder
+                        radius: 12
+                        border.width: 4 //appwindow.diagramCellBorder
 
                         TextField {
                             id: inputD
@@ -717,16 +752,34 @@ ApplicationWindow // Sailfish OS
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
                         color: "transparent"
-                        radius: appwindow.diagramCellRadius
-                        border.width: appwindow.diagramCellBorder
-                        // AppText { // Felgo
-                        Label { // Sailfish OS
-                            anchors.centerIn: parent
-                            text: " "
+                        radius: 12
+                        border.width: 4 //appwindow.diagramCellBorder
+
+                        TextField {
+                            id: inputE
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: "e"
+                            placeholderText: variablePE
+                            textMargin: 0
+                            horizontalAlignment: TextInput.AlignHCenter
+                            labelVisible: false
+                            backgroundStyle: TextEditor.NoBackground
+                            //backgroundStyle: TextEditor.FilledBackground
                             color: appwindow.titleTextColor
+                            placeholderColor: appwindow.titleTextColor
                             font.family: "TypeWriter"
                             font.pixelSize: appwindow.largeTextSize
+                            validator: RegExpValidator { regExp: /./ }
+                            strictValidation: true
+                            errorHighlight: false
+                            onClicked: {
+                                truthTableModel.setVariableName(5,variableE)
+                                variablePE = truthTableModel.string2html("e")
+                                variableNE = truthTableModel.string2html("*e")
+                                text = ""
+                            }
                         }
+
                     }
 
                 }

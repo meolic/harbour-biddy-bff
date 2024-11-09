@@ -12,6 +12,8 @@ Page { // Sailfish OS
     //flickable.contentWidth: karnaughColumn.width // Felgo
     //scrollIndicator.visible: true // Felgo
 
+    property int circleRadius: 40
+
     property var colorList: [
          "indigo", "blue", "orchid", "orange", "green", "red", "mediumturquoise", "greenyellow",
          "indigo", "blue", "orchid", "orange", "green", "red", "mediumturquoise", "greenyellow"
@@ -39,6 +41,9 @@ Page { // Sailfish OS
             truthTableModel.setVariableName(4,appwindow.variableD)
             variablePD = truthTableModel.string2html("d")
             variableND = truthTableModel.string2html("*d")
+            truthTableModel.setVariableName(5,appwindow.variableE)
+            variablePE = truthTableModel.string2html("e")
+            variableNE = truthTableModel.string2html("*e")
             coveringTableModel.sopChanged()
         }
     }
@@ -184,7 +189,7 @@ Page { // Sailfish OS
                 }
                 /**/
 
-                // KARNAUGH MAP
+                // KARNAUGH MAP 4x4
 
                 Item {
                     id: diagram
@@ -213,7 +218,7 @@ Page { // Sailfish OS
                         id: diagramLegendTop
                         width: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 4 variables
                         height: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
-                        radius: appwindow.diagramCellRadius
+                        radius: circleRadius
                         color: appwindow.bgDiagramLegendColor
                         anchors.bottom: diagramBorder.top
                         anchors.horizontalCenter: diagramBorder.horizontalCenter
@@ -258,11 +263,12 @@ Page { // Sailfish OS
                         }
                     }
 
+                    // diagramLegendBottom
                     Rectangle {
                         id: diagramLegendBottom
                         width: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 4 variables
                         height: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
-                        radius: appwindow.diagramCellRadius
+                        radius: circleRadius
                         color: appwindow.bgDiagramLegendColor
                         anchors.top: diagramBorder.bottom
                         anchors.horizontalCenter: diagramBorder.horizontalCenter
@@ -318,11 +324,12 @@ Page { // Sailfish OS
                         }
                     }
 
+                    // diagramLegendLeft
                     Rectangle {
                         id: diagramLegendLeft
                         width: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
                         height: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 4 variables
-                        radius: appwindow.diagramCellRadius
+                        radius: circleRadius
                         color: appwindow.bgDiagramLegendColor
                         anchors.verticalCenter: diagramBorder.verticalCenter
                         anchors.right: diagramBorder.left
@@ -368,11 +375,12 @@ Page { // Sailfish OS
                         }
                     }
 
+                    // diagramLegendRight
                     Rectangle {
                         id: diagramLegendRight
                         width: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
                         height: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 4 variables
-                        radius: appwindow.diagramCellRadius
+                        radius: circleRadius
                         color: appwindow.bgDiagramLegendColor
                         anchors.verticalCenter: diagramBorder.verticalCenter
                         anchors.left: diagramBorder.right
@@ -434,6 +442,7 @@ Page { // Sailfish OS
                         }
                     }
 
+                    // this defines one cell in the diagram
                     Component {
                         id: diagramCell
 
@@ -463,6 +472,43 @@ Page { // Sailfish OS
                         }
                     }
 
+                    // this defines one circle
+                    Component {
+                        id: diagramCircle
+                        Item {
+                            Rectangle {
+                                property int cxx: (cx < 0) ? 0 : cx
+                                property int cyy: (cy < 0) ? 0 : cy
+                                property int cww: ((cx < 0) || (cx+cw > 4)) ? 1 : cw
+                                property int chh: ((cy < 0) || (cy+ch > 4)) ? 1 : ch
+                                //radius: 40 // use 20 on Felgo, use 40 on Sailfish OS
+                                color: "transparent"
+                                width: cww*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth - 4 // fixed for 4 variables
+                                height: chh*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth - 4 // fixed for 4 variables
+                                x: diagramBorder.x + cxx*appwindow.diagramCellSize + 2
+                                y: diagramBorder.y + cyy*appwindow.diagramCellSize + 2
+                                Rectangle {
+                                    radius: circleRadius
+                                    color: "transparent"
+                                    border.color: index === -1 ? "transparent" : colorList[cc%colorList.length]
+                                    border.width: appwindow.diagramCellBorder
+                                    anchors
+                                    {
+                                        left: parent.left
+                                        right: parent.right
+                                        top: parent.top
+                                        bottom: parent.bottom
+                                        topMargin    : (cy < 0) ? -40 : 0
+                                        bottomMargin : (cy+ch > 4) ? -40 : 0
+                                        leftMargin   : (cx < 0) ? -40 : 0
+                                        rightMargin  : (cx+cw > 4) ? -40 : 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // this defines diagram
                     GridView {
                         id: karnaughGrid
                         cellWidth: appwindow.diagramCellSize
@@ -501,41 +547,7 @@ Page { // Sailfish OS
                         }
                     }
 
-                    Component {
-                        id: diagramCircle
-                        Item {
-                            Rectangle {
-                                property int cxx: (cx < 0) ? 0 : cx
-                                property int cyy: (cy < 0) ? 0 : cy
-                                property int cww: ((cx < 0) || (cx+cw > 4)) ? 1 : cw
-                                property int chh: ((cy < 0) || (cy+ch > 4)) ? 1 : ch
-                                radius: 40 // use 20 on Felgo, use 40 on Sailfish OS
-                                color: "transparent"
-                                width: cww*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth - 4 // fixed for 4 variables
-                                height: chh*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth - 4 // fixed for 4 variables
-                                x: diagramBorder.x + cxx*appwindow.diagramCellSize + 2
-                                y: diagramBorder.y + cyy*appwindow.diagramCellSize + 2
-                                Rectangle {
-                                    radius: appwindow.diagramCellRadius
-                                    color: "transparent"
-                                    border.color: index === -1 ? "transparent" : colorList[cc%colorList.length]
-                                    border.width: appwindow.diagramCellBorder
-                                    anchors
-                                    {
-                                        left: parent.left
-                                        right: parent.right
-                                        top: parent.top
-                                        bottom: parent.bottom
-                                        topMargin    : (cy < 0) ? -40 : 0
-                                        bottomMargin : (cy+ch > 4) ? -40 : 0
-                                        leftMargin   : (cx < 0) ? -40 : 0
-                                        rightMargin  : (cx+cw > 4) ? -40 : 0
-                                    }
-                                }
-                            }
-                        }
-                    }
-
+                    // this defines set of circles
                     ListView {
                         id: circleSet
                         model: implicantCircleModel

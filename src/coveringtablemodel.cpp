@@ -126,7 +126,7 @@ void CoveringTableModel::onModelChanged()
 
     // algorithm is like this:
     // 1. user clicks on diagram or truth table, then karnaughMapModel or truthTableModel emits modelChanged()
-    // 2. signal modelChanged() starts this function and emits sopChanged()
+    // 2. signal modelChanged() starts this function and it emits sopChanged()
     // 3. signal sopChanged() is used in GUI to start updating all the elements showing SOP
     //    (this action does not target the Karnaugh diagram and the truth table itself)
     emit sopChanged();

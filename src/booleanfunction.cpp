@@ -151,13 +151,30 @@ Biddy_Edge permitsymData(Biddy_Edge f, Biddy_Variable lowest, unsigned int n)
 
 // ========= class BooleanFunction
 
+// Boolean function is created only once, thes reused everytime, even if num variables changes
 BooleanFunction::BooleanFunction()
 {
-    support = Biddy_Eval2((Biddy_String)"a*b*c*d");
+    numVariables = 4;
+    if (numVariables == 2) {
+        numMinterms = 4;
+        support = Biddy_Eval2((Biddy_String)"a*b");
+    } else if (numVariables == 3) {
+        numMinterms = 8;
+        support = Biddy_Eval2((Biddy_String)"a*b*c");
+    } else if (numVariables == 4) {
+        numMinterms = 16;
+        support = Biddy_Eval2((Biddy_String)"a*b*c*d");
+    } else if (numVariables == 5) {
+        numMinterms = 32;
+        support = Biddy_Eval2((Biddy_String)"a*b*c*d*e");
+    } else {
+        numMinterms = 0;
+        support = Biddy_GetConstantZero();
+    }
     bdd = nullptr;
     dontcarebdd = nullptr;
     bits = "";
-    for (unsigned int i=0; i<16; i++) minterms[i] = " ";
+    for (unsigned int i=0; i<MAXMINTERMS; i++) minterms[i] = " ";
     sopSolutions.clear();
     selectedSopSolution = 0;
     circles.clear();
@@ -177,7 +194,7 @@ BooleanFunction::~BooleanFunction()
 string BooleanFunction::string2html(string s, string variableNames)
 {
     string t;
-    string a,b,c,d;
+    string a,b,c,d,e;
     //cout << s << endl;
     if (s == "0") return s;
     if (variableNames=="") {
@@ -185,33 +202,40 @@ string BooleanFunction::string2html(string s, string variableNames)
         b = "b";
         c = "c";
         d = "d";
+        e = "e";
     } else {
         a = variableNames[0];
         b = variableNames[1];
         c = variableNames[2];
         d = variableNames[3];
+        e = variableNames[4];
     }
     t = s;
     replaceAll(t,"*a","NA");
     replaceAll(t,"*b","NB");
     replaceAll(t,"*c","NC");
     replaceAll(t,"*d","ND");
+    replaceAll(t,"*e","NE");
     replaceAll(t,"* a","NA");
     replaceAll(t,"* b","NB");
     replaceAll(t,"* c","NC");
     replaceAll(t,"* d","ND");
+    replaceAll(t,"* e","NE");
     replaceAll(t,"a","PA");
     replaceAll(t,"b","PB");
     replaceAll(t,"c","PC");
     replaceAll(t,"d","PD");
+    replaceAll(t,"e","PE");
     replaceAll(t,"PA","<span>"+a+"</span>");
     replaceAll(t,"PB","<span>"+b+"</span>");
     replaceAll(t,"PC","<span>"+c+"</span>");
     replaceAll(t,"PD","<span>"+d+"</span>");
+    replaceAll(t,"PE","<span>"+e+"</span>");
     replaceAll(t,"NA","<span style=\"text-decoration: overline\">"+a+"</span>");
     replaceAll(t,"NB","<span style=\"text-decoration: overline\">"+b+"</span>");
     replaceAll(t,"NC","<span style=\"text-decoration: overline\">"+c+"</span>");
     replaceAll(t,"ND","<span style=\"text-decoration: overline\">"+d+"</span>");
+    replaceAll(t,"NE","<span style=\"text-decoration: overline\">"+e+"</span>");
     if (t.find('+') == std::string::npos) {
       t = "<span></span>" + t;
     } else {
@@ -224,19 +248,19 @@ string BooleanFunction::string2html(string s, string variableNames)
 
 void BooleanFunction::makeAllZero()
 {
-    for (unsigned int i=0; i<16; i++) minterms[i] = "0";
+    for (unsigned int i=0; i<numMinterms; i++) minterms[i] = "0";
     update();
 }
 
 void BooleanFunction::makeAllOne()
 {
-    for (unsigned int i=0; i<16; i++) minterms[i] = "1";
+    for (unsigned int i=0; i<numMinterms; i++) minterms[i] = "1";
     update();
 }
 
 void BooleanFunction::makeAllEmpty()
 {
-    for (unsigned int i=0; i<16; i++) minterms[i] = " ";
+    for (unsigned int i=0; i<numMinterms; i++) minterms[i] = " ";
     update();
 }
 
@@ -244,7 +268,7 @@ void BooleanFunction::makeAllRandom()
 {
     default_random_engine rndengine(rndDevice());
     uniform_int_distribution<int> zeroOne(0,1);
-    for (unsigned int i=0; i<16; i++) {
+    for (unsigned int i=0; i<numMinterms; i++) {
         if (zeroOne(rndengine)) {
             minterms[i] = "0";
         } else {
@@ -262,7 +286,7 @@ void BooleanFunction::update()
     bdd = Biddy_GetConstantZero();
     dontcarebdd = Biddy_GetConstantZero();
     bits = "";
-    for (unsigned int i=0; i<16; i++) {
+    for (unsigned int i=0; i<numMinterms; i++) {
         if (minterms.at(i) == " ") {
             bits += ".";
         } else if (minterms.at(i) == "0") {
@@ -290,6 +314,18 @@ Biddy_Edge BooleanFunction::getSupport()
 }
 
 // =========
+// === unsigned int numvariables;
+unsigned int BooleanFunction::getNumVariables()
+{
+    return numVariables;
+}
+
+void setNumVariables(unsigned int num)
+{
+    cout << "setNumVariables: " << num << endl;
+}
+
+// =========
 // Biddy_Edge bdd;
 
 Biddy_Edge BooleanFunction::getBdd()
@@ -314,9 +350,9 @@ string BooleanFunction::getBits()
 }
 
 // =========
-// array<string,16> minterms;
+// array<string,MAXMINTERMS> minterms;
 
-array<string,16> BooleanFunction::getMinterms()
+array<string,MAXMINTERMS> BooleanFunction::getMinterms()
 {
     return minterms;
 }
@@ -450,27 +486,44 @@ void BooleanFunction::createCircles(set<Biddy_Edge> theset)
     clearCircles();
 
     unsigned int idx = 0;
-    for (unsigned int n=0; n<=4; n++)
-    {
-        for (Biddy_Edge implicant: theset) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
-            //cout << "CREATE CIRCLES: " << booleanFunction2string(implicant) << endl;
-            int i = 0;
-            bool OK = false;
-            while (!OK && (i<16)) {
-                if (Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i))) != Biddy_GetConstantZero()) OK = true;
-                else i++;
+    if (numVariables == 2) {
+        for (unsigned int n=0; n<=2; n++)
+        {
+
+        }
+    } else if (numVariables == 3) {
+        for (unsigned int n=0; n<=3; n++)
+        {
+
+        }
+    } else if (numVariables == 4) {
+        for (unsigned int n=0; n<=4; n++)
+        {
+            for (Biddy_Edge implicant: theset) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
+                //cout << "CREATE CIRCLES: " << booleanFunction2string(implicant) << endl;
+                int i = 0;
+                bool OK = false;
+                while (!OK && (i<16)) {
+                    if (Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i))) != Biddy_GetConstantZero()) OK = true;
+                    else i++;
+                }
+                if (OK) {
+                    unsigned int w = 1;
+                    unsigned int h = 1;
+                    if ((i%4 != 3) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+1))) != Biddy_GetConstantZero()) w = 2;
+                    if ((i%4 == 0) && (w == 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+3))) != Biddy_GetConstantZero()) w = 4;
+                    if ((i%4 == 0) && (w == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+3))) != Biddy_GetConstantZero()) {i = i + 3; w = 2;}
+                    if ((i < 12) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+4))) != Biddy_GetConstantZero()) h = 2;
+                    if ((i < 4) && (h == 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+12))) != Biddy_GetConstantZero()) h = 4;
+                    if ((i < 4) && (h == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+12))) != Biddy_GetConstantZero()) {i = i + 12; h = 2;}
+                    addCircle({(int)i%4,(int)i/4,w,h,idx++}); // last argument is color
+                }
             }
-            if (OK) {
-                unsigned int w = 1;
-                unsigned int h = 1;
-                if ((i%4 != 3) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+1))) != Biddy_GetConstantZero()) w = 2;
-                if ((i%4 == 0) && (w == 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+3))) != Biddy_GetConstantZero()) w = 4;
-                if ((i%4 == 0) && (w == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+3))) != Biddy_GetConstantZero()) {i = i + 3; w = 2;}
-                if ((i < 12) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+4))) != Biddy_GetConstantZero()) h = 2;
-                if ((i < 4) && (h == 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+12))) != Biddy_GetConstantZero()) h = 4;
-                if ((i < 4) && (h == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+12))) != Biddy_GetConstantZero()) {i = i + 12; h = 2;}
-                addCircle({(int)i%4,(int)i/4,w,h,idx++}); // last argument is color
-            }
+        }
+    } else if (numVariables == 5) {
+        for (unsigned int n=0; n<=5; n++)
+        {
+
         }
     }
 }
@@ -510,7 +563,7 @@ void BooleanFunction::createSop(set<Biddy_Edge> essentialImplicants)
     // 1. regarding the number of dependent variables, those with less variables go first
     // 2. (TO DO) regarding the name of first variables, those with smaller name go first
     // 3. (TO DO) regarding the positivness of first variable, those with positive variable go first
-    for (unsigned int n=0; n<=4; n++) {
+    for (unsigned int n=0; n<=numVariables; n++) {
         for (auto implicant : essentialImplicants) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
             //cout << "SET FINAL SOP: " << booleanFunction2string(implicant) << endl;
             addSopImplicant(implicant2string(implicant));

@@ -30,6 +30,10 @@ void rtrim(std::string &);
 void trim(std::string &);
 void replaceAll(std::string&, const std::string&, const std::string&);
 
+// global constants
+const unsigned int MAXVARIABLES = 5;
+const unsigned int MAXMINTERMS = 32;
+
 // these functions are using Biddy package directly, i.e. they operate on Biddy_Edge and not on BooleanFunction
 // they could be declared static, but it is more elegant to declare them outside the class
 void initBdd();
@@ -43,9 +47,11 @@ Biddy_Edge permitsymData(Biddy_Edge, Biddy_Variable, unsigned int);
 const array<unsigned int,4> KARNAUGH2x2 = {{0,1,2,3}};
 const array<unsigned int,8> KARNAUGH3x3 = {{0,4,1,5,3,7,2,6}};
 const array<unsigned int,16> KARNAUGH4x4 = {{0,4,12,8,1,5,13,9,3,7,15,11,2,6,14,10}};
+const array<unsigned int,32> KARNAUGH5x5 = {{0,4,12,8,1,5,13,9,3,7,15,11,2,6,14,10}}; // TO DO: adapt
 const array<unsigned int,4> VEITCH2x2 = {{3,2,1,0}};
 const array<unsigned int,8> VEITCH3x3 = {{6,4,7,5,3,1,2,0}};
 const array<unsigned int,16> VEITCH4x4 = {{12,14,10,8,13,15,11,9,5,7,3,1,4,6,2,0}};
+const array<unsigned int,32> VEITCH5x5 = {{12,14,10,8,13,15,11,9,5,7,3,1,4,6,2,0}};  // TO DO: adapt
 
 struct ImplicantCircle
 {
@@ -60,11 +66,13 @@ class BooleanFunction
 {
     private:
         random_device rndDevice;
+        unsigned int numVariables;
+        unsigned int numMinterms;
         Biddy_Edge support;
         Biddy_Edge bdd;
         Biddy_Edge dontcarebdd;
         string bits;
-        array<string,16> minterms;
+        array<string,MAXMINTERMS> minterms;
         vector<set<Biddy_Edge>> sopSolutions;
         unsigned int selectedSopSolution;
         vector<ImplicantCircle> circles;
@@ -91,6 +99,10 @@ class BooleanFunction
         // === Biddy_Edge support;
         Biddy_Edge getSupport();
 
+        // === unsigned int numvariables;
+        unsigned int getNumVariables();
+        void setNumVariables(unsigned int num);
+
         // === Biddy_Edge bdd;
         Biddy_Edge getBdd();
 
@@ -100,8 +112,8 @@ class BooleanFunction
         // === string bits;
         string getBits();
 
-        // === array<string,16> minterms;
-        array<string,16> getMinterms();
+        // === array<string,MAXMINTERMS> minterms;
+        array<string,MAXMINTERMS> getMinterms();
         string getMinterm(unsigned int);
         void setMinterm(unsigned int, string);
 

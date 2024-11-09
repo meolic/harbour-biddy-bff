@@ -24,6 +24,15 @@ class TruthTableModel : public QAbstractListModel
 {
     Q_OBJECT
 
+    // elements for TruthTableModel is not the same as elements for KarnaughMapModel
+    //
+    // This is for TruthTableModel:
+    // size(elements) = (numVariables + 1) * numMinterms
+    // numVariables == 2: size(elements) = (2+1) * 4 = 12, elements = "00x01x10x11x"
+    // numVariables == 3: size(elements) = (3+1) * 8 = 32, elements = "000x001x010x011x100x101x110x111x"
+    // numVariables == 4: size(elements) = (4+1) * 16 = 80, elements = "0000x0001x..."
+    // numVariables == 5: size(elements) = (5+1) * 32 = 192, elements = "00000x00001x..."
+
     private:
         BooleanFunction *booleanFunction;
         QList<QString> elements;
@@ -32,18 +41,18 @@ class TruthTableModel : public QAbstractListModel
     public:
         explicit TruthTableModel(QObject *parent = nullptr, BooleanFunction *bf = nullptr);
         ~TruthTableModel();
-        virtual int rowCount(const QModelIndex &parent) const;
-        virtual QVariant data(const QModelIndex &index, int role) const;
+        virtual int rowCount(const QModelIndex&) const;
+        virtual QVariant data(const QModelIndex&,int) const;
         void refreshCPP();
 
-        Q_INVOKABLE QString get(const int &index);
+        Q_INVOKABLE QString get(const int&);
         Q_INVOKABLE QString getVariableName(const int&); //get ith variable name
         Q_INVOKABLE void setVariableName(const int&, const QString&); //set ith variable name
         Q_INVOKABLE QString string2html(const QString&); //change string for presentation
-        Q_INVOKABLE void setZero(const int &index); //change one element
-        Q_INVOKABLE void setOne(const int &index); //change one element
-        Q_INVOKABLE void setX(const int &index); //change one element
-        Q_INVOKABLE void setEmpty(const int &index); //change one element
+        Q_INVOKABLE void setZero(const int&); //change one element
+        Q_INVOKABLE void setOne(const int&); //change one element
+        Q_INVOKABLE void setX(const int&); //change one element
+        Q_INVOKABLE void setEmpty(const int&); //change one element
         Q_INVOKABLE void allZero(); //create special Truth table
         Q_INVOKABLE void allOne(); //create special Truth table
         Q_INVOKABLE void allEmpty(); //create special Truth table

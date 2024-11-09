@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 {
 
     initBdd();
-    BooleanFunction *booleanFunction = new BooleanFunction();
+    BooleanFunction *booleanFunction = new BooleanFunction(); // created only once, thes reused everytime, even if num variables changes
     TruthTableModel *truthTableModel = new TruthTableModel(nullptr,booleanFunction);
     ImplicantCircleModel *implicantCircleModel = new ImplicantCircleModel(nullptr,booleanFunction);
     KarnaughMapModel *karnaughMapModel = new KarnaughMapModel(nullptr,booleanFunction);

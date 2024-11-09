@@ -121,7 +121,7 @@ Page { // Sailfish OS
                         id: truthTableLegendTop
                         width: 5*appwindow.diagramCellSize
                         height: appwindow.largeTextSize
-                        radius: 0 //appwindow.diagramCellRadius
+                        radius: 0
                         color: appwindow.bgDiagramLegendColor
                         anchors.bottom: truthTableBorder.top
                         anchors.left: truthTableBorder.left

@@ -124,7 +124,7 @@ Page { // Sailfish OS
         // AppText { // Felgo
         Label { // Sailfish OS
             x: appwindow.titleTextSize
-            text: qsTr("I can test on Sony XA2 and Sailfish 4, only.<br>Please, use email <u>robert@meolic.com</u><br>to report issues and ideas.")
+            text: qsTr("I test on Sony XA2 and Jolla C2. <br>Please, use email <u>robert@meolic.com</u><br>to report issues and ideas.")
             //font.bold : true
             color: appwindow.textColor1
             font.family: "FreeSans"
