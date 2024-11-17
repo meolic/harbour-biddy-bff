@@ -189,18 +189,33 @@ Page { // Sailfish OS
                 }
                 /**/
 
-                // KARNAUGH MAP 4x4
+                // KARNAUGH MAP 3x3
 
                 Item {
-                    id: diagram
+                    id: diagram3
+                    visible: appwindow.numVariables === 3
                     width: parent.width
                     height: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
 
-                    /*
+                    /**/
                     Component.onCompleted: {
-                        console.log("KarnaughMap: diagram started")
+                        console.log("KarnaughMap: diagram 3x3 Component.onCompleted")
                     }
-                    */
+                    /**/
+                }
+
+                // KARNAUGH MAP 4x4
+
+                Item {
+                    id: diagram4
+                    visible: appwindow.numVariables === 4
+                    width: parent.width
+                    height: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
+
+                    Component.onCompleted: {
+                        console.log("KarnaughMap: diagram 4x4 Component.onCompleted")
+                        coveringTableModel.sopChanged()
+                    }
 
                     // diagramBorder is now shown but used for positioning of other elements
                     Rectangle {
@@ -555,11 +570,6 @@ Page { // Sailfish OS
                         z: 3
                     }
 
-                    Component.onCompleted: {
-                        //console.log("KarnaughMap diagram: Component.onCompleted")
-                        coveringTableModel.sopChanged()
-                    }
-
                 }
 
                 // BUTTONS TO CHANGE THE SOLUTION
@@ -567,7 +577,7 @@ Page { // Sailfish OS
                 Row {
                     id: buttonrow
                     width: karnaughMapPage.width
-                    anchors.horizontalCenter: diagram.horizontalCenter
+                    anchors.horizontalCenter: karnaughColumn.horizontalCenter
                     spacing: 5 * buttonrow.width / 72
 
                     Item {
@@ -644,7 +654,7 @@ Page { // Sailfish OS
                 }
 
                 Row {
-                    anchors.horizontalCenter: diagram.horizontalCenter
+                    anchors.horizontalCenter: karnaughColumn.horizontalCenter
                     // AppText { // Felgo
                     Label { // Sailfish OS
                         text: qsTr("SOP")
@@ -663,7 +673,7 @@ Page { // Sailfish OS
                 }
 
                 Row {
-                    anchors.horizontalCenter: diagram.horizontalCenter
+                    anchors.horizontalCenter: karnaughColumn.horizontalCenter
                     id: textrow
 
                     // AppText { // Felgo

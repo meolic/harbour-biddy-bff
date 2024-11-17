@@ -75,8 +75,8 @@ QVariant KarnaughMapModel::data(const QModelIndex &index, int role) const
 void KarnaughMapModel::refreshCPP()
 {
     //qDebug() << "KarnaughMapModel::refreshCPP()";
-    qDebug() << "KarnaughMapModel::refreshCPP() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
-    qDebug() << "KarnaughMapModel::refreshCPP() elements.count() = " << elements.count() << " : " << elements;
+    //qDebug() << "KarnaughMapModel::refreshCPP() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
+    //qDebug() << "KarnaughMapModel::refreshCPP() elements.count() = " << elements.count() << " : " << elements;
 
     if (booleanFunction->getNumVariables() == 2)
     {
@@ -98,8 +98,8 @@ void KarnaughMapModel::refreshCPP()
 void KarnaughMapModel::onModelChanged()
 {
     //qDebug() << "KarnaughMapModel::onModelChanged()";
-    qDebug() << "KarnaughMapModel::onModelChanged() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
-    qDebug() << "KarnaughMapModel::onModelChanged() elements.count() = " << elements.count() << " : " << elements;
+    //qDebug() << "KarnaughMapModel::onModelChanged() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
+    //qDebug() << "KarnaughMapModel::onModelChanged() elements.count() = " << elements.count() << " : " << elements;
 
     if (booleanFunction->getNumVariables() == 2)
     {

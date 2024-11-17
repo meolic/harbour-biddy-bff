@@ -320,9 +320,10 @@ unsigned int BooleanFunction::getNumVariables()
     return numVariables;
 }
 
-void setNumVariables(unsigned int num)
+void BooleanFunction::setNumVariables(unsigned int num)
 {
-    cout << "setNumVariables: " << num << endl;
+    cout << "BooleanFunction: setNumVariables " << num << endl;
+    numVariables = num;
 }
 
 // =========

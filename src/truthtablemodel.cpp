@@ -121,8 +121,8 @@ QVariant TruthTableModel::data(const QModelIndex &index, int role) const
 void TruthTableModel::refreshCPP()
 {
     //qDebug() << "TruthTableModel::refreshCPP()";
-    qDebug() << "TruthTableModel::refreshCPP() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
-    qDebug() << "TruthTableModel::refreshCPP() elements.count() = " << elements.count() << " : " << elements;
+    //qDebug() << "TruthTableModel::refreshCPP() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
+    //qDebug() << "TruthTableModel::refreshCPP() elements.count() = " << elements.count() << " : " << elements;
 
     if (booleanFunction->getNumVariables() == 2)
     {
@@ -145,8 +145,8 @@ void TruthTableModel::refreshCPP()
 void TruthTableModel::onModelChanged()
 {
     //qDebug() << "TruthTableModel::onModelChanged()";
-    qDebug() << "TruthTableModel::onModelChanged() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
-    qDebug() << "TruthTableModel::onModelChanged() elements.count() = " << elements.count() << " : " << elements;
+    //qDebug() << "TruthTableModel::onModelChanged() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
+    //qDebug() << "TruthTableModel::onModelChanged() elements.count() = " << elements.count() << " : " << elements;
 
     if (booleanFunction->getNumVariables() == 2)
     {
@@ -165,12 +165,33 @@ void TruthTableModel::onModelChanged()
 
 // INVOKABLE METHODS
 
+
 QString TruthTableModel::get(const int &row)
 {
     if(row < 0 || row >= elements.count()) {
         return QString();
     }
     return elements.at(row);
+}
+
+int TruthTableModel::getNumVariables()
+{
+    return booleanFunction->getNumVariables();
+}
+
+void TruthTableModel::setNumVariables(const int &n)
+{
+    if (n == 0) return;
+    if (n < 2) return;
+    if (n > 5) return;
+
+    if (n == (int) booleanFunction->getNumVariables())
+    {
+        qDebug() << "TruthTableModel::setNumVariables " << n << " (NOT CHANGED)";
+    } else {
+        booleanFunction->setNumVariables(n);
+        qDebug() << "TruthTableModel::setNumVariables " << n;
+    }
 }
 
 QString TruthTableModel::string2html(const QString &text)

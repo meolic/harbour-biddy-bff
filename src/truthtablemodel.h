@@ -46,6 +46,8 @@ class TruthTableModel : public QAbstractListModel
         void refreshCPP();
 
         Q_INVOKABLE QString get(const int&);
+        Q_INVOKABLE int getNumVariables();
+        Q_INVOKABLE void setNumVariables(const int&);
         Q_INVOKABLE QString getVariableName(const int&); //get ith variable name
         Q_INVOKABLE void setVariableName(const int&, const QString&); //set ith variable name
         Q_INVOKABLE QString string2html(const QString&); //change string for presentation

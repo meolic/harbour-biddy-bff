@@ -18,9 +18,29 @@ ApplicationWindow // Sailfish OS
     cover: Qt.resolvedUrl("cover/CoverPage.qml") // Sailfish OS
     allowedOrientations: defaultAllowedOrientations // Sailfish OS
 
-    property string version: "v2024-11-09"
+    // Sony Xperai XA2
+    // Display:  1920 × 1080 px
 
-    property int diagramCellSize: 120 // use 60 on Felgo, use 120 on Sailfish OS
+    // Jolla C2 (2024) - Reeder S19 Max Pro S (2023)
+    // Size: 179 x 78 x 8.5mm
+    // Display:  LCD 60 Hz / 1600 × 720 px / 6.74" / 108.78 cm² / ~ 150 x 70 mm
+    // Memory: 8192 MB
+    // Storage: 128 GB + 128GB storage (expandable with MicroSD)
+    // Chipset: Unisoc Tiger T606 / Spreadtrum T606 / ARM Unisoc @ 1.82 GHz, 1 Processor, 8 Cores
+    // Chipset: ARM implementer 65 architecture 8 variant 3 part 3338 revision 1
+    // Chipset: 2x 1.6 GHz ARM Cortex-A75 / 6x 1.6 GHz ARM Cortex-A55
+    // GPU Type: Mali-G57 MP1 (650 MHz)
+    // Connectivity: LTE+ (4.5G), BT 5.0, WLAN 802.11ac
+    // Cameras: 64MP / 16MP / 8MP
+    // USB: Type-C
+    // Other: 3.5mm audio jack, Dual SIM (nano) + microSD
+
+    property string version: "v2024-11-17"
+
+    property int myScreenHeight: _screenHeight
+    property int myScreenWidth: _screenWidth
+
+    property int diagramCellSize: myScreenWidth / 9 // use 60 on Felgo, use 120 on XA2
     property int diagramCellBorder: 8 // // use 4 on Felgo, use 8 on Sailfish OS
     property int diagramBorderWidth: 2 // // use 2 on Felgo, use 2 on Sailfish OS
     property int tableRowSize: 60 // use 30 on Felgo, use 60 on Sailfish OS
@@ -53,7 +73,7 @@ ApplicationWindow // Sailfish OS
 
     // NUMBER OF VARIABLES
 
-    property int numVariables: 4
+    property int numVariables: 4 // TO DO
 
     // VARIABLE NAMES
 
@@ -99,11 +119,14 @@ ApplicationWindow // Sailfish OS
             contentWidth: mainColumn.width // Sailfish OS
             VerticalScrollDecorator {} // Sailfish OS
 
-            /*
+            /**/
             Component.onCompleted: {
                 console.log("Main: SilicaFlickable started")
+                console.log("Main: myScreenHeight = " + myScreenHeight)
+                console.log("Main: myScreenWidth = " + myScreenWidth)
+                console.log("Main: numVariables = " + numVariables)
             }
-            */
+            /**/
 
             // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
             // Sailfish OS
@@ -492,7 +515,9 @@ ApplicationWindow // Sailfish OS
                             font.pixelSize: appwindow.largeTextSize
                         }
                         onClicked: {
-                            //console.log("BUTTON 2 variables")
+                            console.log("BUTTON 2 variables")
+                            numVariables = 2
+                            truthTableModel.setNumVariables(2)
                             numvar2.border.color = appwindow.titleTextColor
                             numvar3.border.color = "transparent"
                             numvar4.border.color = "transparent"
@@ -515,7 +540,9 @@ ApplicationWindow // Sailfish OS
                             font.pixelSize: appwindow.largeTextSize
                         }
                         onClicked: {
-                            //console.log("BUTTON 3 variables")
+                            console.log("BUTTON 3 variables")
+                            numVariables = 3
+                            truthTableModel.setNumVariables(3)
                             numvar2.border.color = "transparent"
                             numvar3.border.color = appwindow.titleTextColor
                             numvar4.border.color = "transparent"
@@ -538,7 +565,9 @@ ApplicationWindow // Sailfish OS
                             font.pixelSize: appwindow.largeTextSize
                         }
                         onClicked: {
-                            //console.log("BUTTON 4 variables")
+                            console.log("BUTTON 4 variables")
+                            numVariables = 4
+                            truthTableModel.setNumVariables(4)
                             numvar2.border.color = "transparent"
                             numvar3.border.color = "transparent"
                             numvar4.border.color = appwindow.titleTextColor
@@ -561,7 +590,9 @@ ApplicationWindow // Sailfish OS
                             font.pixelSize: appwindow.largeTextSize
                         }
                         onClicked: {
-                            //console.log("BUTTON 5 variables")
+                            console.log("BUTTON 5 variables")
+                            numVariables = 5
+                            truthTableModel.setNumVariables(5)
                             numvar2.border.color = "transparent"
                             numvar3.border.color = "transparent"
                             numvar4.border.color = "transparent"
@@ -612,6 +643,7 @@ ApplicationWindow // Sailfish OS
                     spacing: appwindow.textSpacingSize
 
                     Rectangle {
+                        enabled: numVariables >= 1
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
@@ -646,6 +678,7 @@ ApplicationWindow // Sailfish OS
                     }
 
                     Rectangle {
+                        enabled: numVariables >= 2
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
@@ -680,6 +713,7 @@ ApplicationWindow // Sailfish OS
                     }
 
                     Rectangle {
+                        enabled: numVariables >= 3
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
@@ -714,6 +748,7 @@ ApplicationWindow // Sailfish OS
                     }
 
                     Rectangle {
+                        enabled: numVariables >= 4
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
@@ -748,6 +783,7 @@ ApplicationWindow // Sailfish OS
                     }
 
                     Rectangle {
+                        enabled: numVariables >= 5
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
