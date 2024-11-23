@@ -12,6 +12,11 @@ Page { // Sailfish OS
     //flickable.contentWidth: karnaughColumn.width // Felgo
     //scrollIndicator.visible: true // Felgo
 
+    property var truthTableModel: truthTableModel4
+    property var implicantCircleModel: implicantCircleModel4
+    property var coveringTableModel: coveringTableModel4
+    property var karnaughMapModel: karnaughMapModel4
+
     property int circleRadius: 40
 
     property var colorList: [

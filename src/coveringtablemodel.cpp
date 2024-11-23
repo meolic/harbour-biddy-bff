@@ -17,6 +17,8 @@
 #include<QDebug>
 #define QT_NO_DEBUG_OUTPUT
 
+// there exists multiple instances of CoveringTableModel, one for each size of Boolean function
+
 CoveringTableModel::CoveringTableModel(QObject *parent, BooleanFunction *bf) : QAbstractListModel(parent)
 {
     //qDebug() << "CoveringTableModel INIT";

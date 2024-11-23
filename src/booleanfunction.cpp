@@ -154,23 +154,9 @@ Biddy_Edge permitsymData(Biddy_Edge f, Biddy_Variable lowest, unsigned int n)
 // Boolean function is created only once, thes reused everytime, even if num variables changes
 BooleanFunction::BooleanFunction()
 {
-    numVariables = 4;
-    if (numVariables == 2) {
-        numMinterms = 4;
-        support = Biddy_Eval2((Biddy_String)"a*b");
-    } else if (numVariables == 3) {
-        numMinterms = 8;
-        support = Biddy_Eval2((Biddy_String)"a*b*c");
-    } else if (numVariables == 4) {
-        numMinterms = 16;
-        support = Biddy_Eval2((Biddy_String)"a*b*c*d");
-    } else if (numVariables == 5) {
-        numMinterms = 32;
-        support = Biddy_Eval2((Biddy_String)"a*b*c*d*e");
-    } else {
-        numMinterms = 0;
-        support = Biddy_GetConstantZero();
-    }
+    numVariables = 0;
+    numMinterms = 0;
+    support = Biddy_GetConstantZero();
     bdd = nullptr;
     dontcarebdd = nullptr;
     bits = "";
@@ -191,6 +177,7 @@ BooleanFunction::~BooleanFunction()
 {
 }
 
+// here, raw variable names (i.e. BDD variables) are used, this must be compatilbe with variable support defined in the constructor BooleanFunction::BooleanFunction()
 string BooleanFunction::string2html(string s, string variableNames)
 {
     string t;
@@ -211,6 +198,7 @@ string BooleanFunction::string2html(string s, string variableNames)
         e = variableNames[4];
     }
     t = s;
+
     replaceAll(t,"*a","NA");
     replaceAll(t,"*b","NB");
     replaceAll(t,"*c","NC");
@@ -314,16 +302,42 @@ Biddy_Edge BooleanFunction::getSupport()
 }
 
 // =========
-// === unsigned int numvariables;
+// === unsigned int numVariables;
 unsigned int BooleanFunction::getNumVariables()
 {
     return numVariables;
 }
 
+// =========
+// === unsigned int numMinterms;
+unsigned int BooleanFunction::getNumMinterms()
+{
+    return numMinterms;
+}
+
+// here, raw variable names (i.e. BDD variables) are used, this must be compatilbe with implementation of BooleanFunction::string2html
+// raw variables names are not the same as actual variable names shown in GUI
 void BooleanFunction::setNumVariables(unsigned int num)
 {
     cout << "BooleanFunction: setNumVariables " << num << endl;
     numVariables = num;
+
+    if (numVariables == 2) {
+        numMinterms = 4;
+        support = Biddy_Eval2((Biddy_String)"a*b");
+    } else if (numVariables == 3) {
+        numMinterms = 8;
+        support = Biddy_Eval2((Biddy_String)"a*b*c");
+    } else if (numVariables == 4) {
+        numMinterms = 16;
+        support = Biddy_Eval2((Biddy_String)"a*b*c*d");
+    } else if (numVariables == 5) {
+        numMinterms = 32;
+        support = Biddy_Eval2((Biddy_String)"a*b*c*d*e");
+    } else {
+        numMinterms = 0;
+        support = Biddy_GetConstantZero();
+    }
 }
 
 // =========

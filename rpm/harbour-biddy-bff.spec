@@ -9,7 +9,7 @@ Name:       harbour-biddy-bff
 # << macros
 
 Summary:    Boolean functions forever
-Version:    0.91
+Version:    0.92
 Release:    1
 Group:      Qt/Qt
 License:    GPLv2

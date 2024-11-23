@@ -58,8 +58,8 @@ void QuineMcCluskey::addQmlogSet(set<Biddy_Edge> theset)
     {
         for (unsigned int n=1; n<=16; n=n*2) {
             for (auto m: theset) if (Biddy_CountMinterms(m,4) == n) {
-                //cout << "ELEMENT: " << implicant2string(m) << endl;
-                //cout << implicant2symbol(booleanFunction->getSupport(),m) < endl;
+                cout << "QuineMcCluskey::addQmlogSet ELEMENT: " << implicant2string(m) << endl;
+                cout << implicant2symbol(booleanFunction->getSupport(),m) << endl;
                 booleanFunction->addQmlogLine(implicant2symbol(booleanFunction->getSupport(),m));
             }
         }

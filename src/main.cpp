@@ -58,26 +58,81 @@ int main(int argc, char *argv[])
 {
 
     initBdd();
-    BooleanFunction *booleanFunction = new BooleanFunction(); // created only once, thes reused everytime, even if num variables changes
-    TruthTableModel *truthTableModel = new TruthTableModel(nullptr,booleanFunction);
-    ImplicantCircleModel *implicantCircleModel = new ImplicantCircleModel(nullptr,booleanFunction);
-    KarnaughMapModel *karnaughMapModel = new KarnaughMapModel(nullptr,booleanFunction);
-    CoveringTableModel *coveringTableModel = new CoveringTableModel(nullptr,booleanFunction);
+    BooleanFunction *booleanFunction2 = new BooleanFunction(); // created one function with 2 variables
+    booleanFunction2->setNumVariables(2);
+    BooleanFunction *booleanFunction3 = new BooleanFunction(); // created one function with 3 variables
+    booleanFunction3->setNumVariables(3);
+    BooleanFunction *booleanFunction4 = new BooleanFunction(); // created one function with 4 variables
+    booleanFunction4->setNumVariables(4);
+    BooleanFunction *booleanFunction5 = new BooleanFunction(); // created one function with 5 variables
+    booleanFunction5->setNumVariables(5);
+    TruthTableModel *truthTableModel2 = new TruthTableModel(nullptr,booleanFunction2);
+    TruthTableModel *truthTableModel3 = new TruthTableModel(nullptr,booleanFunction3);
+    TruthTableModel *truthTableModel4 = new TruthTableModel(nullptr,booleanFunction4);
+    TruthTableModel *truthTableModel5 = new TruthTableModel(nullptr,booleanFunction5);
+    ImplicantCircleModel *implicantCircleModel2 = new ImplicantCircleModel(nullptr,booleanFunction2);
+    ImplicantCircleModel *implicantCircleModel3 = new ImplicantCircleModel(nullptr,booleanFunction3);
+    ImplicantCircleModel *implicantCircleModel4 = new ImplicantCircleModel(nullptr,booleanFunction4);
+    ImplicantCircleModel *implicantCircleModel5 = new ImplicantCircleModel(nullptr,booleanFunction5);
+    KarnaughMapModel *karnaughMapModel2 = new KarnaughMapModel(nullptr,booleanFunction2);
+    KarnaughMapModel *karnaughMapModel3 = new KarnaughMapModel(nullptr,booleanFunction3);
+    KarnaughMapModel *karnaughMapModel4 = new KarnaughMapModel(nullptr,booleanFunction4);
+    KarnaughMapModel *karnaughMapModel5 = new KarnaughMapModel(nullptr,booleanFunction5);
+    CoveringTableModel *coveringTableModel2 = new CoveringTableModel(nullptr,booleanFunction2);
+    CoveringTableModel *coveringTableModel3 = new CoveringTableModel(nullptr,booleanFunction3);
+    CoveringTableModel *coveringTableModel4 = new CoveringTableModel(nullptr,booleanFunction4);
+    CoveringTableModel *coveringTableModel5 = new CoveringTableModel(nullptr,booleanFunction5);
 
     // any change in truthTableModel is signalised to implicantCircleModel, karnaughMapModel, and coveringTableModel
-    QObject::connect(truthTableModel,SIGNAL(modelChanged()),implicantCircleModel,SLOT(onModelChanged()));
-    QObject::connect(truthTableModel,SIGNAL(modelChanged()),karnaughMapModel,SLOT(onModelChanged()));
-    QObject::connect(truthTableModel,SIGNAL(modelChanged()),coveringTableModel,SLOT(onModelChanged()));
+    QObject::connect(truthTableModel2,SIGNAL(modelChanged()),implicantCircleModel2,SLOT(onModelChanged()));
+    QObject::connect(truthTableModel2,SIGNAL(modelChanged()),karnaughMapModel2,SLOT(onModelChanged()));
+    QObject::connect(truthTableModel2,SIGNAL(modelChanged()),coveringTableModel2,SLOT(onModelChanged()));
+
+    QObject::connect(truthTableModel3,SIGNAL(modelChanged()),implicantCircleModel3,SLOT(onModelChanged()));
+    QObject::connect(truthTableModel3,SIGNAL(modelChanged()),karnaughMapModel3,SLOT(onModelChanged()));
+    QObject::connect(truthTableModel3,SIGNAL(modelChanged()),coveringTableModel3,SLOT(onModelChanged()));
+
+    QObject::connect(truthTableModel4,SIGNAL(modelChanged()),implicantCircleModel4,SLOT(onModelChanged()));
+    QObject::connect(truthTableModel4,SIGNAL(modelChanged()),karnaughMapModel4,SLOT(onModelChanged()));
+    QObject::connect(truthTableModel4,SIGNAL(modelChanged()),coveringTableModel4,SLOT(onModelChanged()));
+
+    QObject::connect(truthTableModel5,SIGNAL(modelChanged()),implicantCircleModel5,SLOT(onModelChanged()));
+    QObject::connect(truthTableModel5,SIGNAL(modelChanged()),karnaughMapModel5,SLOT(onModelChanged()));
+    QObject::connect(truthTableModel5,SIGNAL(modelChanged()),coveringTableModel5,SLOT(onModelChanged()));
 
     // any change in karnaughMapModel is signalised to truthTableModel, implicantCircleModel, and coveringTableModel
-    QObject::connect(karnaughMapModel,SIGNAL(modelChanged()),truthTableModel,SLOT(onModelChanged()));
-    QObject::connect(karnaughMapModel,SIGNAL(modelChanged()),implicantCircleModel,SLOT(onModelChanged()));
-    QObject::connect(karnaughMapModel,SIGNAL(modelChanged()),coveringTableModel,SLOT(onModelChanged()));
+    QObject::connect(karnaughMapModel2,SIGNAL(modelChanged()),truthTableModel2,SLOT(onModelChanged()));
+    QObject::connect(karnaughMapModel2,SIGNAL(modelChanged()),implicantCircleModel2,SLOT(onModelChanged()));
+    QObject::connect(karnaughMapModel2,SIGNAL(modelChanged()),coveringTableModel2,SLOT(onModelChanged()));
+
+    QObject::connect(karnaughMapModel3,SIGNAL(modelChanged()),truthTableModel3,SLOT(onModelChanged()));
+    QObject::connect(karnaughMapModel3,SIGNAL(modelChanged()),implicantCircleModel3,SLOT(onModelChanged()));
+    QObject::connect(karnaughMapModel3,SIGNAL(modelChanged()),coveringTableModel3,SLOT(onModelChanged()));
+
+    QObject::connect(karnaughMapModel4,SIGNAL(modelChanged()),truthTableModel4,SLOT(onModelChanged()));
+    QObject::connect(karnaughMapModel4,SIGNAL(modelChanged()),implicantCircleModel4,SLOT(onModelChanged()));
+    QObject::connect(karnaughMapModel4,SIGNAL(modelChanged()),coveringTableModel4,SLOT(onModelChanged()));
+
+    QObject::connect(karnaughMapModel5,SIGNAL(modelChanged()),truthTableModel5,SLOT(onModelChanged()));
+    QObject::connect(karnaughMapModel5,SIGNAL(modelChanged()),implicantCircleModel5,SLOT(onModelChanged()));
+    QObject::connect(karnaughMapModel5,SIGNAL(modelChanged()),coveringTableModel5,SLOT(onModelChanged()));
 
     // any change in coveringTableModel is signalised to truthTableModel, implicationCircleModel, and karnaughMapModel
-    QObject::connect(coveringTableModel,SIGNAL(modelChanged()),truthTableModel,SLOT(onModelChanged()));
-    QObject::connect(coveringTableModel,SIGNAL(modelChanged()),implicantCircleModel,SLOT(onModelChanged()));
-    QObject::connect(coveringTableModel,SIGNAL(modelChanged()),karnaughMapModel,SLOT(onModelChanged()));
+    QObject::connect(coveringTableModel2,SIGNAL(modelChanged()),truthTableModel2,SLOT(onModelChanged()));
+    QObject::connect(coveringTableModel2,SIGNAL(modelChanged()),implicantCircleModel2,SLOT(onModelChanged()));
+    QObject::connect(coveringTableModel2,SIGNAL(modelChanged()),karnaughMapModel2,SLOT(onModelChanged()));
+
+    QObject::connect(coveringTableModel3,SIGNAL(modelChanged()),truthTableModel3,SLOT(onModelChanged()));
+    QObject::connect(coveringTableModel3,SIGNAL(modelChanged()),implicantCircleModel3,SLOT(onModelChanged()));
+    QObject::connect(coveringTableModel3,SIGNAL(modelChanged()),karnaughMapModel3,SLOT(onModelChanged()));
+
+    QObject::connect(coveringTableModel4,SIGNAL(modelChanged()),truthTableModel4,SLOT(onModelChanged()));
+    QObject::connect(coveringTableModel4,SIGNAL(modelChanged()),implicantCircleModel4,SLOT(onModelChanged()));
+    QObject::connect(coveringTableModel4,SIGNAL(modelChanged()),karnaughMapModel4,SLOT(onModelChanged()));
+
+    QObject::connect(coveringTableModel5,SIGNAL(modelChanged()),truthTableModel5,SLOT(onModelChanged()));
+    QObject::connect(coveringTableModel5,SIGNAL(modelChanged()),implicantCircleModel5,SLOT(onModelChanged()));
+    QObject::connect(coveringTableModel5,SIGNAL(modelChanged()),karnaughMapModel5,SLOT(onModelChanged()));
 
 #ifdef SAILFISHAPP
 
@@ -87,10 +142,22 @@ int main(int argc, char *argv[])
     // SAILFISH - PRODUCTION
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> viewer(SailfishApp::createView());
-    viewer.data()->rootContext()->setContextProperty(QStringLiteral("truthTableModel"), truthTableModel);
-    viewer.data()->rootContext()->setContextProperty(QStringLiteral("implicantCircleModel"), implicantCircleModel);
-    viewer.data()->rootContext()->setContextProperty(QStringLiteral("karnaughMapModel"), karnaughMapModel);
-    viewer.data()->rootContext()->setContextProperty(QStringLiteral("coveringTableModel"), coveringTableModel);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("truthTableModel2"), truthTableModel2);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("truthTableModel3"), truthTableModel3);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("truthTableModel4"), truthTableModel4);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("truthTableModel5"), truthTableModel5);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("implicantCircleModel2"), implicantCircleModel2);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("implicantCircleModel3"), implicantCircleModel3);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("implicantCircleModel4"), implicantCircleModel4);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("implicantCircleModel5"), implicantCircleModel5);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("karnaughMapModel2"), karnaughMapModel2);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("karnaughMapModel3"), karnaughMapModel3);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("karnaughMapModel4"), karnaughMapModel4);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("karnaughMapModel5"), karnaughMapModel5);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("coveringTableModel2"), coveringTableModel2);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("coveringTableModel3"), coveringTableModel3);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("coveringTableModel4"), coveringTableModel4);
+    viewer.data()->rootContext()->setContextProperty(QStringLiteral("coveringTableModel5"), coveringTableModel5);
     viewer->setSource(SailfishApp::pathTo("qml/Main.qml"));
     viewer->show();
     return app->exec();
@@ -106,10 +173,22 @@ int main(int argc, char *argv[])
     felgo.setPreservePlatformFonts(true); // Use platform-specific fonts instead of Felgo's default font
     felgo.setLicenseKey(PRODUCT_LICENSE_KEY); // Set an optional license key from project file
     felgo.initialize(&engine);
-    engine.rootContext()->setContextProperty(QStringLiteral("truthTableModel"), truthTableModel);
-    engine.rootContext()->setContextProperty(QStringLiteral("implicantCircleModel"), implicantCircleModel);
-    engine.rootContext()->setContextProperty(QStringLiteral("karnaughMapModel"), karnaughMapModel);
-    engine.rootContext()->setContextProperty(QStringLiteral("coveringTableModel"), coveringTableModel);
+    engine.rootContext()->setContextProperty(QStringLiteral("truthTableModel2"), truthTableModel2);
+    engine.rootContext()->setContextProperty(QStringLiteral("truthTableModel3"), truthTableModel3);
+    engine.rootContext()->setContextProperty(QStringLiteral("truthTableModel4"), truthTableModel4);
+    engine.rootContext()->setContextProperty(QStringLiteral("truthTableModel5"), truthTableModel5);
+    engine.rootContext()->setContextProperty(QStringLiteral("implicantCircleModel2"), implicantCircleModel2);
+    engine.rootContext()->setContextProperty(QStringLiteral("implicantCircleModel3"), implicantCircleModel3);
+    engine.rootContext()->setContextProperty(QStringLiteral("implicantCircleModel4"), implicantCircleModel4);
+    engine.rootContext()->setContextProperty(QStringLiteral("implicantCircleModel5"), implicantCircleModel5);
+    engine.rootContext()->setContextProperty(QStringLiteral("karnaughMapModel2"), karnaughMapModel2);
+    engine.rootContext()->setContextProperty(QStringLiteral("karnaughMapModel3"), karnaughMapModel3);
+    engine.rootContext()->setContextProperty(QStringLiteral("karnaughMapModel4"), karnaughMapModel4);
+    engine.rootContext()->setContextProperty(QStringLiteral("karnaughMapModel5"), karnaughMapModel5);
+    engine.rootContext()->setContextProperty(QStringLiteral("coveringTableModel2"), coveringTableModel2);
+    engine.rootContext()->setContextProperty(QStringLiteral("coveringTableModel3"), coveringTableModel3);
+    engine.rootContext()->setContextProperty(QStringLiteral("coveringTableModel4"), coveringTableModel4);
+    engine.rootContext()->setContextProperty(QStringLiteral("coveringTableModel5"), coveringTableModel5);
     felgo.setMainQmlFileName(QStringLiteral("qml/Main.qml")); // use this for DEVELOPMENT
     //felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml")); // use this for PUBLISHING
     engine.load(QUrl(felgo.mainQmlFileName()));

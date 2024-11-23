@@ -17,12 +17,14 @@
 #include<QDebug>
 #define QT_NO_DEBUG_OUTPUT
 
+// there exists multiple instances of TruthTableModel, one for each size of Boolean function
+
 TruthTableModel::TruthTableModel(QObject *parent, BooleanFunction *bf) : QAbstractListModel(parent)
 {
     //qDebug() << "TruthTableModel INIT";
 
     booleanFunction = bf;
-    variableNames << "a" << "b" << "c" << "d" << "e";
+    variableNames << "." << "." << "." << "." << "."; // initial array, it must have 5 elements
     unsigned int i0 = 0;
     unsigned int i1 = 0;
     unsigned int i2 = 0;
@@ -142,11 +144,17 @@ void TruthTableModel::refreshCPP()
 }
 
 // onModelChanged() is used to refresh TruthTable.qml to reflect the changed model
+//
+// size(elements) = (numVariables + 1) * numMinterms
+// numVariables == 2: size(elements) = (2+1) * 4 = 12, elements = "00x01x10x11x"
+// numVariables == 3: size(elements) = (3+1) * 8 = 32, elements = "000x001x010x011x100x101x110x111x"
+// numVariables == 4: size(elements) = (4+1) * 16 = 80, elements = "0000x0001x..."
+// numVariables == 5: size(elements) = (5+1) * 32 = 192, elements = "00000x00001x..."
 void TruthTableModel::onModelChanged()
 {
     //qDebug() << "TruthTableModel::onModelChanged()";
-    //qDebug() << "TruthTableModel::onModelChanged() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
-    //qDebug() << "TruthTableModel::onModelChanged() elements.count() = " << elements.count() << " : " << elements;
+    qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
+                ") onModelChanged(), elements.count()=" << elements.count() << ", " << elements;
 
     if (booleanFunction->getNumVariables() == 2)
     {
@@ -187,13 +195,16 @@ void TruthTableModel::setNumVariables(const int &n)
 
     if (n == (int) booleanFunction->getNumVariables())
     {
-        qDebug() << "TruthTableModel::setNumVariables " << n << " (NOT CHANGED)";
+        qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << ")::setNumVariables " << n << " (NOT CHANGED)";
     } else {
         booleanFunction->setNumVariables(n);
-        qDebug() << "TruthTableModel::setNumVariables " << n;
+        qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << ")::setNumVariables " << n;
     }
 }
 
+// this function only prepare second argument needed for BooleanFunction::string2html and then call it
+// second argument is a string of actual variable names, it is stored inside TruthTableModel
+// therefore, other models must use string2html functionality via TruthTableModel
 QString TruthTableModel::string2html(const QString &text)
 {
     string vn = "";
@@ -214,10 +225,12 @@ void TruthTableModel::setVariableName(const int&i, const QString &name)
     if (i == 0) return;
     if (name == "") return;
 
-    //qDebug() << "TruthTableModel::setVariableName " << name;
+    qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << ")::setVariableName " << variableNames << ", i=" << i << ", name=" << name;
 
     // only the first character in the given name is used
     variableNames[i-1] = name[0];
+
+    qDebug() << "TruthTableModel::setVariableName finished";
 }
 
 void TruthTableModel::setZero(const int &row)

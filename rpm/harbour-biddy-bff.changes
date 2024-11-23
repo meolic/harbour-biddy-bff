@@ -5,6 +5,10 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Sun Nov 17 2024 Robert Meolic <robert@meolic.com> 0.92
+- resolution adapted for Jolla C2
+- architecture changed to support multiple numVariables
+
 * Sun Oct 13 2024 Robert Meolic <robert@meolic.com> 0.91
 - packaging adapted for harbour
 

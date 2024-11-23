@@ -35,12 +35,12 @@ ApplicationWindow // Sailfish OS
     // USB: Type-C
     // Other: 3.5mm audio jack, Dual SIM (nano) + microSD
 
-    property string version: "v2024-11-17"
+    property string version: "v2024-11-23"
 
     property int myScreenHeight: _screenHeight
     property int myScreenWidth: _screenWidth
 
-    property int diagramCellSize: myScreenWidth / 9 // use 60 on Felgo, use 120 on XA2
+    property int diagramCellSize: myScreenWidth / 9
     property int diagramCellBorder: 8 // // use 4 on Felgo, use 8 on Sailfish OS
     property int diagramBorderWidth: 2 // // use 2 on Felgo, use 2 on Sailfish OS
     property int tableRowSize: 60 // use 30 on Felgo, use 60 on Sailfish OS
@@ -73,7 +73,7 @@ ApplicationWindow // Sailfish OS
 
     // NUMBER OF VARIABLES
 
-    property int numVariables: 4 // TO DO
+    property int numVariables: 4  // To DO: make this linked to BooleanFunction::getNumVariables()
 
     // VARIABLE NAMES
 
@@ -82,23 +82,55 @@ ApplicationWindow // Sailfish OS
     property string variableC: inputC.text
     property string variableD: inputD.text
     property string variableE: inputE.text
-    property string variablePA: truthTableModel.string2html("a")
-    property string variablePB: truthTableModel.string2html("b")
-    property string variablePC: truthTableModel.string2html("c")
-    property string variablePD: truthTableModel.string2html("d")
-    property string variablePE: truthTableModel.string2html("e")
-    property string variableNA: truthTableModel.string2html("*a")
-    property string variableNB: truthTableModel.string2html("*b")
-    property string variableNC: truthTableModel.string2html("*c")
-    property string variableND: truthTableModel.string2html("*d")
-    property string variableNE: truthTableModel.string2html("*e")
+    property string variablePA: truthTableModel5.string2html("a")
+    property string variablePB: truthTableModel5.string2html("b")
+    property string variablePC: truthTableModel5.string2html("c")
+    property string variablePD: truthTableModel5.string2html("d")
+    property string variablePE: truthTableModel5.string2html("e")
+    property string variableNA: truthTableModel5.string2html("*a")
+    property string variableNB: truthTableModel5.string2html("*b")
+    property string variableNC: truthTableModel5.string2html("*c")
+    property string variableND: truthTableModel5.string2html("*d")
+    property string variableNE: truthTableModel5.string2html("*e")
 
     //x: Theme.horizontalPageMargin
     //color: Theme.secondaryHighlightColor
     //font.pixelSize: Theme.fontSizeExtraLarge
 
     Component.onCompleted: {
-        karnaughMapModel.allZero()
+
+        // initial values of variableA, variableB, ... are given in the elements furter in this file
+
+        truthTableModel2.setVariableName(1,variableA)
+        truthTableModel3.setVariableName(1,variableA)
+        truthTableModel4.setVariableName(1,variableA)
+        truthTableModel5.setVariableName(1,variableA)
+
+        truthTableModel2.setVariableName(2,variableB)
+        truthTableModel3.setVariableName(2,variableB)
+        truthTableModel4.setVariableName(2,variableB)
+        truthTableModel5.setVariableName(2,variableB)
+
+        truthTableModel2.setVariableName(3,variableC)
+        truthTableModel3.setVariableName(3,variableC)
+        truthTableModel4.setVariableName(3,variableC)
+        truthTableModel5.setVariableName(3,variableC)
+
+        truthTableModel2.setVariableName(4,variableD)
+        truthTableModel3.setVariableName(4,variableD)
+        truthTableModel4.setVariableName(4,variableD)
+        truthTableModel5.setVariableName(4,variableD)
+
+        truthTableModel2.setVariableName(5,variableE)
+        truthTableModel3.setVariableName(5,variableE)
+        truthTableModel4.setVariableName(5,variableE)
+        truthTableModel5.setVariableName(5,variableE)
+
+        //karnaughMapModel.allZero()
+        truthTableModel2.allZero()
+        truthTableModel3.allZero()
+        truthTableModel4.allZero()
+        truthTableModel5.allZero()
         pageStack.push(mainPage,{ },PageStackAction.Immediate) // Sailfish OS
         pageKarnaughMap ? pageStack.pushAttached(Qt.resolvedUrl("KarnaughMap.qml")) :
             pageTruthTable ? pageStack.pushAttached(Qt.resolvedUrl("TruthTable.qml")) :
@@ -517,7 +549,7 @@ ApplicationWindow // Sailfish OS
                         onClicked: {
                             console.log("BUTTON 2 variables")
                             numVariables = 2
-                            truthTableModel.setNumVariables(2)
+                            //truthTableModel.setNumVariables(2)
                             numvar2.border.color = appwindow.titleTextColor
                             numvar3.border.color = "transparent"
                             numvar4.border.color = "transparent"
@@ -542,7 +574,7 @@ ApplicationWindow // Sailfish OS
                         onClicked: {
                             console.log("BUTTON 3 variables")
                             numVariables = 3
-                            truthTableModel.setNumVariables(3)
+                            //truthTableModel.setNumVariables(3)
                             numvar2.border.color = "transparent"
                             numvar3.border.color = appwindow.titleTextColor
                             numvar4.border.color = "transparent"
@@ -567,7 +599,7 @@ ApplicationWindow // Sailfish OS
                         onClicked: {
                             console.log("BUTTON 4 variables")
                             numVariables = 4
-                            truthTableModel.setNumVariables(4)
+                            //truthTableModel.setNumVariables(4)
                             numvar2.border.color = "transparent"
                             numvar3.border.color = "transparent"
                             numvar4.border.color = appwindow.titleTextColor
@@ -592,7 +624,7 @@ ApplicationWindow // Sailfish OS
                         onClicked: {
                             console.log("BUTTON 5 variables")
                             numVariables = 5
-                            truthTableModel.setNumVariables(5)
+                            //truthTableModel.setNumVariables(5)
                             numvar2.border.color = "transparent"
                             numvar3.border.color = "transparent"
                             numvar4.border.color = "transparent"
@@ -669,9 +701,12 @@ ApplicationWindow // Sailfish OS
                             strictValidation: true
                             errorHighlight: false
                             onClicked: {
-                                truthTableModel.setVariableName(1,variableA)
-                                variablePA = truthTableModel.string2html("a")
-                                variableNA = truthTableModel.string2html("*a")
+                                truthTableModel2.setVariableName(1,variableA)
+                                truthTableModel3.setVariableName(1,variableA)
+                                truthTableModel4.setVariableName(1,variableA)
+                                truthTableModel5.setVariableName(1,variableA)
+                                variablePA = truthTableModel5.string2html("a")
+                                variableNA = truthTableModel5.string2html("*a")
                                 text = ""
                             }
                         }
@@ -704,9 +739,12 @@ ApplicationWindow // Sailfish OS
                             strictValidation: true
                             errorHighlight: false
                             onClicked: {
-                                truthTableModel.setVariableName(2,variableB)
-                                variablePB = truthTableModel.string2html("b")
-                                variableNB = truthTableModel.string2html("*b")
+                                truthTableModel2.setVariableName(2,variableB)
+                                truthTableModel3.setVariableName(2,variableB)
+                                truthTableModel4.setVariableName(2,variableB)
+                                truthTableModel5.setVariableName(2,variableB)
+                                variablePB = truthTableModel5.string2html("b")
+                                variableNB = truthTableModel5.string2html("*b")
                                 text = ""
                             }
                         }
@@ -739,9 +777,12 @@ ApplicationWindow // Sailfish OS
                             strictValidation: true
                             errorHighlight: false
                             onClicked: {
-                                truthTableModel.setVariableName(3,variableC)
-                                variablePC = truthTableModel.string2html("c")
-                                variableNC = truthTableModel.string2html("*c")
+                                truthTableModel2.setVariableName(3,variableC)
+                                truthTableModel3.setVariableName(3,variableC)
+                                truthTableModel4.setVariableName(3,variableC)
+                                truthTableModel5.setVariableName(3,variableC)
+                                variablePC = truthTableModel5.string2html("c")
+                                variableNC = truthTableModel5.string2html("*c")
                                 text = ""
                             }
                         }
@@ -774,9 +815,12 @@ ApplicationWindow // Sailfish OS
                             strictValidation: true
                             errorHighlight: false
                             onClicked: {
-                                truthTableModel.setVariableName(4,variableD)
-                                variablePD = truthTableModel.string2html("d")
-                                variableND = truthTableModel.string2html("*d")
+                                truthTableModel2.setVariableName(4,variableD)
+                                truthTableModel3.setVariableName(4,variableD)
+                                truthTableModel4.setVariableName(4,variableD)
+                                truthTableModel5.setVariableName(4,variableD)
+                                variablePD = truthTableModel5.string2html("d")
+                                variableND = truthTableModel5.string2html("*d")
                                 text = ""
                             }
                         }
@@ -809,9 +853,12 @@ ApplicationWindow // Sailfish OS
                             strictValidation: true
                             errorHighlight: false
                             onClicked: {
-                                truthTableModel.setVariableName(5,variableE)
-                                variablePE = truthTableModel.string2html("e")
-                                variableNE = truthTableModel.string2html("*e")
+                                truthTableModel2.setVariableName(5,variableE)
+                                truthTableModel3.setVariableName(5,variableE)
+                                truthTableModel4.setVariableName(5,variableE)
+                                truthTableModel5.setVariableName(5,variableE)
+                                variablePE = truthTableModel5.string2html("e")
+                                variableNE = truthTableModel5.string2html("*e")
                                 text = ""
                             }
                         }

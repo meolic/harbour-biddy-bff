@@ -17,6 +17,8 @@
 #include<QDebug>
 #define QT_NO_DEBUG_OUTPUT
 
+// there exists multiple instances of ImplicantCircleModel, one for each size of Boolean function
+
 ImplicantCircleModel::ImplicantCircleModel(QObject *parent, BooleanFunction *bf) : QAbstractListModel(parent)
 {
     //qDebug() << "ImplicantCircleModel INIT";

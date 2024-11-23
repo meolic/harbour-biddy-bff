@@ -101,6 +101,7 @@ class BooleanFunction
 
         // === unsigned int numvariables;
         unsigned int getNumVariables();
+        unsigned int getNumMinterms();
         void setNumVariables(unsigned int num);
 
         // === Biddy_Edge bdd;

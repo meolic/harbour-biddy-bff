@@ -17,6 +17,8 @@
 #include<QDebug>
 #define QT_NO_DEBUG_OUTPUT
 
+// there exists multiple instances of KarnaughMapModel, one for each size of Boolean function
+
 KarnaughMapModel::KarnaughMapModel(QObject *parent, BooleanFunction *bf) : QAbstractListModel(parent)
 {
     //qDebug() << "KarnaughMapModel INIT";
