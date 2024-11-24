@@ -24,17 +24,7 @@ KarnaughMapModel::KarnaughMapModel(QObject *parent, BooleanFunction *bf) : QAbst
     //qDebug() << "KarnaughMapModel INIT";
 
     booleanFunction = bf;
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        //qDebug() << "KarnaughMapModel booleanFunction->getNumVariables() == 4";
-        for (unsigned int i=0; i<16; i++) elements << " ";
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
-    }
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) elements << " ";
 }
 
 KarnaughMapModel::~KarnaughMapModel()
@@ -77,20 +67,29 @@ QVariant KarnaughMapModel::data(const QModelIndex &index, int role) const
 void KarnaughMapModel::refreshCPP()
 {
     //qDebug() << "KarnaughMapModel::refreshCPP()";
-    //qDebug() << "KarnaughMapModel::refreshCPP() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
-    //qDebug() << "KarnaughMapModel::refreshCPP() elements.count() = " << elements.count() << " : " << elements;
+    qDebug() << "KarnaughMapModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
+                ") refreshCPP(), elements.count()=" << elements.count() << ", " << elements;
 
     if (booleanFunction->getNumVariables() == 2)
     {
+        for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
+            booleanFunction->setMinterm(i,elements.at(static_cast<int>(KARNAUGH2x2.at(i))).toStdString());
+        }
     } else if (booleanFunction->getNumVariables() == 3)
     {
+        for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
+            booleanFunction->setMinterm(i,elements.at(static_cast<int>(KARNAUGH3x3.at(i))).toStdString());
+        }
     } else if (booleanFunction->getNumVariables() == 4)
     {
-        for (unsigned int i=0; i<16; i++) {
+        for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
             booleanFunction->setMinterm(i,elements.at(static_cast<int>(KARNAUGH4x4.at(i))).toStdString());
         }
     } else if (booleanFunction->getNumVariables() == 5)
     {
+        for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
+            booleanFunction->setMinterm(i,elements.at(static_cast<int>(KARNAUGH5x5.at(i))).toStdString());
+        }
     }
     booleanFunction->update();
     emit modelChanged(); // notifies other classes about the change
@@ -100,20 +99,29 @@ void KarnaughMapModel::refreshCPP()
 void KarnaughMapModel::onModelChanged()
 {
     //qDebug() << "KarnaughMapModel::onModelChanged()";
-    //qDebug() << "KarnaughMapModel::onModelChanged() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
-    //qDebug() << "KarnaughMapModel::onModelChanged() elements.count() = " << elements.count() << " : " << elements;
+    qDebug() << "KarnaughMapModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
+                ") onModelChanged(), elements.count()=" << elements.count() << ", " << elements;
 
     if (booleanFunction->getNumVariables() == 2)
     {
+        for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
+            elements.replace(static_cast<int>(i),QString::fromStdString(booleanFunction->getMinterm(KARNAUGH2x2.at(i))));
+        }
     } else if (booleanFunction->getNumVariables() == 3)
     {
+        for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
+            elements.replace(static_cast<int>(i),QString::fromStdString(booleanFunction->getMinterm(KARNAUGH3x3.at(i))));
+        }
     } else if (booleanFunction->getNumVariables() == 4)
     {
-        for (unsigned int i=0; i<16; i++) {
+        for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
             elements.replace(static_cast<int>(i),QString::fromStdString(booleanFunction->getMinterm(KARNAUGH4x4.at(i))));
         }
     } else if (booleanFunction->getNumVariables() == 5)
     {
+        for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
+            elements.replace(static_cast<int>(i),QString::fromStdString(booleanFunction->getMinterm(KARNAUGH5x5.at(i))));
+        }
     }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
 }
@@ -162,15 +170,8 @@ void KarnaughMapModel::setEmpty(const int &row)
 
 void KarnaughMapModel::allZero()
 {
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        for (int i=0; i<16; i++) elements[i] = "0";
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
+        elements[i] = "0";
     }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
     refreshCPP();
@@ -178,22 +179,17 @@ void KarnaughMapModel::allZero()
 
 void KarnaughMapModel::allOne()
 {
-    for (int i=0; i<16; i++) elements[i] = "1";
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
+        elements[i] = "1";
+    }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
     refreshCPP();
 }
 
 void KarnaughMapModel::allEmpty()
 {
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        for (int i=0; i<16; i++) elements[i] = " ";
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
+        elements[i] = " ";
     }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
     refreshCPP();

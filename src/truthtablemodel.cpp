@@ -18,7 +18,12 @@
 #define QT_NO_DEBUG_OUTPUT
 
 // there exists multiple instances of TruthTableModel, one for each size of Boolean function
-
+//
+// if (numVariables == 2) numMinterms = 4;
+// if (numVariables == 3) numMinterms = 8;
+// if (numVariables == 4) numMinterms = 16;
+// if (numVariables == 5) numMinterms = 32;
+// size(elements) = (numVariables + 1) * numMinterms
 TruthTableModel::TruthTableModel(QObject *parent, BooleanFunction *bf) : QAbstractListModel(parent)
 {
     //qDebug() << "TruthTableModel INIT";
@@ -33,7 +38,7 @@ TruthTableModel::TruthTableModel(QObject *parent, BooleanFunction *bf) : QAbstra
     elements.clear();
     if (booleanFunction->getNumVariables() == 2)
     {
-        for (int i=1; i<=4; i++) {
+        for (unsigned int i=1; i<=booleanFunction->getNumMinterms(); i++) {
             if (i0 == 0) elements << "0"; else elements << "1"; // legend
             if (i1 == 0) elements << "0"; else elements << "1"; // legend
             elements << " "; // value
@@ -42,7 +47,7 @@ TruthTableModel::TruthTableModel(QObject *parent, BooleanFunction *bf) : QAbstra
         }
     } else if (booleanFunction->getNumVariables() == 3)
     {
-        for (int i=1; i<=9; i++) {
+        for (unsigned int i=1; i<=booleanFunction->getNumMinterms(); i++) {
             if (i0 == 0) elements << "0"; else elements << "1"; // legend
             if (i1 == 0) elements << "0"; else elements << "1"; // legend
             if (i2 == 0) elements << "0"; else elements << "1"; // legend
@@ -53,8 +58,7 @@ TruthTableModel::TruthTableModel(QObject *parent, BooleanFunction *bf) : QAbstra
         }
     } else if (booleanFunction->getNumVariables() == 4)
     {
-        //qDebug() << "TruthTableModel booleanFunction->getNumVariables() == 4";
-        for (int i=1; i<=16; i++) {
+        for (unsigned int i=1; i<=booleanFunction->getNumMinterms(); i++) {
             if (i0 == 0) elements << "0"; else elements << "1"; // legend
             if (i1 == 0) elements << "0"; else elements << "1"; // legend
             if (i2 == 0) elements << "0"; else elements << "1"; // legend
@@ -67,7 +71,7 @@ TruthTableModel::TruthTableModel(QObject *parent, BooleanFunction *bf) : QAbstra
         }
     } else if (booleanFunction->getNumVariables() == 5)
     {
-        for (int i=1; i<=25; i++) {
+        for (unsigned int i=1; i<=booleanFunction->getNumMinterms(); i++) {
             if (i0 == 0) elements << "0"; else elements << "1"; // legend
             if (i1 == 0) elements << "0"; else elements << "1"; // legend
             if (i2 == 0) elements << "0"; else elements << "1"; // legend
@@ -123,50 +127,27 @@ QVariant TruthTableModel::data(const QModelIndex &index, int role) const
 void TruthTableModel::refreshCPP()
 {
     //qDebug() << "TruthTableModel::refreshCPP()";
-    //qDebug() << "TruthTableModel::refreshCPP() booleanFunction->getNumVariables() == " << booleanFunction->getNumVariables();
-    //qDebug() << "TruthTableModel::refreshCPP() elements.count() = " << elements.count() << " : " << elements;
+    //qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
+    //            ") refreshCPP(), elements.count()=" << elements.count() << ", " << elements;
 
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        for (unsigned int i=0; i<16; i++) {
-            booleanFunction->setMinterm(i,elements.at(static_cast<int>((4+1)*i+4)).toStdString());
-        }
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
+    int v = booleanFunction->getNumVariables();
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
+        booleanFunction->setMinterm(i,elements.at((v+1)*i+v).toStdString());
     }
-
     booleanFunction->update();
     emit modelChanged(); // notifies other classes about the change
 }
 
 // onModelChanged() is used to refresh TruthTable.qml to reflect the changed model
-//
-// size(elements) = (numVariables + 1) * numMinterms
-// numVariables == 2: size(elements) = (2+1) * 4 = 12, elements = "00x01x10x11x"
-// numVariables == 3: size(elements) = (3+1) * 8 = 32, elements = "000x001x010x011x100x101x110x111x"
-// numVariables == 4: size(elements) = (4+1) * 16 = 80, elements = "0000x0001x..."
-// numVariables == 5: size(elements) = (5+1) * 32 = 192, elements = "00000x00001x..."
 void TruthTableModel::onModelChanged()
 {
     //qDebug() << "TruthTableModel::onModelChanged()";
-    qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
-                ") onModelChanged(), elements.count()=" << elements.count() << ", " << elements;
+    //qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
+    //            ") onModelChanged(), elements.count()=" << elements.count() << ", " << elements;
 
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        for (unsigned int i=0; i<16; i++) {
-            elements.replace(static_cast<int>((4+1)*i+4),QString::fromStdString(booleanFunction->getMinterm(i)));
-        }
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
+    int v = booleanFunction->getNumVariables();
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
+        elements.replace((v+1)*i+v,QString::fromStdString(booleanFunction->getMinterm(i)));
     }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
 }
@@ -225,12 +206,10 @@ void TruthTableModel::setVariableName(const int&i, const QString &name)
     if (i == 0) return;
     if (name == "") return;
 
-    qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << ")::setVariableName " << variableNames << ", i=" << i << ", name=" << name;
+    //qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << ")::setVariableName " << variableNames << ", i=" << i << ", name=" << name;
 
     // only the first character in the given name is used
     variableNames[i-1] = name[0];
-
-    qDebug() << "TruthTableModel::setVariableName finished";
 }
 
 void TruthTableModel::setZero(const int &row)
@@ -267,15 +246,9 @@ void TruthTableModel::setEmpty(const int &row)
 
 void TruthTableModel::allZero()
 {
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        for (int i=0; i<16; i++) elements[5*i+4] = "0";
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
+    int v = booleanFunction->getNumVariables();
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
+        elements[(v+1)*i+v] = "0";
     }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
     refreshCPP();
@@ -283,15 +256,9 @@ void TruthTableModel::allZero()
 
 void TruthTableModel::allOne()
 {
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        for (int i=0; i<16; i++) elements[5*i+4] = "1";
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
+    int v = booleanFunction->getNumVariables();
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
+        elements[(v+1)*i+v] = "1";
     }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
     refreshCPP();
@@ -299,15 +266,9 @@ void TruthTableModel::allOne()
 
 void TruthTableModel::allEmpty()
 {
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        for (int i=0; i<16; i++) elements[5*i+4] = " ";
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
+    int v = booleanFunction->getNumVariables();
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
+        elements[(v+1)*i+v] = " ";
     }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});
     refreshCPP();

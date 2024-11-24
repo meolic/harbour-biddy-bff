@@ -50,21 +50,13 @@ void QuineMcCluskey::addQmlogSet(set<Biddy_Edge> theset)
 
     // ORDERED BY NUMBER OF MINTERMS
 
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        for (unsigned int n=1; n<=16; n=n*2) {
-            for (auto m: theset) if (Biddy_CountMinterms(m,4) == n) {
-                cout << "QuineMcCluskey::addQmlogSet ELEMENT: " << implicant2string(m) << endl;
-                cout << implicant2symbol(booleanFunction->getSupport(),m) << endl;
-                booleanFunction->addQmlogLine(implicant2symbol(booleanFunction->getSupport(),m));
-            }
+    int v = booleanFunction->getNumVariables();
+    for (unsigned int n=1; n<=booleanFunction->getNumMinterms(); n=n*2) {
+        for (auto m: theset) if (Biddy_CountMinterms(m,v) == n) {
+            cout << "QuineMcCluskey::addQmlogSet ELEMENT: " << implicant2string(m) << endl;
+            cout << implicant2symbol(booleanFunction->getSupport(),m) << endl;
+            booleanFunction->addQmlogLine(implicant2symbol(booleanFunction->getSupport(),m));
         }
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
     }
 }
 
@@ -210,20 +202,11 @@ void QuineMcCluskey::minimize()
     // create complete onset, this is directly used only to show the covering table, not in the algorithm
 
     booleanFunction->clearOnset();
-    if (booleanFunction->getNumVariables() == 2)
-    {
-    } else if (booleanFunction->getNumVariables() == 3)
-    {
-    } else if (booleanFunction->getNumVariables() == 4)
-    {
-        for (unsigned int i=0; i<16; i++) {
-            string m = booleanFunction->getMinterm(i);
-            if (m == "1") {
-                booleanFunction->addOnset(i);
-            }
+    for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
+        string m = booleanFunction->getMinterm(i);
+        if (m == "1") {
+            booleanFunction->addOnset(i);
         }
-    } else if (booleanFunction->getNumVariables() == 5)
-    {
     }
 
     //cout << "QuineMcCluskey::minimize() create init set" << endl;
@@ -234,7 +217,7 @@ void QuineMcCluskey::minimize()
 
     //debugSet(setInit);
 
-    // STEP 1: finding prime implicants
+    // STEP 1: finding prime implicants // TO DO, extent to 5 variables
 
     set<Biddy_Edge> setG0,setG1,setG2,setG3,setG4;
     set<Biddy_Edge> setG01,setG12,setG23,setG34;
@@ -458,8 +441,8 @@ void QuineMcCluskey::minimize()
     */
 
     // ORDERED BY NUMBER OF MINTERMS
-    for (unsigned int n=1; n<=16; n=n*2) {
-        for (auto m: setFinal) if (Biddy_CountMinterms(m,4) == n) {
+    for (unsigned int n=1; n<=booleanFunction->getNumMinterms(); n=n*2) {
+        for (auto m: setFinal) if (Biddy_CountMinterms(m,booleanFunction->getNumVariables()) == n) {
             booleanFunction->addImplicants(m);
         }
     }

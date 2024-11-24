@@ -19,6 +19,11 @@
 #include <cctype>
 #include <locale>
 
+// if (numVariables == 2) numMinterms = 4;
+// if (numVariables == 3) numMinterms = 8;
+// if (numVariables == 4) numMinterms = 16;
+// if (numVariables == 5) numMinterms = 32;
+
 // trim is from:
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 
