@@ -12,8 +12,16 @@ Page { // Sailfish OS
     //flickable.contentWidth: truthTableColumn.width // Felgo
     //scrollIndicator.visible: true // Felgo
 
-    property var truthTableModel: truthTableModel4
-    property var coveringTableModel: coveringTableModel4
+    property var truthTableModel:
+        (appwindow.activeVariables === 2) ? truthTableModel2 :
+        (appwindow.activeVariables === 3) ? truthTableModel3 :
+        (appwindow.activeVariables === 4) ? truthTableModel4 :
+        (appwindow.activeVariables === 5) ? truthTableModel5 : null
+    property var coveringTableModel:
+        (appwindow.activeVariables === 2) ? coveringTableModel2 :
+        (appwindow.activeVariables === 3) ? coveringTableModel3 :
+        (appwindow.activeVariables === 4) ? coveringTableModel4 :
+        (appwindow.activeVariables === 5) ? coveringTableModel5 : null
 
     // Sailfish OS
     /**/

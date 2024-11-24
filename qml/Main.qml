@@ -73,7 +73,7 @@ ApplicationWindow // Sailfish OS
 
     // NUMBER OF VARIABLES
 
-    property int numVariables: 4  // To DO: make this linked to BooleanFunction::getNumVariables()
+    property int activeVariables: 4  // reffer from other models to this value as appwindow.activeVariables
 
     // VARIABLE NAMES
 
@@ -156,7 +156,7 @@ ApplicationWindow // Sailfish OS
                 console.log("Main: SilicaFlickable started")
                 console.log("Main: myScreenHeight = " + myScreenHeight)
                 console.log("Main: myScreenWidth = " + myScreenWidth)
-                console.log("Main: numVariables = " + numVariables)
+                console.log("Main: activeVariables = " + activeVariables)
             }
             /**/
 
@@ -548,8 +548,7 @@ ApplicationWindow // Sailfish OS
                         }
                         onClicked: {
                             console.log("BUTTON 2 variables")
-                            numVariables = 2
-                            //truthTableModel.setNumVariables(2)
+                            activeVariables = 2
                             numvar2.border.color = appwindow.titleTextColor
                             numvar3.border.color = "transparent"
                             numvar4.border.color = "transparent"
@@ -573,8 +572,7 @@ ApplicationWindow // Sailfish OS
                         }
                         onClicked: {
                             console.log("BUTTON 3 variables")
-                            numVariables = 3
-                            //truthTableModel.setNumVariables(3)
+                            activeVariables = 3
                             numvar2.border.color = "transparent"
                             numvar3.border.color = appwindow.titleTextColor
                             numvar4.border.color = "transparent"
@@ -598,8 +596,7 @@ ApplicationWindow // Sailfish OS
                         }
                         onClicked: {
                             console.log("BUTTON 4 variables")
-                            numVariables = 4
-                            //truthTableModel.setNumVariables(4)
+                            activeVariables = 4
                             numvar2.border.color = "transparent"
                             numvar3.border.color = "transparent"
                             numvar4.border.color = appwindow.titleTextColor
@@ -623,8 +620,7 @@ ApplicationWindow // Sailfish OS
                         }
                         onClicked: {
                             console.log("BUTTON 5 variables")
-                            numVariables = 5
-                            //truthTableModel.setNumVariables(5)
+                            activeVariables = 5
                             numvar2.border.color = "transparent"
                             numvar3.border.color = "transparent"
                             numvar4.border.color = "transparent"
@@ -675,7 +671,7 @@ ApplicationWindow // Sailfish OS
                     spacing: appwindow.textSpacingSize
 
                     Rectangle {
-                        enabled: numVariables >= 1
+                        enabled: activeVariables >= 1
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
@@ -713,7 +709,7 @@ ApplicationWindow // Sailfish OS
                     }
 
                     Rectangle {
-                        enabled: numVariables >= 2
+                        enabled: activeVariables >= 2
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
@@ -751,7 +747,7 @@ ApplicationWindow // Sailfish OS
                     }
 
                     Rectangle {
-                        enabled: numVariables >= 3
+                        enabled: activeVariables >= 3
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
@@ -789,7 +785,7 @@ ApplicationWindow // Sailfish OS
                     }
 
                     Rectangle {
-                        enabled: numVariables >= 4
+                        enabled: activeVariables >= 4
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1
@@ -827,7 +823,7 @@ ApplicationWindow // Sailfish OS
                     }
 
                     Rectangle {
-                        enabled: numVariables >= 5
+                        enabled: activeVariables >= 5
                         width: appwindow.diagramCellSize
                         height: appwindow.diagramCellSize
                         border.color: appwindow.textColor1

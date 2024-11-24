@@ -12,10 +12,26 @@ Page { // Sailfish OS
     //flickable.contentWidth: karnaughColumn.width // Felgo
     //scrollIndicator.visible: true // Felgo
 
-    property var truthTableModel: truthTableModel4
-    property var implicantCircleModel: implicantCircleModel4
-    property var coveringTableModel: coveringTableModel4
-    property var karnaughMapModel: karnaughMapModel4
+    property var truthTableModel:
+        (appwindow.activeVariables === 2) ? truthTableModel2 :
+        (appwindow.activeVariables === 3) ? truthTableModel3 :
+        (appwindow.activeVariables === 4) ? truthTableModel4 :
+        (appwindow.activeVariables === 5) ? truthTableModel5 : null
+    property var implicantCircleModel:
+        (appwindow.activeVariables === 2) ? implicantCircleModel2 :
+        (appwindow.activeVariables === 3) ? implicantCircleModel3 :
+        (appwindow.activeVariables === 4) ? implicantCircleModel4 :
+        (appwindow.activeVariables === 5) ? implicantCircleModel5 : null
+    property var coveringTableModel:
+        (appwindow.activeVariables === 2) ? coveringTableModel2 :
+        (appwindow.activeVariables === 3) ? coveringTableModel3 :
+        (appwindow.activeVariables === 4) ? coveringTableModel4 :
+        (appwindow.activeVariables === 5) ? coveringTableModel5 : null
+    property var karnaughMapModel:
+        (appwindow.activeVariables === 2) ? karnaughMapModel2 :
+        (appwindow.activeVariables === 3) ? karnaughMapModel3 :
+        (appwindow.activeVariables === 4) ? karnaughMapModel4 :
+        (appwindow.activeVariables === 5) ? karnaughMapModel5 : null
 
     property int circleRadius: 40
 
@@ -198,7 +214,7 @@ Page { // Sailfish OS
 
                 Item {
                     id: diagram3
-                    visible: appwindow.numVariables === 3
+                    visible: appwindow.activeVariables === 3
                     width: parent.width
                     height: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
 
@@ -213,7 +229,7 @@ Page { // Sailfish OS
 
                 Item {
                     id: diagram4
-                    visible: appwindow.numVariables === 4
+                    visible: appwindow.activeVariables === 4
                     width: parent.width
                     height: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
 
