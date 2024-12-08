@@ -35,7 +35,7 @@ ApplicationWindow // Sailfish OS
     // USB: Type-C
     // Other: 3.5mm audio jack, Dual SIM (nano) + microSD
 
-    property string version: "v2024-11-23"
+    property string version: "v2024-12-08"
 
     property int myScreenHeight: _screenHeight
     property int myScreenWidth: _screenWidth
@@ -126,7 +126,6 @@ ApplicationWindow // Sailfish OS
         truthTableModel4.setVariableName(5,variableE)
         truthTableModel5.setVariableName(5,variableE)
 
-        //karnaughMapModel.allZero()
         truthTableModel2.allZero()
         truthTableModel3.allZero()
         truthTableModel4.allZero()

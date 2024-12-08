@@ -178,8 +178,8 @@ bool QuineMcCluskey::isRedundant(Biddy_Edge f)
 // Quine-McCluskey algorithm
 void QuineMcCluskey::minimize()
 {
-    //cout << "QuineMcCluskey::minimize() started" << endl;
-    //cout << booleanFunction2string(booleanFunction->getBdd()) << endl;
+    cout << "QuineMcCluskey::minimize() started" << endl;
+    cout << booleanFunction2string(booleanFunction->getBdd()) << endl;
 
     booleanFunction->setQmlog("");
 
@@ -208,6 +208,12 @@ void QuineMcCluskey::minimize()
             booleanFunction->addOnset(i);
         }
     }
+
+    // TESTING, ONLY
+    if (booleanFunction->getNumVariables() == 2) return;
+    if (booleanFunction->getNumVariables() == 3) return;
+    //if (booleanFunction->getNumVariables() == 4) return;
+    if (booleanFunction->getNumVariables() == 5) return;
 
     //cout << "QuineMcCluskey::minimize() create init set" << endl;
 

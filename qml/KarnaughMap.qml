@@ -32,6 +32,30 @@ Page { // Sailfish OS
         (appwindow.activeVariables === 3) ? karnaughMapModel3 :
         (appwindow.activeVariables === 4) ? karnaughMapModel4 :
         (appwindow.activeVariables === 5) ? karnaughMapModel5 : null
+    property var karnaughGrid:
+        (appwindow.activeVariables === 2) ? diagram2.karnaughGrid :
+        (appwindow.activeVariables === 3) ? diagram3.karnaughGrid :
+        (appwindow.activeVariables === 4) ? diagram4.karnaughGrid :
+        (appwindow.activeVariables === 5) ? diagram5a.karnaughGrid : null
+/*
+    property var karnaughGridPart2:
+        (appwindow.activeVariables === 2) ? null :
+        (appwindow.activeVariables === 3) ? null :
+        (appwindow.activeVariables === 4) ? null :
+        (appwindow.activeVariables === 5) ? diagram5b.karnaughGrid : null
+*/
+    property var diagramBorder:
+        (appwindow.activeVariables === 2) ? diagram2.diagramBorder :
+        (appwindow.activeVariables === 3) ? diagram3.diagramBorder :
+        (appwindow.activeVariables === 4) ? diagram4.diagramBorder :
+        (appwindow.activeVariables === 5) ? diagram5a.diagramBorder : null
+/*
+    property var diagramBorderPart2:
+        (appwindow.activeVariables === 2) ? null :
+        (appwindow.activeVariables === 3) ? null :
+        (appwindow.activeVariables === 4) ? null :
+        (appwindow.activeVariables === 5) ? diagram5b.diagramBorder : null
+*/
 
     property int circleRadius: 40
 
@@ -152,21 +176,24 @@ Page { // Sailfish OS
                 text: qsTr("INIT 0")
                 onClicked: {
                     //console.log("MENU: " + text)
-                    karnaughGrid.model.allZero()
+                    //karnaughGrid.model.allZero()
+                    karnaughMapModel.allZero()
                 }
             }
             MenuItem {
                 text: qsTr("INIT 1")
                 onClicked: {
                     //console.log("MENU: " + text)
-                    karnaughGrid.model.allOne()
+                    //karnaughGrid.model.allOne()
+                    karnaughMapModel.allOne()
                 }
             }
             MenuItem {
                 text: qsTr("RANDOM")
                 onClicked: {
                     //console.log("MENU: " + text)
-                    karnaughGrid.model.allRandom()
+                    //karnaughGrid.model.allRandom()
+                    karnaughMapModel.allRandom()
                 }
             }
         }
@@ -210,37 +237,733 @@ Page { // Sailfish OS
                 }
                 /**/
 
-                // KARNAUGH MAP 3x3
+                // this defines one cell in the diagram
+                Component {
+                    id: diagramCell
+
+                    Item {
+                        id: diagramCellItem
+                        width: appwindow.diagramCellSize
+                        height: appwindow.diagramCellSize
+                        Rectangle {
+                            id: box
+                            parent: karnaughMapPage.karnaughGrid
+                            x: diagramCellItem.x;
+                            y: diagramCellItem.y;
+                            width: diagramCellItem.width;
+                            height: diagramCellItem.height;
+                            color: appwindow.bgDiagramColor
+                            border.color: appwindow.bgDiagramLegendColor
+                            border.width: 1
+
+                            Text {
+                              anchors.centerIn: parent
+                              text: display
+                              color: appwindow.diagramTextColor
+                              font.family: "FreeSans"
+                              font.pixelSize: appwindow.titleTextSize
+                            }
+                        }
+                    }
+                }
+
+                // this defines one circle
+                Component {
+                    id: diagramCircle
+
+                    Item {
+                        Rectangle {
+                            property int cxx: (cx < 0) ? 0 : cx
+                            property int cyy: (cy < 0) ? 0 : cy
+                            property int cww: ((cx < 0) || (cx+cw > 4)) ? 1 : cw
+                            property int chh: ((cy < 0) || (cy+ch > 4)) ? 1 : ch
+                            //radius: 40 // use 20 on Felgo, use 40 on Sailfish OS
+                            color: "transparent"
+                            width: cww*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth - 4 // fixed for 4 variables
+                            height: chh*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth - 4 // fixed for 4 variables
+                            x: karnaughMapPage.diagramBorder.x + cxx*appwindow.diagramCellSize + 2
+                            y: karnaughMapPage.diagramBorder.y + cyy*appwindow.diagramCellSize + 2
+                            Rectangle {
+                                radius: circleRadius
+                                color: "transparent"
+                                border.color: index === -1 ? "transparent" : colorList[cc%colorList.length]
+                                border.width: appwindow.diagramCellBorder
+                                anchors
+                                {
+                                    left: parent.left
+                                    right: parent.right
+                                    top: parent.top
+                                    bottom: parent.bottom
+                                    topMargin    : (cy < 0) ? -40 : 0
+                                    bottomMargin : (cy+ch > 4) ? -40 : 0
+                                    leftMargin   : (cx < 0) ? -40 : 0
+                                    rightMargin  : (cx+cw > 4) ? -40 : 0
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // this defines top legend
+                Component {
+                    id: diagramLegendTopRow
+
+                    Row {
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 2)
+                            text: "0"
+                            color: appwindow.textColor2
+                            width: appwindow.diagramCellSize
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 2)
+                            text: "1"
+                            color: appwindow.textColor2
+                            width: appwindow.diagramCellSize
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: ((appwindow.activeVariables === 3) || (appwindow.activeVariables === 4))
+                            text: "00"
+                            color: appwindow.textColor2
+                            width: appwindow.diagramCellSize
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: ((appwindow.activeVariables === 3) || (appwindow.activeVariables === 4))
+                            text: "01"
+                            color: appwindow.textColor2
+                            width: appwindow.diagramCellSize
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: ((appwindow.activeVariables === 3) || (appwindow.activeVariables === 4))
+                            text: "11"
+                            color: appwindow.textColor2
+                            width: appwindow.diagramCellSize
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: ((appwindow.activeVariables === 3) || (appwindow.activeVariables === 4))
+                            text: "10"
+                            color: appwindow.textColor2
+                            width: appwindow.diagramCellSize
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                    }
+                }
+
+                // this defines bottom legend
+                Component {
+                    id: diagramLegendBottomRow
+
+                    Row {
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            //id: labelNA
+                            visible: (appwindow.activeVariables === 2)
+                            width: appwindow.diagramCellSize
+                            text: '<font>'+appwindow.variableNA+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            //id: labelPA
+                            visible: (appwindow.activeVariables === 2)
+                            width: appwindow.diagramCellSize
+                            text: '<font>'+appwindow.variablePA+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            //id: labelNAPA
+                            visible: ((appwindow.activeVariables === 3) || (appwindow.activeVariables === 4))
+                            width: appwindow.diagramCellSize
+                            text: '<font>'+appwindow.variableNA+' '+appwindow.variableNB+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            //id: labelNAPB
+                            visible: ((appwindow.activeVariables === 3) || (appwindow.activeVariables === 4))
+                            width: appwindow.diagramCellSize
+                            text: '<font>'+appwindow.variableNA+' '+appwindow.variablePB+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            //id: labelPAPB
+                            visible: ((appwindow.activeVariables === 3) || (appwindow.activeVariables === 4))
+                            width: appwindow.diagramCellSize
+                            text: '<font>'+appwindow.variablePA+' '+appwindow.variablePB+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            //id: labelPANB
+                            visible: ((appwindow.activeVariables === 3) || (appwindow.activeVariables === 4))
+                            width: appwindow.diagramCellSize
+                            text: '<font>'+appwindow.variablePA+' '+appwindow.variableNB+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                    }
+                }
+
+                // this defines left legend
+                Component {
+                    id: diagramLegendLeftColumn
+
+                    Column {
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: ((appwindow.activeVariables === 2) || (appwindow.activeVariables === 3))
+                            height: appwindow.diagramCellSize
+                            text: "0"
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: ((appwindow.activeVariables === 2) || (appwindow.activeVariables === 3))
+                            height: appwindow.diagramCellSize
+                            text: "1"
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 4)
+                            height: appwindow.diagramCellSize
+                            text: "00"
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 4)
+                            height: appwindow.diagramCellSize
+                            text: "01"
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 4)
+                            height: appwindow.diagramCellSize
+                            text: "11"
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 4)
+                            height: appwindow.diagramCellSize
+                            text: "10"
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                    }
+                }
+
+                // this defines right legend
+                Component {
+                    id: diagramLegendRightColumn
+
+                    Column {
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 2)
+                            height: appwindow.diagramCellSize
+                            //width: appwindow.largeTextSize // Felgo
+                            text: '<font>'+appwindow.variableNB+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 2)
+                            height: appwindow.diagramCellSize
+                            //width: appwindow.largeTextSize // Felgo
+                            text: '<font>'+appwindow.variablePB+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 3)
+                            height: appwindow.diagramCellSize
+                            //width: appwindow.largeTextSize // Felgo
+                            text: '<font>'+appwindow.variableNC+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 3)
+                            height: appwindow.diagramCellSize
+                            //width: appwindow.largeTextSize // Felgo
+                            text: '<font>'+appwindow.variablePC+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 4)
+                            height: appwindow.diagramCellSize
+                            //width: appwindow.largeTextSize // Felgo
+                            text: '<font>'+appwindow.variableNC+' '+appwindow.variableND+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 4)
+                            height: appwindow.diagramCellSize
+                            //width: appwindow.largeTextSize // Felgo
+                            text: '<font>'+appwindow.variableNC+' '+appwindow.variablePD+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 4)
+                            height: appwindow.diagramCellSize
+                            //width: appwindow.largeTextSize // Felgo
+                            text: '<font>'+appwindow.variablePC+' '+appwindow.variablePD+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                        // AppText { // Felgo
+                        Label { // Sailfish OS
+                            visible: (appwindow.activeVariables === 4)
+                            height: appwindow.diagramCellSize
+                            //width: appwindow.largeTextSize // Felgo
+                            text: '<font>'+appwindow.variablePC+' '+appwindow.variableND+'</font>'
+                            textFormat: Text.RichText
+                            color: appwindow.textColor2
+                            font.family: "TypeWriter"
+                            //font.capitalization: Font.SmallCaps
+                            font.pixelSize: appwindow.regularTextSize
+                        }
+                    }
+                }
+
+                // KARNAUGH MAP 2x2 (2 VARIABLES)
+
+                Item {
+                    id: diagram2
+                    //visible: (appwindow.activeVariables === 2)
+                    visible: {
+                        console.log("KarnaughMap: diagram2 reevaluating visible: "+(appwindow.activeVariables === 2))
+                        return (appwindow.activeVariables === 2)
+                    }
+                    width: parent.width
+                    height: 2*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
+                    property alias karnaughGrid: karnaughGrid2
+                    property alias diagramBorder: diagramBorder2
+
+                    /*
+                    Component.onCompleted: {
+                        console.log("KarnaughMap: diagram2 Component.onCompleted, visible: "+visible+" ("+appwindow.activeVariables+" variables), model.rowCount()="+karnaughGrid2.model.rowCount())
+                    }
+                    */
+
+                    // diagramBorder2 is not shown but used for positioning of other elements
+                    Rectangle {
+                        id: diagramBorder2
+                        width: 2*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth // fixed for 2 variables
+                        height: 2*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth // fixed for 2 variables
+                        color: "transparent"
+                        border.width: appwindow.diagramBorderWidth
+                        border.color: appwindow.bgDiagramLegendColor
+                        anchors.centerIn: parent
+                        z: 2 // use 6 to debug
+                    }
+
+                    // diagramLegendTop2
+                    Rectangle {
+                        width: 2*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 2 variables
+                        height: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
+                        radius: circleRadius
+                        color: appwindow.bgDiagramLegendColor
+                        anchors.bottom: diagramBorder2.top
+                        anchors.horizontalCenter: diagramBorder2.horizontalCenter
+                        z: 4
+
+                        Loader {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.bottom
+                            anchors.horizontalCenterOffset: appwindow.diagramCellSize / 4 - 4
+                            sourceComponent: diagramLegendTopRow
+                        }
+                    }
+
+                    // diagramLegendBottom2
+                    Rectangle {
+                        width: 2*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 2 variables
+                        height: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
+                        radius: circleRadius
+                        color: appwindow.bgDiagramLegendColor
+                        anchors.top: diagramBorder2.bottom
+                        anchors.horizontalCenter: diagramBorder2.horizontalCenter
+                        z: 4
+
+                        Loader {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.horizontalCenterOffset: appwindow.diagramCellSize / 4 // fixed for 2 variables
+                            anchors.verticalCenter: parent.verticalCenter
+                            sourceComponent: diagramLegendBottomRow
+                        }
+                    }
+
+                    // diagramLegendLeft2
+                    Rectangle {
+                        width: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
+                        height: 2*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 2 variables
+                        radius: circleRadius
+                        color: appwindow.bgDiagramLegendColor
+                        anchors.verticalCenter: diagramBorder2.verticalCenter
+                        anchors.right: diagramBorder2.left
+                        z: 4
+
+                        Loader {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            //anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 - 12 // Felgo // fixed for 3 variables
+                            anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 // Sailfish OS // fixed for 3 variables
+                            sourceComponent: diagramLegendLeftColumn
+                        }
+                    }
+
+                    // diagramLegendRight2
+                    Rectangle {
+                        width: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
+                        height: 2*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 2 variables
+                        radius: circleRadius
+                        color: appwindow.bgDiagramLegendColor
+                        anchors.verticalCenter: diagramBorder2.verticalCenter
+                        anchors.left: diagramBorder2.right
+                        z: 4
+
+                        Loader {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            //anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 - 12 // Felgo // fixed for 3 variables
+                            anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 + 8 // Sailfish OS // fixed for 3 variables
+                            sourceComponent: diagramLegendRightColumn
+                        }
+                    }
+
+                    // this defines diagram
+                    GridView {
+                        id: karnaughGrid2
+                        cellWidth: appwindow.diagramCellSize
+                        cellHeight: appwindow.diagramCellSize
+                        width: 2*cellWidth
+                        height: 2*cellHeight
+                        anchors.centerIn: parent
+                        model: (appwindow.activeVariables === 2) ? karnaughMapModel2 : null
+                        //model: {
+                        //    console.log("KarnaughMap: GridView2 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel2.rowCount())
+                        //    return karnaughMapModel2
+                        //}
+                        delegate: diagramCell
+                        z: 2
+
+                        Component.onCompleted: {
+                            console.log("KarnaughMap: GridView2 onCompleted visible: "+visible+" ("+appwindow.activeVariables+" variables)")
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            preventStealing : false
+                            property int index: parent.indexAt(mouseX, mouseY)
+
+                            onClicked: {
+                                var value = parent.model.get(index) // use this for C++ Model
+                                //console.log("karnaughGrid2.onClicked("+index+"/" + value + ")")
+                                if (value === " ") {
+                                    parent.model.setZero(index)
+                                }
+                                if (value === "0") {
+                                    parent.model.setOne(index)
+                                }
+                                if (value === "1") {
+                                    parent.model.setX(index)
+                                }
+                                if (value === "X") {
+                                    parent.model.setZero(index)
+                                }
+                            }
+                        }
+                    }
+
+                    // this defines set of circles
+                    ListView {
+                        model: implicantCircleModel
+                        //model: {
+                        //    console.log("KarnaughMap: ListView2 reevaluating model, "+appwindow.activeVariables+" variables")
+                        //    return implicantCircleModel
+                        //}
+                        delegate: diagramCircle
+                        z: 3
+                    }
+
+                }
+
+                // KARNAUGH MAP 4x2 (3 VARIABLES)
 
                 Item {
                     id: diagram3
-                    visible: appwindow.activeVariables === 3
-                    width: parent.width
-                    height: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
-
-                    /**/
-                    Component.onCompleted: {
-                        console.log("KarnaughMap: diagram 3x3 Component.onCompleted")
+                    //visible: (appwindow.activeVariables === 3)
+                    visible: {
+                        console.log("KarnaughMap: diagram3 reevaluating visible: "+(appwindow.activeVariables === 3))
+                        return (appwindow.activeVariables === 3)
                     }
-                    /**/
+                    width: parent.width
+                    height: 2*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
+                    property alias karnaughGrid: karnaughGrid3
+                    property alias diagramBorder: diagramBorder3
+
+                    /*
+                    Component.onCompleted: {
+                        console.log("KarnaughMap: diagram3 Component.onCompleted, visible: "+visible+" ("+appwindow.activeVariables+" variables), model.rowCount()="+karnaughGrid3.model.rowCount())
+                    }
+                    */
+
+                    // diagramBorder3 is not shown but used for positioning of other elements
+                    Rectangle {
+                        id: diagramBorder3
+                        width: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth // fixed for 3 variables
+                        height: 2*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth // fixed for 3 variables
+                        color: "transparent"
+                        border.width: appwindow.diagramBorderWidth
+                        border.color: appwindow.bgDiagramLegendColor
+                        anchors.centerIn: parent
+                        z: 2 // use 6 to debug
+                    }
+
+                    // diagramLegendTop3
+                    Rectangle {
+                        width: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 3 variables
+                        height: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
+                        radius: circleRadius
+                        color: appwindow.bgDiagramLegendColor
+                        anchors.bottom: diagramBorder3.top
+                        anchors.horizontalCenter: diagramBorder3.horizontalCenter
+                        z: 4
+
+                        Loader {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.bottom
+                            anchors.horizontalCenterOffset: appwindow.diagramCellSize / 4 - 4
+                            sourceComponent: diagramLegendTopRow
+                        }
+                    }
+
+                    // diagramLegendBottom3
+                    Rectangle {
+                        width: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 3 variables
+                        height: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
+                        radius: circleRadius
+                        color: appwindow.bgDiagramLegendColor
+                        anchors.top: diagramBorder3.bottom
+                        anchors.horizontalCenter: diagramBorder3.horizontalCenter
+                        z: 4
+
+                        Loader {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.horizontalCenterOffset: appwindow.diagramCellSize / 4 // fixed for 3 variables
+                            anchors.verticalCenter: parent.verticalCenter
+                            sourceComponent: diagramLegendBottomRow
+                        }
+                    }
+
+                    // diagramLegendLeft3
+                    Rectangle {
+                        width: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
+                        height: 2*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 3 variables
+                        radius: circleRadius
+                        color: appwindow.bgDiagramLegendColor
+                        anchors.verticalCenter: diagramBorder3.verticalCenter
+                        anchors.right: diagramBorder3.left
+                        z: 4
+
+                        Loader {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            //anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 - 12 // Felgo // fixed for 3 variables
+                            anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 // Sailfish OS // fixed for 3 variables
+                            sourceComponent: diagramLegendLeftColumn
+                        }
+                    }
+
+                    // diagramLegendRight3
+                    Rectangle {
+                        width: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
+                        height: 2*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 3 variables
+                        radius: circleRadius
+                        color: appwindow.bgDiagramLegendColor
+                        anchors.verticalCenter: diagramBorder3.verticalCenter
+                        anchors.left: diagramBorder3.right
+                        z: 4
+
+                        Loader {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            //anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 - 12 // Felgo // fixed for 3 variables
+                            anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 + 8 // Sailfish OS // fixed for 3 variables
+                            sourceComponent: diagramLegendRightColumn
+                        }
+                    }
+
+                    // this defines diagram
+                    GridView {
+                        id: karnaughGrid3
+                        cellWidth: appwindow.diagramCellSize
+                        cellHeight: appwindow.diagramCellSize
+                        width: 4*cellWidth
+                        height: 2*cellHeight
+                        anchors.centerIn: parent
+                        model: (appwindow.activeVariables === 3) ? karnaughMapModel3 : null
+                        //model: {
+                        //    console.log("KarnaughMap: GridView3 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel3.rowCount())
+                        //    return karnaughMapModel3
+                        //}
+                        delegate: diagramCell
+                        z: 2
+
+                        Component.onCompleted: {
+                            console.log("KarnaughMap: GridView3 onCompleted visible: "+visible+" ("+appwindow.activeVariables+" variables)")
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            preventStealing : false
+                            property int index: parent.indexAt(mouseX, mouseY)
+
+                            onClicked: {
+                                var value = parent.model.get(index) // use this for C++ Model
+                                //console.log("karnaughGrid3.onClicked("+index+"/" + value + ")")
+                                if (value === " ") {
+                                    parent.model.setZero(index)
+                                }
+                                if (value === "0") {
+                                    parent.model.setOne(index)
+                                }
+                                if (value === "1") {
+                                    parent.model.setX(index)
+                                }
+                                if (value === "X") {
+                                    parent.model.setZero(index)
+                                }
+                            }
+                        }
+                    }
+
+                    // this defines set of circles
+                    ListView {
+                        model: implicantCircleModel
+                        //model: {
+                        //    console.log("KarnaughMap: ListView3 reevaluating model, "+appwindow.activeVariables+" variables")
+                        //    return implicantCircleModel
+                        //}
+                        delegate: diagramCircle
+                        z: 3
+                    }
+
                 }
 
-                // KARNAUGH MAP 4x4
+                // KARNAUGH MAP 4x4 (4 VARIABLES)
 
                 Item {
                     id: diagram4
-                    visible: appwindow.activeVariables === 4
+                    //visible: (appwindow.activeVariables === 4)
+                    visible: {
+                        console.log("KarnaughMap: diagram4 reevaluating visible: "+(appwindow.activeVariables === 4))
+                        return (appwindow.activeVariables === 4)
+                    }
                     width: parent.width
                     height: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
+                    property alias karnaughGrid: karnaughGrid4
+                    property alias diagramBorder: diagramBorder4
 
+                    /*
                     Component.onCompleted: {
-                        console.log("KarnaughMap: diagram 4x4 Component.onCompleted")
-                        coveringTableModel.sopChanged()
+                        console.log("KarnaughMap: diagram4 Component.onCompleted, visible: "+visible+" ("+appwindow.activeVariables+" variables), model.rowCount()="+karnaughGrid4.model.rowCount())
+                        //coveringTableModel.sopChanged() // TO DO: MOVE THIS TO TOP SECTION IF NEEDED
                     }
+                    */
 
-                    // diagramBorder is now shown but used for positioning of other elements
+                    // diagramBorder is not shown but used for positioning of other elements
                     Rectangle {
-                        id: diagramBorder
+                        id: diagramBorder4
                         width: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth // fixed for 4 variables
                         height: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth // fixed for 4 variables
                         color: "transparent"
@@ -250,334 +973,120 @@ Page { // Sailfish OS
                         z: 2 // use 6 to debug
                     }
 
+                    // diagramLegendTop4
                     Rectangle {
-                        id: diagramLegendTop
                         width: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 4 variables
                         height: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
                         radius: circleRadius
                         color: appwindow.bgDiagramLegendColor
-                        anchors.bottom: diagramBorder.top
-                        anchors.horizontalCenter: diagramBorder.horizontalCenter
+                        anchors.bottom: diagramBorder4.top
+                        anchors.horizontalCenter: diagramBorder4.horizontalCenter
                         z: 4
 
-                        Row {
+                        Loader {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.bottom
                             anchors.horizontalCenterOffset: appwindow.diagramCellSize / 4 - 4 // fixed for 4 variables
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                text: "00"
-                                color: appwindow.textColor2
-                                width: appwindow.diagramCellSize
-                                font.family: "TypeWriter"
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                text: "01"
-                                color: appwindow.textColor2
-                                width: appwindow.diagramCellSize
-                                font.family: "TypeWriter"
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                text: "11"
-                                color: appwindow.textColor2
-                                width: appwindow.diagramCellSize
-                                font.family: "TypeWriter"
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                text: "10"
-                                color: appwindow.textColor2
-                                width: appwindow.diagramCellSize
-                                font.family: "TypeWriter"
-                                font.pixelSize: appwindow.regularTextSize
-                            }
+                            sourceComponent: diagramLegendTopRow
                         }
                     }
 
-                    // diagramLegendBottom
+                    // diagramLegendBottom4
                     Rectangle {
-                        id: diagramLegendBottom
                         width: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 4 variables
                         height: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
                         radius: circleRadius
                         color: appwindow.bgDiagramLegendColor
-                        anchors.top: diagramBorder.bottom
-                        anchors.horizontalCenter: diagramBorder.horizontalCenter
+                        anchors.top: diagramBorder4.bottom
+                        anchors.horizontalCenter: diagramBorder4.horizontalCenter
                         z: 4
 
-                        Row {
+                        Loader {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.horizontalCenterOffset: appwindow.diagramCellSize / 4 // fixed for 4 variables
                             anchors.verticalCenter: parent.verticalCenter
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                width: appwindow.diagramCellSize
-                                text: '<font>'+appwindow.variableNA+' '+appwindow.variableNB+'</font>'
-                                textFormat: Text.RichText
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                //font.capitalization: Font.SmallCaps
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                id: labelNAPB
-                                width: appwindow.diagramCellSize
-                                text: '<font>'+appwindow.variableNA+' '+appwindow.variablePB+'</font>'
-                                textFormat: Text.RichText
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                //font.capitalization: Font.SmallCaps
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                id: labelPAPB
-                                width: appwindow.diagramCellSize
-                                text: '<font>'+appwindow.variablePA+' '+appwindow.variablePB+'</font>'
-                                textFormat: Text.RichText
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                //font.capitalization: Font.SmallCaps
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                id: labelPANB
-                                width: appwindow.diagramCellSize
-                                text: '<font>'+appwindow.variablePA+' '+appwindow.variableNB+'</font>'
-                                textFormat: Text.RichText
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                //font.capitalization: Font.SmallCaps
-                                font.pixelSize: appwindow.regularTextSize
-                            }
+                            sourceComponent: diagramLegendBottomRow
                         }
                     }
 
-                    // diagramLegendLeft
+                    // diagramLegendLeft4
                     Rectangle {
-                        id: diagramLegendLeft
                         width: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
                         height: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 4 variables
                         radius: circleRadius
                         color: appwindow.bgDiagramLegendColor
-                        anchors.verticalCenter: diagramBorder.verticalCenter
-                        anchors.right: diagramBorder.left
+                        anchors.verticalCenter: diagramBorder4.verticalCenter
+                        anchors.right: diagramBorder4.left
                         z: 4
 
-                        Column {
+                        Loader {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
                             //anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 - 12 // Felgo // fixed for 4 variables
                             anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 // Sailfish OS // fixed for 4 variables
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                height: appwindow.diagramCellSize
-                                text: "00"
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                height: appwindow.diagramCellSize
-                                text: "01"
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                height: appwindow.diagramCellSize
-                                text: "11"
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                height: appwindow.diagramCellSize
-                                text: "10"
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                font.pixelSize: appwindow.regularTextSize
-                            }
+                            sourceComponent: diagramLegendLeftColumn
                         }
                     }
 
-                    // diagramLegendRight
+                    // diagramLegendRight4
                     Rectangle {
-                        id: diagramLegendRight
                         width: appwindow.largeTextSize // (karnaughMapPage.cellSize * 2) / 3
                         height: 4*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth + 60 // fixed for 4 variables
                         radius: circleRadius
                         color: appwindow.bgDiagramLegendColor
-                        anchors.verticalCenter: diagramBorder.verticalCenter
-                        anchors.left: diagramBorder.right
+                        anchors.verticalCenter: diagramBorder4.verticalCenter
+                        anchors.left: diagramBorder4.right
                         z: 4
 
-                        Column {
+                        Loader {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.verticalCenter: parent.verticalCenter
                             //anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 - 12 // Felgo // fixed for 4 variables
                             anchors.verticalCenterOffset: appwindow.diagramCellSize / 4 + 8 // Sailfish OS // fixed for 4 variables
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                id: labelNCND
-                                height: appwindow.diagramCellSize
-                                //width: appwindow.largeTextSize // Felgo
-                                text: '<font>'+appwindow.variableNC+' '+appwindow.variableND+'</font>'
-                                textFormat: Text.RichText
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                //font.capitalization: Font.SmallCaps
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                id: labelNCPD
-                                height: appwindow.diagramCellSize
-                                //width: appwindow.largeTextSize // Felgo
-                                text: '<font>'+appwindow.variableNC+' '+appwindow.variablePD+'</font>'
-                                textFormat: Text.RichText
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                //font.capitalization: Font.SmallCaps
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                id: labelPCPD
-                                height: appwindow.diagramCellSize
-                                //width: appwindow.largeTextSize // Felgo
-                                text: '<font>'+appwindow.variablePC+' '+appwindow.variablePD+'</font>'
-                                textFormat: Text.RichText
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                //font.capitalization: Font.SmallCaps
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
-                                id: labelPCND
-                                height: appwindow.diagramCellSize
-                                //width: appwindow.largeTextSize // Felgo
-                                text: '<font>'+appwindow.variablePC+' '+appwindow.variableND+'</font>'
-                                textFormat: Text.RichText
-                                color: appwindow.textColor2
-                                font.family: "TypeWriter"
-                                //font.capitalization: Font.SmallCaps
-                                font.pixelSize: appwindow.regularTextSize
-                            }
-                        }
-                    }
-
-                    // this defines one cell in the diagram
-                    Component {
-                        id: diagramCell
-
-                        Item {
-                            id: diagramCellItem
-                            width: appwindow.diagramCellSize
-                            height: appwindow.diagramCellSize
-                            Rectangle {
-                                id: box
-                                parent: karnaughGrid
-                                x: diagramCellItem.x;
-                                y: diagramCellItem.y;
-                                width: diagramCellItem.width;
-                                height: diagramCellItem.height;
-                                color: appwindow.bgDiagramColor
-                                border.color: appwindow.bgDiagramLegendColor
-                                border.width: 1
-
-                                Text {
-                                  anchors.centerIn: parent
-                                  text: display
-                                  color: appwindow.diagramTextColor
-                                  font.family: "FreeSans"
-                                  font.pixelSize: appwindow.titleTextSize
-                                }
-                            }
-                        }
-                    }
-
-                    // this defines one circle
-                    Component {
-                        id: diagramCircle
-                        Item {
-                            Rectangle {
-                                property int cxx: (cx < 0) ? 0 : cx
-                                property int cyy: (cy < 0) ? 0 : cy
-                                property int cww: ((cx < 0) || (cx+cw > 4)) ? 1 : cw
-                                property int chh: ((cy < 0) || (cy+ch > 4)) ? 1 : ch
-                                //radius: 40 // use 20 on Felgo, use 40 on Sailfish OS
-                                color: "transparent"
-                                width: cww*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth - 4 // fixed for 4 variables
-                                height: chh*appwindow.diagramCellSize+2*appwindow.diagramBorderWidth - 4 // fixed for 4 variables
-                                x: diagramBorder.x + cxx*appwindow.diagramCellSize + 2
-                                y: diagramBorder.y + cyy*appwindow.diagramCellSize + 2
-                                Rectangle {
-                                    radius: circleRadius
-                                    color: "transparent"
-                                    border.color: index === -1 ? "transparent" : colorList[cc%colorList.length]
-                                    border.width: appwindow.diagramCellBorder
-                                    anchors
-                                    {
-                                        left: parent.left
-                                        right: parent.right
-                                        top: parent.top
-                                        bottom: parent.bottom
-                                        topMargin    : (cy < 0) ? -40 : 0
-                                        bottomMargin : (cy+ch > 4) ? -40 : 0
-                                        leftMargin   : (cx < 0) ? -40 : 0
-                                        rightMargin  : (cx+cw > 4) ? -40 : 0
-                                    }
-                                }
-                            }
+                            sourceComponent: diagramLegendRightColumn
                         }
                     }
 
                     // this defines diagram
                     GridView {
-                        id: karnaughGrid
+                        id: karnaughGrid4
                         cellWidth: appwindow.diagramCellSize
                         cellHeight: appwindow.diagramCellSize
                         width: 4*cellWidth
                         height: 4*cellHeight
                         anchors.centerIn: parent
-                        model: karnaughMapModel
+                        model: (appwindow.activeVariables === 4) ? karnaughMapModel4 : null
+                        //model: {
+                        //    console.log("KarnaughMap: GridView4 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel4.rowCount())
+                        //    return karnaughMapModel4
+                        //}
                         delegate: diagramCell
                         z: 2
 
+                        Component.onCompleted: {
+                            console.log("KarnaughMap: GridView4 onCompleted visible: "+visible+" ("+appwindow.activeVariables+" variables)")
+                        }
+
                         MouseArea {
-                            id: gridArea
                             anchors.fill: parent
                             hoverEnabled: true
                             preventStealing : false
-                            property int index: karnaughGrid.indexAt(mouseX, mouseY)
+                            property int index: parent.indexAt(mouseX, mouseY)
 
                             onClicked: {
-                                var value = karnaughGrid.model.get(index) // use this for C++ Model
-                                //var value = karnaughGrid.model.get(index).display // use this for QML ListModel
-                                //console.log("karnaughGrid.onClicked("+index+"/" + value + ")")
+                                var value = parent.model.get(index) // use this for C++ Model
+                                //console.log("karnaughGrid4.onClicked("+index+"/" + value + ")")
                                 if (value === " ") {
-                                    karnaughGrid.model.setZero(index)
+                                    parent.model.setZero(index)
                                 }
                                 if (value === "0") {
-                                    karnaughGrid.model.setOne(index)
+                                    parent.model.setOne(index)
                                 }
                                 if (value === "1") {
-                                    karnaughGrid.model.setX(index)
+                                    parent.model.setX(index)
                                 }
                                 if (value === "X") {
-                                    karnaughGrid.model.setZero(index)
+                                    parent.model.setZero(index)
                                 }
                             }
                         }
@@ -585,13 +1094,123 @@ Page { // Sailfish OS
 
                     // this defines set of circles
                     ListView {
-                        id: circleSet
+                        model: implicantCircleModel
+                        //model: {
+                        //    console.log("KarnaughMap: ListView4 reevaluating model, "+appwindow.activeVariables+" variables")
+                        //    return implicantCircleModel
+                        //}
+                        delegate: diagramCircle
+                        z: 3
+                    }
+
+                }
+
+                // KARNAUGH MAP 4x4 + 4x4 (5 VARIABLES)
+
+                Item {
+                    id: diagram5a
+                    //visible: (appwindow.activeVariables === 5)
+                    visible: {
+                        console.log("KarnaughMap: diagram5a reevaluating visible: "+(appwindow.activeVariables === 5))
+                        return (appwindow.activeVariables === 5)
+                    }
+                    width: parent.width
+                    height: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
+                    property alias karnaughGrid: karnaughGrid5a
+                    property alias diagramBorder: diagramBorder5a
+
+                    /*
+                    Component.onCompleted: {
+                        console.log("KarnaughMap: diagram5a Component.onCompleted, visible: "+visible+" ("+appwindow.activeVariables+" variables), model.rowCount()="+karnaughGrid5a.model.rowCount())
+                    }
+                    */
+
+                    // diagramBorder is not shown but used for positioning of other elements
+                    Rectangle {
+                        id: diagramBorder5a
+                    }
+
+                    // this defines diagram
+                    GridView {
+                        id: karnaughGrid5a
+                        cellWidth: appwindow.diagramCellSize
+                        cellHeight: appwindow.diagramCellSize
+                        width: 4*cellWidth
+                        height: 4*cellHeight
+                        anchors.centerIn: parent
+                        model: (appwindow.activeVariables === 5) ? karnaughMapModel5 : null
+                        //model: {
+                        //    console.log("KarnaughMap: GridView5a reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel5.rowCount())
+                        //    return karnaughMapModel5
+                        //}
+                        delegate: diagramCell
+                        z: 2
+
+                        Component.onCompleted: {
+                            console.log("KarnaughMap: GridView5a onCompleted visible: "+visible+" ("+appwindow.activeVariables+" variables)")
+                        }
+                    }
+
+                    // this defines set of circles
+                    ListView {
                         model: implicantCircleModel
                         delegate: diagramCircle
                         z: 3
                     }
 
                 }
+
+/*
+                Item {
+                    id: diagram5b
+                    //visible: (appwindow.activeVariables === 5)
+                    visible: {
+                        console.log("KarnaughMap: diagram5b reevaluating visible: "+(appwindow.activeVariables === 5))
+                        return (appwindow.activeVariables === 5)
+                    }
+                    width: parent.width
+                    height: 4*appwindow.diagramCellSize + 2*appwindow.diagramBorderWidth + 2*appwindow.diagramCellSize
+                    property alias karnaughGrid: karnaughGrid5b
+                    property alias diagramBorder: diagramBorder5b
+
+                    Component.onCompleted: {
+                        console.log("KarnaughMap: diagram5b Component.onCompleted, visible: "+visible+" ("+appwindow.activeVariables+" variables), model.rowCount()="+karnaughGrid5b.model.rowCount())
+                    }
+
+                    // diagramBorder is not shown but used for positioning of other elements
+                    Rectangle {
+                        id: diagramBorder5b
+                    }
+
+                    // this defines diagram
+                    GridView {
+                        id: karnaughGrid5b
+                        cellWidth: appwindow.diagramCellSize
+                        cellHeight: appwindow.diagramCellSize
+                        width: 4*cellWidth
+                        height: 4*cellHeight
+                        anchors.centerIn: parent
+                        model: (appwindow.activeVariables === 5) ? karnaughMapModel5 : null
+                        //model: {
+                        //    console.log("KarnaughMap: GridView5b reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel5.rowCount())
+                        //    return karnaughMapModel5
+                        //}
+                        delegate: diagramCell
+                        z: 2
+
+                        Component.onCompleted: {
+                            console.log("KarnaughMap: GridView5b onCompleted visible: "+visible)
+                        }
+                    }
+
+                    // this defines set of circles
+                    ListView {
+                        model: implicantCircleModel
+                        delegate: diagramCircle
+                        z: 3
+                    }
+                }
+*/
 
                 // BUTTONS TO CHANGE THE SOLUTION
 
