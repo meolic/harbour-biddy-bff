@@ -127,8 +127,8 @@ QVariant TruthTableModel::data(const QModelIndex &index, int role) const
 void TruthTableModel::refreshCPP()
 {
     //qDebug() << "TruthTableModel::refreshCPP()";
-    qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
-                ") refreshCPP(), elements.count()=" << elements.count() << ", " << elements;
+    //qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
+    //            ") refreshCPP(), elements.count()=" << elements.count() << ", " << elements;
 
     int v = booleanFunction->getNumVariables();
     for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {
@@ -142,8 +142,8 @@ void TruthTableModel::refreshCPP()
 void TruthTableModel::onModelChanged()
 {
     //qDebug() << "TruthTableModel::onModelChanged()";
-    qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
-                ") onModelChanged(), elements.count()=" << elements.count() << ", " << elements;
+    //qDebug() << "TruthTableModel(" << booleanFunction->getNumVariables() << "," << booleanFunction->getNumMinterms() <<
+    //            ") onModelChanged(), elements.count()=" << elements.count() << ", " << elements;
 
     int v = booleanFunction->getNumVariables();
     for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++) {

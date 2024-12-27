@@ -1,16 +1,34 @@
-import QtQuick 2.5
+// Copyright (C) 2024,2025 Robert Meolic, SI-2000 Maribor, Slovenia.
 
-//import Felgo 3.0
+// biddy-bff is free software; you can redistribute it and/or modify it under the terms
+// of the GNU General Public License as published by the Free Software Foundation;
+// either version 2 of the License, or (at your option) any later version.
+
+// biddy-bff is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+// PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License along with
+// this program; if not, write to the Free Software Foundation, Inc., 51 Franklin
+// Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+// QtQuick version is a 1 to 1 mapping to Qt, i.e. Qt 5.X.* supports QtQuick 2.X.
+// By including QtQuick 2.N, Qt will create it using the latest available QtQuick version (2.LAST), but it will only give you the features available in 2.N.
+// So, by declaring QtQuick 2.N you limit the features to the specified version, but you still benefits from all the bug fixes.
+// Thus, you should use the smallest QtQuick 2.N version that you need.
+//
+// https://en.wikipedia.org/wiki/Qt_Quick
+// rpm -qi qt5-qtcore
+// rpm -qi qt5-qtdeclarative-qtquick
+// rpm -qi sailfishsilica-qt5
+// SailfishOS 4.6.0.15 (Sony XA2) uses Qt 5.6.3 and supports QtQuick 2.6, QtQml 2.0, QtQml.Models 2.2, and Sailfish.Silica 1.2
+// SailfishOS 5.0.0.43 (Jolla C2) uses Qt 5.6.3 and supports QtQuick 2.6, QtQml 2.0, QtQml.Models 2.2, and Sailfish.Silica 1.2
+
+import QtQuick 2.0
 import Sailfish.Silica 1.0
 
-//FlickablePage { // Felgo
-Page { // Sailfish OS
-    //title: qsTr("Truth Table") // Felgo
+Page {
     id: truthTablePage
-
-    //flickable.contentHeight: truthTableColumn.height // Felgo
-    //flickable.contentWidth: truthTableColumn.width // Felgo
-    //scrollIndicator.visible: true // Felgo
 
     property var truthTableModel:
         (appwindow.activeVariables === 2) ? truthTableModel2 :
@@ -22,23 +40,22 @@ Page { // Sailfish OS
         (appwindow.activeVariables === 3) ? coveringTableModel3 :
         (appwindow.activeVariables === 4) ? coveringTableModel4 :
         (appwindow.activeVariables === 5) ? coveringTableModel5 : null
+    property var tableGrid: table.tableGrid
+    property int truthtablesize: appwindow.activeVariables + 1
+    property int truthtablelines: truthTableModel.rowCount() / truthtablesize
 
-    // Sailfish OS
-    /**/
     onStatusChanged: {
         if (status == PageStatus.Active) {
             pageBooleanExpression ? pageStack.pushAttached(Qt.resolvedUrl("BooleanExpression.qml")) :
                 pageQM ? pageStack.pushAttached(Qt.resolvedUrl("QM.qml")) : pageStack.pushAttached(Qt.resolvedUrl("About.qml"))
         }
     }
-    /**/
 
-    //Item { // Felgo
-    SilicaFlickable { // Sailfish OS
+    SilicaFlickable {
         anchors.fill: parent
-        contentHeight: truthTableColumn.height // Sailfish OS
-        contentWidth: truthTableColumn.width // Sailfish OS
-        VerticalScrollDecorator {} // Sailfish OS
+        contentHeight: truthTableColumn.height
+        contentWidth: truthTableColumn.width
+        VerticalScrollDecorator {}
 
         PullDownMenu {
             MenuItem {
@@ -75,13 +92,45 @@ Page { // Sailfish OS
                 GradientStop { position: 1.0; color: appwindow.bgColor2 }
             }
 
+            Component {
+                id: tableCell
+
+                Item {
+                    id: tableCellItem
+                    width: appwindow.diagramCellSize
+                    height: appwindow.tableRowSize
+                    Rectangle {
+                        parent: truthTablePage.tableGrid
+                        x: tableCellItem.x
+                        y: tableCellItem.y
+                        width: tableCellItem.width
+                        height: tableCellItem.height
+                        color: appwindow.bgDiagramColor
+                        border.color: appwindow.bgDiagramLegendColor
+                        border.width: 1
+
+                        Text {
+                          anchors.centerIn: parent
+                          text: display
+                          color: (index % truthTablePage.truthtablesize === appwindow.activeVariables) ? appwindow.diagramTextColor : appwindow.disabledTextColor
+                          font.family: "FreeSans"
+                          font.pixelSize: appwindow.regularTextSize
+                        }
+
+                        /*
+                        Component.onCompleted: {
+                            console.log("TruthTable: tableCell, index = " + index + ", tableCellItem.y = " + tableCellItem.y + ", y = " + y)
+                        }
+                        */
+                    }
+                }
+            }
+
             Column {
                 id: truthTableColumn
                 anchors.centerIn: parent
-                //width: appwindow.screenWidth // Felgo
-                //height: (implicitHeight < appwindow.screenHeight) ? appwindow.screenHeight : implicitHeight // Felgo
-                width: Screen.width // Sailfish OS
-                height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight // Sailfish OS
+                width: Screen.width
+                height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight
                 spacing: appwindow.textSpacingSize
 
                 Row {
@@ -91,8 +140,6 @@ Page { // Sailfish OS
                     }
                 }
 
-                // Sailfish OS
-                /**/
                 Label {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: qsTr("Truth Table")
@@ -101,82 +148,87 @@ Page { // Sailfish OS
                     font.family: "FreeSans"
                     font.pixelSize: appwindow.titleTextSize
                 }
-                /**/
 
                 Item {
                     id: table
-                    height: 16 * appwindow.tableRowSize + 2 * appwindow.diagramCellBorder + 1 * appwindow.diagramCellSize
                     width: parent.width
+                    height: truthTablePage.truthtablelines * appwindow.tableRowSize + 2 * appwindow.diagramBorderSize + 1 * appwindow.diagramLegendHeight
+                    property alias tableGrid: tableGrid
 
-                    /*
+                    /**/
                     Component.onCompleted: {
-                        console.log("TruthTable: table started")
+                        console.log("TruthTable: Component.onCompleted "+" ("+appwindow.activeVariables+" variables), model.rowCount()="+tableGrid.model.rowCount())
                     }
-                    */
+                    /**/
 
                     // truthTableBorder is now shown but used for positioning of other elements
                     Rectangle {
                         id: truthTableBorder
-                        width: 5 * appwindow.diagramCellSize + 2 * appwindow.diagramCellBorder // fixed for 4 variables
-                        height: 16 * appwindow.tableRowSize + 2 * appwindow.diagramCellBorder // fixed for 4 variables
-                        color: "transparent" // use "red" to debug
-                        border.width: appwindow.diagramBorderWidth
-                        border.color: appwindow.bgDiagramLegendColor
+                        width: truthTablePage.truthtablesize * appwindow.diagramCellSize + 2 * appwindow.diagramBorderSize
+                        height: truthTablePage.truthtablelines * appwindow.tableRowSize + 2 * appwindow.diagramBorderSize
+                        color: "transparent"
+                        border.width: appwindow.diagramBorderSize
+                        border.color: appwindow.bgDiagramLegendColor // use "yellow" to debug
                         //anchors.centerIn: parent
-                        anchors.bottom: parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        z: 2 // use 6 to debug
+                        y: appwindow.diagramLegendHeight
+
+                        z: 2 // normal 2, use 6 to debug
                     }
 
                     Rectangle {
                         id: truthTableLegendTop
-                        width: 5*appwindow.diagramCellSize
-                        height: appwindow.largeTextSize
+                        width: truthTablePage.truthtablesize * appwindow.diagramCellSize
+                        height: appwindow.diagramLegendHeight
                         radius: 0
                         color: appwindow.bgDiagramLegendColor
                         anchors.bottom: truthTableBorder.top
-                        anchors.left: truthTableBorder.left
-                        anchors.leftMargin: appwindow.diagramCellBorder
+                        anchors.horizontalCenter: truthTableBorder.horizontalCenter
                         z: 4
 
                         Row {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.bottom: parent.bottom
-                            anchors.horizontalCenterOffset: appwindow.diagramCellSize / 4 + 12 // fixed for 4 variables
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
+                            anchors.horizontalCenterOffset: 4 * appwindow.diagramCellSize / 10
+                            Label {
                                 text: '<font>'+appwindow.variableA+'</font>'
                                 color: appwindow.textColor2
                                 width: appwindow.diagramCellSize
                                 font.family: "TypeWriter"
                                 font.pixelSize: appwindow.regularTextSize
                             }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
+                            Label {
                                 text: '<font>'+appwindow.variableB+'</font>'
                                 color: appwindow.textColor2
                                 width: appwindow.diagramCellSize
                                 font.family: "TypeWriter"
                                 font.pixelSize: appwindow.regularTextSize
                             }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
+                            Label {
+                                visible: (appwindow.activeVariables > 2)
                                 text: '<font>'+appwindow.variableC+'</font>'
                                 color: appwindow.textColor2
                                 width: appwindow.diagramCellSize
                                 font.family: "TypeWriter"
                                 font.pixelSize: appwindow.regularTextSize
                             }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
+                            Label {
+                                visible: (appwindow.activeVariables > 3)
                                 text: '<font>'+appwindow.variableD+'</font>'
                                 color: appwindow.textColor2
                                 width: appwindow.diagramCellSize
                                 font.family: "TypeWriter"
                                 font.pixelSize: appwindow.regularTextSize
                             }
-                            // AppText { // Felgo
-                            Label { // Sailfish OS
+                            Label {
+                                visible: (appwindow.activeVariables > 4)
+                                text: '<font>'+appwindow.variableE+'</font>'
+                                color: appwindow.textColor2
+                                width: appwindow.diagramCellSize
+                                font.family: "TypeWriter"
+                                font.pixelSize: appwindow.regularTextSize
+                            }
+                            Label {
                                 text: ""
                                 color: appwindow.textColor2
                                 width: appwindow.diagramCellSize
@@ -186,41 +238,13 @@ Page { // Sailfish OS
                         }
                     }
 
-                    Component {
-                        id: tableCell
-
-                        Item {
-                            id: tableCellItem
-                            width: appwindow.diagramCellSize
-                            height: appwindow.tableRowSize
-                            Rectangle {
-                                id: box
-                                parent: tableGrid
-                                x: tableCellItem.x
-                                y: tableCellItem.y
-                                width: tableCellItem.width
-                                height: tableCellItem.height
-                                border.width: 1
-
-                                Text {
-                                  anchors.centerIn: parent
-                                  text: display
-                                  color: (index%5 == 4) ? appwindow.diagramTextColor : appwindow.disabledTextColor
-                                  font.family: "FreeSans"
-                                  font.pixelSize: appwindow.regularTextSize
-                                }
-                            }
-                        }
-                    }
-
                     GridView {
                         id: tableGrid
                         cellWidth: appwindow.diagramCellSize
                         cellHeight: appwindow.tableRowSize
-                        width: 5*cellWidth
-                        height: 16*cellHeight
-                        //anchors.centerIn: parent
-                        anchors.bottom: truthTableBorder.bottom
+                        width: truthTablePage.truthtablesize * appwindow.diagramCellSize
+                        height: truthTablePage.truthtablelines * appwindow.tableRowSize
+                        anchors.bottom: truthTableBorder.bottom // not centerIn, because legend is only on the top
                         anchors.horizontalCenter: truthTableBorder.horizontalCenter
                         model: truthTableModel
                         delegate: tableCell
@@ -236,7 +260,7 @@ Page { // Sailfish OS
                             onClicked: {
                                 var value = tableGrid.model.get(index) // use this for C++ TruthTableModel
                                 //var value = tableGrid.model.get(index).display // use this for QML ListModel
-                                if (index%5 != 4) return
+                                if (index % truthTablePage.truthtablesize !== appwindow.activeVariables) return
                                 //console.log("onClicked("+((index-4)/5)+"/" + value + ")")
                                 if (value === " ") {
                                     tableGrid.model.setZero(index)
@@ -266,8 +290,7 @@ Page { // Sailfish OS
 
                 Row {
                     anchors.horizontalCenter: table.horizontalCenter
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         text: qsTr("SOP")
                         color: appwindow.titleTextColor
                         //font.bold : true
@@ -287,8 +310,7 @@ Page { // Sailfish OS
                     anchors.horizontalCenter: table.horizontalCenter
                     id: textrow
 
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         id: textrowSop
                         text: ""
                         textFormat: Text.RichText

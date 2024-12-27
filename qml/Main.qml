@@ -1,22 +1,37 @@
-import QtQuick 2.5
+// Copyright (C) 2024,2025 Robert Meolic, SI-2000 Maribor, Slovenia.
 
-//import Felgo 3.0
+// biddy-bff is free software; you can redistribute it and/or modify it under the terms
+// of the GNU General Public License as published by the Free Software Foundation;
+// either version 2 of the License, or (at your option) any later version.
+
+// biddy-bff is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+// PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License along with
+// this program; if not, write to the Free Software Foundation, Inc., 51 Franklin
+// Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+// QtQuick version is a 1 to 1 mapping to Qt, i.e. Qt 5.X.* supports QtQuick 2.X.
+// By including QtQuick 2.N, Qt will create it using the latest available QtQuick version (2.LAST), but it will only give you the features available in 2.N.
+// So, by declaring QtQuick 2.N you limit the features to the specified version, but you still benefits from all the bug fixes.
+// Thus, you should use the smallest QtQuick 2.N version that you need.
+//
+// https://en.wikipedia.org/wiki/Qt_Quick
+// rpm -qi qt5-qtcore
+// rpm -qi qt5-qtdeclarative-qtquick
+// rpm -qi sailfishsilica-qt5
+// SailfishOS 4.6.0.15 (Sony XA2) uses Qt 5.6.3 and supports QtQuick 2.6, QtQml 2.0, QtQml.Models 2.2, and Sailfish.Silica 1.2
+// SailfishOS 5.0.0.43 (Jolla C2) uses Qt 5.6.3 and supports QtQuick 2.6, QtQml 2.0, QtQml.Models 2.2, and Sailfish.Silica 1.2
+
+import QtQuick 2.0
 import Sailfish.Silica 1.0
 
-// FELGO
-// You get free licenseKeys from https://felgo.com/licenseKey
-// With a licenseKey you can:
-//  * Publish your games & apps for the app stores
-//  * Remove the Felgo Splash Screen or set a custom one (available with the Pro Licenses)
-//  * Add plugins to monetize, analyze & improve your apps (available with the Pro Licenses)
-//licenseKey: "<generate one from https://felgo.com/licenseKey>"
-
-// App // Felgo
-ApplicationWindow // Sailfish OS
+ApplicationWindow
 {
     id: appwindow
-    cover: Qt.resolvedUrl("cover/CoverPage.qml") // Sailfish OS
-    allowedOrientations: defaultAllowedOrientations // Sailfish OS
+    cover: Qt.resolvedUrl("cover/CoverPage.qml")
+    allowedOrientations: defaultAllowedOrientations
 
     // Sony Xperai XA2
     // Display:  1920 × 1080 px
@@ -35,16 +50,19 @@ ApplicationWindow // Sailfish OS
     // USB: Type-C
     // Other: 3.5mm audio jack, Dual SIM (nano) + microSD
 
-    property string version: "v2024-12-08"
+    property string version: "v2024-12-27"
 
     property int myScreenHeight: _screenHeight
     property int myScreenWidth: _screenWidth
 
     property int diagramCellSize: myScreenWidth / 9
-    property int diagramCellBorder: 8 // // use 4 on Felgo, use 8 on Sailfish OS
-    property int diagramBorderWidth: 2 // // use 2 on Felgo, use 2 on Sailfish OS
-    property int tableRowSize: 60 // use 30 on Felgo, use 60 on Sailfish OS
-    property int textSpacingSize: 8 // use 8 on Felgo, use 8 on Sailfish OS
+    property int diagramBorderSize: 2
+    property int diagramLegendWidth: diagramCellSize / 2
+    property int diagramLegendHeight: 3 * diagramCellSize / 4
+    property int diagramGap: 2 * diagramLegendHeight
+    property int diagramCircleBorder: diagramCellSize / 10
+
+    property int tableRowSize: (activeVariables < 5) ? myScreenWidth / 12 : myScreenWidth / 20
 
     property int textSize: diagramCellSize
     property int logoTextSize: textSize
@@ -53,6 +71,7 @@ ApplicationWindow // Sailfish OS
     property int regularTextSize: textSize * 2 / 5
     property int smallTextSize: textSize / 3
     property int tinyTextSize: textSize / 4
+    property int textSpacingSize: 8
 
     property color bgColor1: '#041116' // background first color
     property color bgColor2: '#040616' // background second color
@@ -130,38 +149,30 @@ ApplicationWindow // Sailfish OS
         truthTableModel3.allZero()
         truthTableModel4.allZero()
         truthTableModel5.allZero()
-        pageStack.push(mainPage,{ },PageStackAction.Immediate) // Sailfish OS
+        pageStack.push(mainPage,{ },PageStackAction.Immediate)
         pageKarnaughMap ? pageStack.pushAttached(Qt.resolvedUrl("KarnaughMap.qml")) :
             pageTruthTable ? pageStack.pushAttached(Qt.resolvedUrl("TruthTable.qml")) :
             pageBooleanExpression ? pageStack.pushAttached(Qt.resolvedUrl("BooleanExpression.qml")) :
             pageQM ? pageStack.pushAttached(Qt.resolvedUrl("QM.qml")) : pageStack.pushAttached(Qt.resolvedUrl("About.qml"))
     }
 
-    // NavigationStack { // Felgo
-
     Page {
-        //navigationBarHidden: true // Felgo
         id: mainPage
 
-        //Item { // Felgo
-        SilicaFlickable { // Sailfish OS
+        SilicaFlickable {
             anchors.fill: parent
-            contentHeight: mainColumn.height // Sailfish OS
-            contentWidth: mainColumn.width // Sailfish OS
-            VerticalScrollDecorator {} // Sailfish OS
+            contentHeight: mainColumn.height
+            contentWidth: mainColumn.width
+            VerticalScrollDecorator {}
 
-            /**/
             Component.onCompleted: {
                 console.log("Main: SilicaFlickable started")
                 console.log("Main: myScreenHeight = " + myScreenHeight)
                 console.log("Main: myScreenWidth = " + myScreenWidth)
                 console.log("Main: activeVariables = " + activeVariables)
             }
-            /**/
 
             // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
-            // Sailfish OS
-            /**/
             PullDownMenu {
                 MenuItem {
                     text: qsTr("About")
@@ -220,10 +231,8 @@ ApplicationWindow // Sailfish OS
             Column {
                 id: mainColumn
                 anchors.centerIn: parent
-                //width: appwindow.screenWidth // Felgo
-                //height: (implicitHeight < appwindow.screenHeight) ? appwindow.screenHeight : implicitHeight // Felgo
-                width: Screen.width // Sailfish OS
-                height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight // Sailfish OS
+                width: Screen.width
+                height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight
                 spacing: appwindow.textSpacingSize
 
                 Row {
@@ -243,8 +252,7 @@ ApplicationWindow // Sailfish OS
                     }
                     */
 
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         //anchors.bottom: logo.bottom
                         text: qsTr("BFF")
                         color: appwindow.titleTextColor
@@ -254,8 +262,7 @@ ApplicationWindow // Sailfish OS
                     }
                 }
 
-                // AppText { // Felgo
-                Label { // Sailfish OS
+                Label {
                     id: mainContent
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: qsTr("Boolean Functions Forever")
@@ -277,8 +284,7 @@ ApplicationWindow // Sailfish OS
                 Row {
                     anchors.left: mainContent.left
                     height: appwindow.largeTextSize
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         text: qsTr("Active tabs:")
                         color: appwindow.textColor1
                         //font.bold : true
@@ -295,8 +301,7 @@ ApplicationWindow // Sailfish OS
                         width: appwindow.regularTextSize
                         height: appwindow.titleTextSize
 
-                        // AppText { // Felgo
-                        Label { // Sailfish OS
+                        Label {
                             id: plusKarnaughMap
                             anchors.centerIn: parent
                             z: 4
@@ -307,8 +312,7 @@ ApplicationWindow // Sailfish OS
                             font.pixelSize: appwindow.regularTextSize
                         }
 
-                        // StyledButton { // Felgo
-                        Button { // Sailfish OS
+                        Button {
                             anchors.fill: parent
                             z: 2
                             clip: true
@@ -316,7 +320,7 @@ ApplicationWindow // Sailfish OS
                             // color: "yellow" // DEBUG
                             // border.color: "yellow" // DEBUG
                             color: "transparent"
-                            highlightBackgroundColor: appwindow.textColor2 // Sailfish OS
+                            highlightBackgroundColor: appwindow.textColor2
                             onClicked: {
                                 //console.log("BUTTON plusKarnaughMap")
                                 pageKarnaughMap ? pageKarnaughMap = false : pageKarnaughMap = true
@@ -328,8 +332,7 @@ ApplicationWindow // Sailfish OS
                         }
                     }
 
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         text: qsTr("Karnaugh Map")
                         color: pageKarnaughMap ? appwindow.textColor1 : appwindow.disabledTextColor
                         font.family: "FreeSans"
@@ -346,8 +349,7 @@ ApplicationWindow // Sailfish OS
                         width: appwindow.regularTextSize
                         height: appwindow.titleTextSize
 
-                        // AppText { // Felgo
-                        Label { // Sailfish OS
+                        Label {
                             id: plusTruthTable
                             anchors.centerIn: parent
                             z: 4
@@ -358,8 +360,7 @@ ApplicationWindow // Sailfish OS
                             font.pixelSize: appwindow.regularTextSize
                         }
 
-                        // StyledButton { // Felgo
-                        Button { // Sailfish OS
+                        Button {
                             anchors.fill: parent
                             z: 2
                             clip: true
@@ -367,7 +368,7 @@ ApplicationWindow // Sailfish OS
                             // color: "yellow" // DEBUG
                             // border.color: "yellow" // DEBUG
                             color: "transparent"
-                            highlightBackgroundColor: appwindow.textColor2 // Sailfish OS
+                            highlightBackgroundColor: appwindow.textColor2
                             onClicked: {
                                 //console.log("BUTTON pageTruthTable")
                                 pageTruthTable ? pageTruthTable = false : pageTruthTable = true
@@ -379,8 +380,7 @@ ApplicationWindow // Sailfish OS
                         }
                     }
 
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         text: qsTr("Truth Table")
                         color: pageTruthTable ? appwindow.textColor1 : appwindow.disabledTextColor
                         font.family: "FreeSans"
@@ -397,8 +397,7 @@ ApplicationWindow // Sailfish OS
                         width: appwindow.regularTextSize
                         height: appwindow.titleTextSize
 
-                        // AppText { // Felgo
-                        Label { // Sailfish OS
+                        Label {
                             id: plusBooleanExpression
                             anchors.centerIn: parent
                             z: 4
@@ -409,8 +408,7 @@ ApplicationWindow // Sailfish OS
                             font.pixelSize: appwindow.regularTextSize
                         }
 
-                        // StyledButton { // Felgo
-                        Button { // Sailfish OS
+                        Button {
                             anchors.fill: parent
                             z: 2
                             clip: true
@@ -418,7 +416,7 @@ ApplicationWindow // Sailfish OS
                             // color: "yellow" // DEBUG
                             // border.color: "yellow" // DEBUG
                             color: "transparent"
-                            highlightBackgroundColor: appwindow.textColor2 // Sailfish OS
+                            highlightBackgroundColor: appwindow.textColor2
                             onClicked: {
                                 //console.log("BUTTON pageBooleanExpression")
                                 pageBooleanExpression ? pageBooleanExpression = false : pageBooleanExpression = true
@@ -430,8 +428,7 @@ ApplicationWindow // Sailfish OS
                         }
                     }
 
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         text: qsTr("Boolean expression")
                         color: pageBooleanExpression ? appwindow.textColor1 : appwindow.disabledTextColor
                         font.family: "FreeSans"
@@ -448,8 +445,7 @@ ApplicationWindow // Sailfish OS
                         width: appwindow.regularTextSize
                         height: appwindow.titleTextSize
 
-                        // AppText { // Felgo
-                        Label { // Sailfish OS
+                        Label {
                             id: plusQM
                             anchors.centerIn: parent
                             z: 4
@@ -460,8 +456,7 @@ ApplicationWindow // Sailfish OS
                             font.pixelSize: appwindow.regularTextSize
                         }
 
-                        // StyledButton { // Felgo
-                        Button { // Sailfish OS
+                        Button {
                             anchors.fill: parent
                             z: 2
                             clip: true
@@ -469,7 +464,7 @@ ApplicationWindow // Sailfish OS
                             // color: "yellow" // DEBUG
                             // border.color: "yellow" // DEBUG
                             color: "transparent"
-                            highlightBackgroundColor: appwindow.textColor2 // Sailfish OS
+                            highlightBackgroundColor: appwindow.textColor2
                             onClicked: {
                                 //console.log("BUTTON pageQM")
                                 pageQM ? pageQM = false : pageQM = true
@@ -481,8 +476,7 @@ ApplicationWindow // Sailfish OS
                         }
                     }
 
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         text: qsTr("Quine-McCluskey algorithm")
                         color: pageQM ? appwindow.textColor1 : appwindow.disabledTextColor
                         font.family: "FreeSans"
@@ -495,8 +489,7 @@ ApplicationWindow // Sailfish OS
                 Row {
                     anchors.left: mainContent.left
                     height: appwindow.regularTextSize
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         anchors.bottom: parent.bottom
                         text: qsTr("* Not changeable, yet")
                         color: appwindow.textColor1
@@ -509,16 +502,14 @@ ApplicationWindow // Sailfish OS
                 Row {
                     Item {
                         width: 1 // dummy value != 0
-                        //height: appwindow.largeTextSize // Felgo
-                        height: appwindow.textSize // Sailfish OS
+                        height: appwindow.textSize
                     }
                 }
 
                 Row {
                     anchors.left: mainContent.left
                     height: appwindow.largeTextSize
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         text: qsTr("Number of variables:")
                         color: appwindow.textColor1
                         //font.bold : true
@@ -537,8 +528,7 @@ ApplicationWindow // Sailfish OS
                         height: appwindow.diagramCellSize
                         border.color: "transparent"
                         color: "transparent"
-                        // AppText { // Felgo
-                        Label { // Sailfish OS
+                        Label {
                             anchors.centerIn: parent
                             text: "2"
                             color: appwindow.textColor1
@@ -561,8 +551,7 @@ ApplicationWindow // Sailfish OS
                         height: appwindow.diagramCellSize
                         border.color: "transparent"
                         color: "transparent"
-                        // AppText { // Felgo
-                        Label { // Sailfish OS
+                        Label {
                             anchors.centerIn: parent
                             text: "3"
                             color: appwindow.textColor1
@@ -585,8 +574,7 @@ ApplicationWindow // Sailfish OS
                         height: appwindow.diagramCellSize
                         border.color: appwindow.titleTextColor
                         color: "transparent"
-                        // AppText { // Felgo
-                        Label { // Sailfish OS
+                        Label {
                             anchors.centerIn: parent
                             text: "4"
                             color: appwindow.textColor1
@@ -609,8 +597,7 @@ ApplicationWindow // Sailfish OS
                         height: appwindow.diagramCellSize
                         border.color: "transparent"
                         color: "transparent"
-                        // AppText { // Felgo
-                        Label { // Sailfish OS
+                        Label {
                             anchors.centerIn: parent
                             text: "5"
                             color: appwindow.textColor1
@@ -633,8 +620,7 @@ ApplicationWindow // Sailfish OS
                 Row {
                     anchors.left: mainContent.left
                     height: appwindow.regularTextSize
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         anchors.bottom: parent.bottom
                         text: qsTr("* Not changeable, yet")
                         color: appwindow.textColor1
@@ -647,16 +633,14 @@ ApplicationWindow // Sailfish OS
                 Row {
                     Item {
                         width: 1 // dummy value != 0
-                        //height: appwindow.largeTextSize // Felgo
-                        height: appwindow.textSize // Sailfish OS
+                        height: appwindow.textSize
                     }
                 }
 
                 Row {
                     anchors.left: mainContent.left
                     height: appwindow.largeTextSize
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         text: qsTr("Variable names:")
                         color: appwindow.textColor1
                         //font.bold : true
@@ -676,7 +660,7 @@ ApplicationWindow // Sailfish OS
                         border.color: appwindow.textColor1
                         color: "transparent"
                         radius: 12
-                        border.width: 4 //appwindow.diagramCellBorder
+                        border.width: 4
 
                         TextField {
                             id: inputA
@@ -714,7 +698,7 @@ ApplicationWindow // Sailfish OS
                         border.color: appwindow.textColor1
                         color: "transparent"
                         radius: 12
-                        border.width: 4 //appwindow.diagramCellBorder
+                        border.width: 4
 
                         TextField {
                             id: inputB
@@ -752,7 +736,7 @@ ApplicationWindow // Sailfish OS
                         border.color: appwindow.textColor1
                         color: "transparent"
                         radius: 12
-                        border.width: 4 //appwindow.diagramCellBorder
+                        border.width: 4
 
                         TextField {
                             id: inputC
@@ -790,7 +774,7 @@ ApplicationWindow // Sailfish OS
                         border.color: appwindow.textColor1
                         color: "transparent"
                         radius: 12
-                        border.width: 4 //appwindow.diagramCellBorder
+                        border.width: 4
 
                         TextField {
                             id: inputD
@@ -828,7 +812,7 @@ ApplicationWindow // Sailfish OS
                         border.color: appwindow.textColor1
                         color: "transparent"
                         radius: 12
-                        border.width: 4 //appwindow.diagramCellBorder
+                        border.width: 4
 
                         TextField {
                             id: inputE
@@ -866,8 +850,7 @@ ApplicationWindow // Sailfish OS
                 Row {
                     anchors.left: mainContent.left
                     height: appwindow.regularTextSize
-                    // AppText { // Felgo
-                    Label { // Sailfish OS
+                    Label {
                         anchors.bottom: parent.bottom
                         text: qsTr("* Not changeable, yet")
                         color: appwindow.textColor1
@@ -879,16 +862,14 @@ ApplicationWindow // Sailfish OS
 
                 Row {
                     id: datespace
-                    //property int size: appwindow.screenHeight - y - date.height - appwindow.titleTextSize // Felgo
-                    property int size: Screen.height - y - date.height - appwindow.titleTextSize // Sailfish OS
+                    property int size: Screen.height - y - date.height - appwindow.titleTextSize
                     Item {
                         width: 1 // dummy value != 0
                         height: (datespace.size < appwindow.titleTextSize) ? appwindow.titleTextSize : datespace.size
                     }
                 }
 
-                //AppText { // Felgo
-                Label { // Sailfish OS
+                Label {
                     anchors.horizontalCenter: parent.horizontalCenter
                     id: date
                     text: version
@@ -901,40 +882,4 @@ ApplicationWindow // Sailfish OS
             }
         }
     }
-    
-
-    /* FELGO */
-    /*
-    }
-                                pageKarnaughMap ? pageStack.pushAttached(Qt.resolvedUrl("KarnaughMap.qml")) :
-                                    pageTruthTable ? pageStack.pushAttached(Qt.resolvedUrl("TruthTable.qml")) :
-                                    pageBooleanExpression ? pageStack.pushAttached(Qt.resolvedUrl("BooleanExpression.qml")) :
-                                    pageQM ? pageStack.pushAttached(Qt.resolvedUrl("QM.qml")) : pageStack.pushAttached(Qt.resolvedUrl("About.qml"))
-
-    Component {
-        id: karnaughMapPage
-        KarnaughMap { }
-    }
-
-    Component {
-        id: truthTablePage
-        TruthTable { }
-    }
-
-    Component {
-        id: sopPage
-        SOP { }
-    }
-
-    Component {
-        id: qmPage
-        QM { }
-    }
-
-    Component {
-        id: aboutPage
-        About { }
-    }
-    */
-
 }

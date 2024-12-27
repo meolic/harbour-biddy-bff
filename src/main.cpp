@@ -31,22 +31,10 @@
 // add the following line to the end of file *.pro:
 // unix|win32: LIBS += -lgmp
 
-#define SAILFISHAPP
-//#define FELGOAPP
-
-#ifdef SAILFISHAPP
-#   include <sailfishapp.h>
-#   include <QGuiApplication>
-#   include <QQuickView>
-#   include <QQmlContext>
-#endif
-
-#ifdef FELGOAPP
-#   include <QApplication>
-#   include <QQmlApplicationEngine>
-#   include <FelgoApplication>
-#   include <QQmlContext>
-#endif
+#include <sailfishapp.h>
+#include <QGuiApplication>
+#include <QQuickView>
+#include <QQmlContext>
 
 #include "booleanfunction.h"
 #include "truthtablemodel.h"
@@ -134,8 +122,6 @@ int main(int argc, char *argv[])
     QObject::connect(coveringTableModel5,SIGNAL(modelChanged()),implicantCircleModel5,SLOT(onModelChanged()));
     QObject::connect(coveringTableModel5,SIGNAL(modelChanged()),karnaughMapModel5,SLOT(onModelChanged()));
 
-#ifdef SAILFISHAPP
-
     // SAILFISH - SIMPLE
     //return SailfishApp::main(argc, argv); //display "qml/Main.qml", only
 
@@ -161,40 +147,6 @@ int main(int argc, char *argv[])
     viewer->setSource(SailfishApp::pathTo("qml/Main.qml"));
     viewer->show();
     return app->exec();
-
-#endif
-
-#ifdef FELGOAPP
-
-    QApplication app(argc, argv);
-    QQmlApplicationEngine engine;
-    FelgoApplication felgo;
-
-    felgo.setPreservePlatformFonts(true); // Use platform-specific fonts instead of Felgo's default font
-    felgo.setLicenseKey(PRODUCT_LICENSE_KEY); // Set an optional license key from project file
-    felgo.initialize(&engine);
-    engine.rootContext()->setContextProperty(QStringLiteral("truthTableModel2"), truthTableModel2);
-    engine.rootContext()->setContextProperty(QStringLiteral("truthTableModel3"), truthTableModel3);
-    engine.rootContext()->setContextProperty(QStringLiteral("truthTableModel4"), truthTableModel4);
-    engine.rootContext()->setContextProperty(QStringLiteral("truthTableModel5"), truthTableModel5);
-    engine.rootContext()->setContextProperty(QStringLiteral("implicantCircleModel2"), implicantCircleModel2);
-    engine.rootContext()->setContextProperty(QStringLiteral("implicantCircleModel3"), implicantCircleModel3);
-    engine.rootContext()->setContextProperty(QStringLiteral("implicantCircleModel4"), implicantCircleModel4);
-    engine.rootContext()->setContextProperty(QStringLiteral("implicantCircleModel5"), implicantCircleModel5);
-    engine.rootContext()->setContextProperty(QStringLiteral("karnaughMapModel2"), karnaughMapModel2);
-    engine.rootContext()->setContextProperty(QStringLiteral("karnaughMapModel3"), karnaughMapModel3);
-    engine.rootContext()->setContextProperty(QStringLiteral("karnaughMapModel4"), karnaughMapModel4);
-    engine.rootContext()->setContextProperty(QStringLiteral("karnaughMapModel5"), karnaughMapModel5);
-    engine.rootContext()->setContextProperty(QStringLiteral("coveringTableModel2"), coveringTableModel2);
-    engine.rootContext()->setContextProperty(QStringLiteral("coveringTableModel3"), coveringTableModel3);
-    engine.rootContext()->setContextProperty(QStringLiteral("coveringTableModel4"), coveringTableModel4);
-    engine.rootContext()->setContextProperty(QStringLiteral("coveringTableModel5"), coveringTableModel5);
-    felgo.setMainQmlFileName(QStringLiteral("qml/Main.qml")); // use this for DEVELOPMENT
-    //felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml")); // use this for PUBLISHING
-    engine.load(QUrl(felgo.mainQmlFileName()));
-    return app.exec();
-
-#endif
 
     exitBdd();
 

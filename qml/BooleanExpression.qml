@@ -1,16 +1,34 @@
-import QtQuick 2.5
+// Copyright (C) 2024,2025 Robert Meolic, SI-2000 Maribor, Slovenia.
 
-//import Felgo 3.0
+// biddy-bff is free software; you can redistribute it and/or modify it under the terms
+// of the GNU General Public License as published by the Free Software Foundation;
+// either version 2 of the License, or (at your option) any later version.
+
+// biddy-bff is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+// PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License along with
+// this program; if not, write to the Free Software Foundation, Inc., 51 Franklin
+// Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+// QtQuick version is a 1 to 1 mapping to Qt, i.e. Qt 5.X.* supports QtQuick 2.X.
+// By including QtQuick 2.N, Qt will create it using the latest available QtQuick version (2.LAST), but it will only give you the features available in 2.N.
+// So, by declaring QtQuick 2.N you limit the features to the specified version, but you still benefits from all the bug fixes.
+// Thus, you should use the smallest QtQuick 2.N version that you need.
+//
+// https://en.wikipedia.org/wiki/Qt_Quick
+// rpm -qi qt5-qtcore
+// rpm -qi qt5-qtdeclarative-qtquick
+// rpm -qi sailfishsilica-qt5
+// SailfishOS 4.6.0.15 (Sony XA2) uses Qt 5.6.3 and supports QtQuick 2.6, QtQml 2.0, QtQml.Models 2.2, and Sailfish.Silica 1.2
+// SailfishOS 5.0.0.43 (Jolla C2) uses Qt 5.6.3 and supports QtQuick 2.6, QtQml 2.0, QtQml.Models 2.2, and Sailfish.Silica 1.2
+
+import QtQuick 2.0
 import Sailfish.Silica 1.0
 
-//FlickablePage { // Felgo
-Page { // Sailfish OS
-    //title: qsTr("Boolean expression") // Felgo
+Page {
     id: booleanExpressionPage
-
-    //flickable.contentHeight: booleanExpressionColumn.height // Felgo
-    //flickable.contentWidth: booleanExpressionColumn.width // Felgo
-    //scrollIndicator.visible: true // Felgo
 
     property var coveringTableModel:
         (appwindow.activeVariables === 2) ? coveringTableModel2 :
@@ -18,21 +36,17 @@ Page { // Sailfish OS
         (appwindow.activeVariables === 4) ? coveringTableModel4 :
         (appwindow.activeVariables === 5) ? coveringTableModel5 : null
 
-    // Sailfish OS
-    /**/
     onStatusChanged: {
         if (status == PageStatus.Active) {
             pageQM ? pageStack.pushAttached(Qt.resolvedUrl("QM.qml")) : pageStack.pushAttached(Qt.resolvedUrl("About.qml"))
         }
     }
-    /**/
 
-    //Item { // Felgo
-    SilicaFlickable { // Sailfish OS
+    SilicaFlickable {
         anchors.fill: parent
-        contentHeight: booleanExpressionColumn.height // Sailfish OS
-        contentWidth: booleanExpressionColumn.width // Sailfish OS
-        VerticalScrollDecorator {} // Sailfish OS
+        contentHeight: booleanExpressionColumn.height
+        contentWidth: booleanExpressionColumn.width
+        VerticalScrollDecorator {}
 
     Rectangle {
         anchors.centerIn: parent
@@ -48,10 +62,8 @@ Page { // Sailfish OS
     Column {
         id: booleanExpressionColumn
         anchors.centerIn: parent
-        //width: appwindow.screenWidth // Felgo
-        //height: (implicitHeight < appwindow.screenHeight) ? appwindow.screenHeight : implicitHeight // Felgo
-        width: Screen.width // Sailfish OS
-        height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight // Sailfish OS
+        width: Screen.width
+        height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight
         spacing: appwindow.textSpacingSize
 
         Row {
@@ -61,8 +73,6 @@ Page { // Sailfish OS
             }
         }
 
-        // Sailfish OS
-        /**/
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Boolean expression")
@@ -71,7 +81,6 @@ Page { // Sailfish OS
             font.family: "FreeSans"
             font.pixelSize: appwindow.titleTextSize
         }
-        /**/
 
         Row {
             Item {
@@ -82,8 +91,7 @@ Page { // Sailfish OS
 
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
-            // AppText { // Felgo
-            Label { // Sailfish OS
+            Label {
                 text: qsTr("Not implemented, yet")
                 color: appwindow.textColor1
                 //font.bold : true
@@ -103,8 +111,7 @@ Page { // Sailfish OS
 
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
-            // AppText { // Felgo
-            Label { // Sailfish OS
+            Label {
                 text: qsTr("SOP")
                 color: appwindow.titleTextColor
                 //font.bold : true
@@ -123,18 +130,13 @@ Page { // Sailfish OS
         Row {
             id : textrow
             anchors.horizontalCenter: parent.horizontalCenter
-            //width: textsop.implicitWidth // Felgo
-            //height: textsop.implicitHeight // Felgo
-            width: textsop.contentWidth // Sailfish OS
-            height: textsop.contentHeight // Sailfish OS
+            width: textsop.contentWidth
+            height: textsop.contentHeight
             spacing: appwindow.textSpacingSize
 
-            // AppText { // Felgo
-            Label { // Sailfish OS
+            Label {
                 id : textsop
                 color: appwindow.textColor1
-                //width: implicitWidth // Felgo
-                //height: implicitHeight // Felgo
                 text: "<font>"+truthTableModel.string2html(coveringTableModel.sop)+"</font>"
                 textFormat: Text.RichText
                 font.family: "TypeWriter"

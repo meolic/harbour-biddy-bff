@@ -1,16 +1,34 @@
-import QtQuick 2.5
+// Copyright (C) 2024,2025 Robert Meolic, SI-2000 Maribor, Slovenia.
 
-//import Felgo 3.0
+// biddy-bff is free software; you can redistribute it and/or modify it under the terms
+// of the GNU General Public License as published by the Free Software Foundation;
+// either version 2 of the License, or (at your option) any later version.
+
+// biddy-bff is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+// PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License along with
+// this program; if not, write to the Free Software Foundation, Inc., 51 Franklin
+// Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+// QtQuick version is a 1 to 1 mapping to Qt, i.e. Qt 5.X.* supports QtQuick 2.X.
+// By including QtQuick 2.N, Qt will create it using the latest available QtQuick version (2.LAST), but it will only give you the features available in 2.N.
+// So, by declaring QtQuick 2.N you limit the features to the specified version, but you still benefits from all the bug fixes.
+// Thus, you should use the smallest QtQuick 2.N version that you need.
+//
+// https://en.wikipedia.org/wiki/Qt_Quick
+// rpm -qi qt5-qtcore
+// rpm -qi qt5-qtdeclarative-qtquick
+// rpm -qi sailfishsilica-qt5
+// SailfishOS 4.6.0.15 (Sony XA2) uses Qt 5.6.3 and supports QtQuick 2.6, QtQml 2.0, QtQml.Models 2.2, and Sailfish.Silica 1.2
+// SailfishOS 5.0.0.43 (Jolla C2) uses Qt 5.6.3 and supports QtQuick 2.6, QtQml 2.0, QtQml.Models 2.2, and Sailfish.Silica 1.2
+
+import QtQuick 2.0
 import Sailfish.Silica 1.0
 
-//FlickablePage { // Felgo
-Page { // Sailfish OS
-    //title: qsTr("Quine-McCluskey algorithm") // Felgo
+Page {
     id: qmPage
-
-    //flickable.contentHeight: qmColumn.height // Felgo
-    //flickable.contentWidth: qmColumn.width // Felgo
-    //scrollIndicator.visible: true // Felgo
 
     property var coveringTableModel:
         (appwindow.activeVariables === 2) ? coveringTableModel2 :
@@ -18,21 +36,17 @@ Page { // Sailfish OS
         (appwindow.activeVariables === 4) ? coveringTableModel4 :
         (appwindow.activeVariables === 5) ? coveringTableModel5 : null
 
-    // Sailfish OS
-    /**/
     onStatusChanged: {
         if (status == PageStatus.Active) {
             pageStack.pushAttached(Qt.resolvedUrl("About.qml"))
         }
     }
-    /**/
 
-    //Item { // Felgo
-    SilicaFlickable { // Sailfish OS
+    SilicaFlickable {
         anchors.fill: parent
-        contentHeight: qmColumn.height // Sailfish OS
-        contentWidth: qmColumn.width // Sailfish OS
-        VerticalScrollDecorator {} // Sailfish OS
+        contentHeight: qmColumn.height
+        contentWidth: qmColumn.width
+        VerticalScrollDecorator {}
 
     Rectangle {
         anchors.centerIn: parent
@@ -48,10 +62,8 @@ Page { // Sailfish OS
     Column {
         id: qmColumn
         anchors.centerIn: parent
-        //width: appwindow.screenWidth // Felgo
-        //height: (implicitHeight < appwindow.screenHeight) ? appwindow.screenHeight : implicitHeight // Felgo
-        width: Screen.width // Sailfish OS
-        height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight // Sailfish OS
+        width: Screen.width
+        height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight
         spacing: appwindow.textSpacingSize
 
         Row {
@@ -61,8 +73,6 @@ Page { // Sailfish OS
             }
         }
 
-        // Sailfish OS
-        /**/
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Quine-McCluskey algorithm")
@@ -71,7 +81,6 @@ Page { // Sailfish OS
             font.family: "FreeSans"
             font.pixelSize: appwindow.titleTextSize
         }
-        /**/
 
         Row {
             Item {
@@ -85,8 +94,7 @@ Page { // Sailfish OS
             width: textlog.contentWidth
             spacing: appwindow.textSpacingSize
 
-            // AppText { // Felgo
-            Label { // Sailfish OS
+            Label {
                 id : textlog
                 text: qsTr(coveringTableModel.qmlog)
                 color: appwindow.textColor1
@@ -116,14 +124,13 @@ Page { // Sailfish OS
                 height: 1 // dummy value != 0
             }
 
-            // StyledButton { // Felgo
-            Button { // Sailfish OS
+            Button {
                 id: buttonPrevious
                 enabled: coveringTableModel.numSopSolutions > 1 ? true : false
                 text: "<"
                 color: appwindow.textColor2
-                highlightBackgroundColor: appwindow.textColor2 // Sailfish OS
-                highlightColor: appwindow.diagramTextColor // Sailfish OS
+                highlightBackgroundColor: appwindow.textColor2
+                highlightColor: appwindow.diagramTextColor
                 width: buttonrow.width / 8 // just a heuristic, looks good
                 onClicked: {
                     //console.log("BUTTON " + text)
@@ -131,14 +138,13 @@ Page { // Sailfish OS
                 }
             }
 
-            // StyledButton { // Felgo
-            Button { // Sailfish OS
+            Button {
                 id: buttonNumSolutions
                 enabled: true
                 text: "<font>"+coveringTableModel.selectedSopSolution+" / "+coveringTableModel.numSopSolutions+"</font>"
                 color: appwindow.textColor2
-                highlightBackgroundColor: appwindow.textColor2 // Sailfish OS
-                highlightColor: appwindow.diagramTextColor // Sailfish OS
+                highlightBackgroundColor: appwindow.textColor2
+                highlightColor: appwindow.diagramTextColor
                 width: buttonrow.width / 3 // just a heuristic, looks good
                 onClicked: {
                     //console.log("BUTTON " + text)
@@ -146,14 +152,13 @@ Page { // Sailfish OS
                 }
             }
 
-            // StyledButton { // Felgo
-            Button { // Sailfish OS
+            Button {
                 id: buttonNext
                 enabled: coveringTableModel.numSopSolutions > 1 ? true : false
                 text: ">"
                 color: appwindow.textColor2
-                highlightBackgroundColor: appwindow.textColor2 // Sailfish OS
-                highlightColor: appwindow.diagramTextColor // Sailfish OS
+                highlightBackgroundColor: appwindow.textColor2
+                highlightColor: appwindow.diagramTextColor
                 width: buttonrow.width / 8 // just a heuristic, looks good
                 onClicked: {
                     //console.log("BUTTON " + text)
@@ -183,8 +188,7 @@ Page { // Sailfish OS
             height: appwindow.titleTextSize
         }
 
-        // AppText { // Felgo
-        Label { // Sailfish OS
+        Label {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Covering table")
             color: appwindow.textColor1
@@ -244,7 +248,7 @@ Page { // Sailfish OS
                     height: diagramQMItem.height/2
                     radius: diagramQMItem.width/2 // create circles
                     color: covering == "1" ? appwindow.titleTextColor : appwindow.textColor1
-                    border.width: appwindow.diagramBorderWidth
+                    border.width: appwindow.diagramBorderSize
                     border.color: appwindow.bgDiagramLegendColor
                     z: 3
                 }
