@@ -30,7 +30,7 @@ void QuineMcCluskey::debugSet(set<Biddy_Edge> theset)
     cout << "DEBUG SET" << endl;
     for (auto m: theset) {
          cout << implicant2string(m)
-             << (isImplicant(m) ? "IMPLICANT" : "NOT IMPLICANT")
+             << (isImplicant(m) ? " - IMPLICANT" : " - NOT IMPLICANT")
              << "/ numones:" << numones(m) << endl;
     }
 }
@@ -209,224 +209,80 @@ void QuineMcCluskey::minimize()
         }
     }
 
-    // TESTING, ONLY
-    if (booleanFunction->getNumVariables() == 2) return;
-    if (booleanFunction->getNumVariables() == 3) return;
-    //if (booleanFunction->getNumVariables() == 4) return;
-    if (booleanFunction->getNumVariables() == 5) return;
-
-    //cout << "QuineMcCluskey::minimize() create init set" << endl;
+    cout << "QuineMcCluskey::minimize() create init set" << endl;
 
     // HERE COMES THE QUINE-MCCLUSKEY ALGORITHM
     set<Biddy_Edge> setInit = createInitSet();
     set<Biddy_Edge> setFinal;
 
-    //debugSet(setInit);
+    debugSet(setInit);
 
-    // STEP 1: finding prime implicants // TO DO, extent to 5 variables
+    // STEP 1: finding prime implicants
 
-    set<Biddy_Edge> setG0,setG1,setG2,setG3,setG4;
-    set<Biddy_Edge> setG01,setG12,setG23,setG34;
-    set<Biddy_Edge> setG012,setG123,setG234;
-    set<Biddy_Edge> setG0123,setG1234;
-    set<Biddy_Edge> setG01234;
+    vector<vector<set<Biddy_Edge>>> setG(booleanFunction->getNumVariables()+1); // constructor creates vector of empty vectors
+    vector<vector<set<Biddy_Edge>>> setGlabels(booleanFunction->getNumVariables()+1); // constructor creates vector of empty vectors
 
-    set<Biddy_Edge> setG0labels,setG1labels,setG2labels,setG3labels,setG4labels;
-    set<Biddy_Edge> setG01labels,setG12labels,setG23labels,setG34labels;
-    set<Biddy_Edge> setG012labels,setG123labels,setG234labels;
-    set<Biddy_Edge> setG0123labels,setG1234labels;
-    set<Biddy_Edge> setG01234labels;
+    // STEP 0: create empty structures setG and setGlabels
+    for (unsigned int i=0; i<=booleanFunction->getNumVariables(); i++) {
+        for (unsigned int j=0; j<=(booleanFunction->getNumVariables()-i); j++) {
+          setG[i].push_back(set<Biddy_Edge>());
+          setGlabels[i].push_back(set<Biddy_Edge>());
+        }
+    }
 
     // STEP 1a: group based on the number of 1s present in their binary equivalents
-    for (auto elem : setInit) {
-        switch (numones(elem)) {
-            case 0:
-              setG0.insert(elem);
-              break;
-            case 1:
-              setG1.insert(elem);
-              break;
-            case 2:
-              setG2.insert(elem);
-              break;
-            case 3:
-              setG3.insert(elem);
-              break;
-            case 4:
-              setG4.insert(elem);
-        }
-    }
+    for (auto elem : setInit) setG[0][numones(elem)].insert(elem);
 
     // STEP 1b: concatenate groups
-
-    for (auto elem1 : setG0) {
-        for (auto elem2 : setG1) {
-            if (isAdjacent(elem1,elem2)) {
-                setG0labels.insert(elem1);
-                setG1labels.insert(elem2);
-                setG01.insert(Biddy_Or(elem1,elem2));
+    for (unsigned int i=0; i<=booleanFunction->getNumVariables()-1; i++) {
+        for (unsigned int j=0; j<=booleanFunction->getNumVariables()-i-1; j++) {
+            for (auto elem1 : setG[i][j]) {
+                for (auto elem2 : setG[i][j+1]) {
+                    if (isAdjacent(elem1,elem2)) {
+                        setGlabels[i][j].insert(elem1);
+                        setGlabels[i][j+1].insert(elem2);
+                        setG[i+1][j].insert(Biddy_Or(elem1,elem2));
+                    }
+                }
             }
         }
     }
 
-    for (auto elem1 : setG1) {
-        for (auto elem2 : setG2) {
-            if (isAdjacent(elem1,elem2)) {
-                setG1labels.insert(elem1);
-                setG2labels.insert(elem2);
-                setG12.insert(Biddy_Or(elem1,elem2));
-            }
+    // collect all implicants that seems to be candidates for prime implicants...
+    // ... (it is not in setGlabels - it does not have adjacent implicant) and (it is not redundant - it does not include only don't care minterms)
+
+    // add all redundant implicants to setGlabels, not all of them were collected in previous algorithm
+    for (unsigned int i=0; i<=booleanFunction->getNumVariables(); i++) {
+        for (unsigned int j=0; j<=(booleanFunction->getNumVariables()-i); j++) {
+            for (auto m : setG[i][j]) if (isRedundant(m)) setGlabels[i][j].insert(m);
         }
     }
-
-    for (auto elem1 : setG2) {
-        for (auto elem2 : setG3) {
-            if (isAdjacent(elem1,elem2)) {
-                setG2labels.insert(elem1);
-                setG3labels.insert(elem2);
-                setG23.insert(Biddy_Or(elem1,elem2));
-            }
-        }
-    }
-
-    for (auto elem1 : setG3) {
-        for (auto elem2 : setG4) {
-            if (isAdjacent(elem1,elem2)) {
-                setG3labels.insert(elem1);
-                setG4labels.insert(elem2);
-                setG34.insert(Biddy_Or(elem1,elem2));
-            }
-        }
-    }
-
-    for (auto elem1 : setG01) {
-        for (auto elem2 : setG12) {
-            if (isAdjacent(elem1,elem2)) {
-                setG01labels.insert(elem1);
-                setG12labels.insert(elem2);
-                setG012.insert(Biddy_Or(elem1,elem2));
-            }
-        }
-    }
-
-    for (auto elem1 : setG12) {
-        for (auto elem2 : setG23) {
-            if (isAdjacent(elem1,elem2)) {
-                setG12labels.insert(elem1);
-                setG23labels.insert(elem2);
-                setG123.insert(Biddy_Or(elem1,elem2));
-            }
-        }
-    }
-
-    for (auto elem1 : setG23) {
-        for (auto elem2 : setG34) {
-            if (isAdjacent(elem1,elem2)) {
-                setG23labels.insert(elem1);
-                setG34labels.insert(elem2);
-                setG234.insert(Biddy_Or(elem1,elem2));
-            }
-        }
-    }
-
-    for (auto elem1 : setG012) {
-        for (auto elem2 : setG123) {
-            if (isAdjacent(elem1,elem2)) {
-                setG012labels.insert(elem1);
-                setG123labels.insert(elem2);
-                setG0123.insert(Biddy_Or(elem1,elem2));
-            }
-        }
-    }
-
-    for (auto elem1 : setG123) {
-        for (auto elem2 : setG234) {
-            if (isAdjacent(elem1,elem2)) {
-                setG123labels.insert(elem1);
-                setG234labels.insert(elem2);
-                setG1234.insert(Biddy_Or(elem1,elem2));
-            }
-        }
-    }
-
-    for (auto elem1 : setG0123) {
-        for (auto elem2 : setG1234) {
-            if (isAdjacent(elem1,elem2)) {
-                setG0123labels.insert(elem1);
-                setG1234labels.insert(elem2);
-                setG01234.insert(Biddy_Or(elem1,elem2));
-            }
-        }
-    }
-
-    // add labels to all implicants that seems to be candidates for prime implicants...
-    // ... but they are not prime implicants because they include only don't care minterms
-    for (auto m : setG0) if ((setG0labels.empty() || (setG0labels.find(m) == setG0labels.end())) && isRedundant(m)) setG0labels.insert(m);
-    for (auto m : setG1) if ((setG1labels.empty() || (setG1labels.find(m) == setG1labels.end())) && isRedundant(m)) setG1labels.insert(m);
-    for (auto m : setG2) if ((setG2labels.empty() || (setG2labels.find(m) == setG2labels.end())) && isRedundant(m)) setG2labels.insert(m);
-    for (auto m : setG3) if ((setG3labels.empty() || (setG3labels.find(m) == setG3labels.end())) && isRedundant(m)) setG3labels.insert(m);
-    for (auto m : setG4) if ((setG4labels.empty() || (setG4labels.find(m) == setG4labels.end())) && isRedundant(m)) setG4labels.insert(m);
-    for (auto m : setG01) if ((setG01labels.empty() || (setG01labels.find(m) == setG01labels.end())) && isRedundant(m)) setG01labels.insert(m);
-    for (auto m : setG12) if ((setG12labels.empty() || (setG12labels.find(m) == setG12labels.end())) && isRedundant(m)) setG12labels.insert(m);
-    for (auto m : setG23) if ((setG23labels.empty() || (setG23labels.find(m) == setG23labels.end())) && isRedundant(m)) setG23labels.insert(m);
-    for (auto m : setG34) if ((setG34labels.empty() || (setG34labels.find(m) == setG34labels.end())) && isRedundant(m)) setG34labels.insert(m);
-    for (auto m : setG012) if ((setG012labels.empty() || (setG012labels.find(m) == setG012labels.end())) && isRedundant(m)) setG012labels.insert(m);
-    for (auto m : setG123) if ((setG123labels.empty() || (setG123labels.find(m) == setG123labels.end())) && isRedundant(m)) setG123labels.insert(m);
-    for (auto m : setG234) if ((setG234labels.empty() || (setG234labels.find(m) == setG234labels.end())) && isRedundant(m)) setG234labels.insert(m);
-    for (auto m : setG0123) if ((setG0123labels.empty() || (setG0123labels.find(m) == setG0123labels.end())) && isRedundant(m)) setG0123labels.insert(m);
-    for (auto m : setG1234) if ((setG1234labels.empty() || (setG1234labels.find(m) == setG1234labels.end())) && isRedundant(m)) setG1234labels.insert(m);
-    for (auto m : setG01234) if ((setG01234labels.empty() || (setG01234labels.find(m) == setG01234labels.end())) && isRedundant(m)) setG01234labels.insert(m);
 
     // collect all prime implicants
-    for (auto m : setG0) if (setG0labels.empty() || (setG0labels.find(m) == setG0labels.end())) setFinal.insert(m);
-    for (auto m : setG1) if (setG1labels.empty() || setG1labels.find(m) == setG1labels.end()) setFinal.insert(m);
-    for (auto m : setG2) if (setG2labels.empty() || setG2labels.find(m) == setG2labels.end()) setFinal.insert(m);
-    for (auto m : setG3) if (setG3labels.empty() || setG3labels.find(m) == setG3labels.end()) setFinal.insert(m);
-    for (auto m : setG4) if (setG4labels.empty() || setG4labels.find(m) == setG4labels.end()) setFinal.insert(m);
-    for (auto m : setG01) if (setG01labels.empty() || setG01labels.find(m) == setG01labels.end()) setFinal.insert(m);
-    for (auto m : setG12) if (setG12labels.empty() || setG12labels.find(m) == setG12labels.end()) setFinal.insert(m);
-    for (auto m : setG23) if (setG23labels.empty() || setG23labels.find(m) == setG23labels.end()) setFinal.insert(m);
-    for (auto m : setG34) if (setG34labels.empty() || setG34labels.find(m) == setG34labels.end()) setFinal.insert(m);
-    for (auto m : setG012) if (setG012labels.empty() || setG012labels.find(m) == setG012labels.end()) setFinal.insert(m);
-    for (auto m : setG123) if (setG123labels.empty() || setG123labels.find(m) == setG123labels.end()) setFinal.insert(m);
-    for (auto m : setG234) if (setG234labels.empty() || setG234labels.find(m) == setG234labels.end()) setFinal.insert(m);
-    for (auto m : setG0123) if (setG0123labels.empty() || setG0123labels.find(m) == setG0123labels.end()) setFinal.insert(m);
-    for (auto m : setG1234) if (setG1234labels.empty() || setG1234labels.find(m) == setG1234labels.end()) setFinal.insert(m);
-    for (auto m : setG01234) if (setG01234labels.empty() || setG01234labels.find(m) == setG01234labels.end()) setFinal.insert(m);
+    for (unsigned int i=0; i<=booleanFunction->getNumVariables(); i++) {
+        for (unsigned int j=0; j<=(booleanFunction->getNumVariables()-i); j++) {
+            for (auto m : setG[i][j]) if (setGlabels[i][j].empty() || (setGlabels[i][j].find(m) == setGlabels[i][j].end())) setFinal.insert(m);
+        }
+    }
 
     // STEP 1c: write results to log
 
     booleanFunction->addQmlogLine("Set of cubes:");
-    if (!setG0.empty()) addQmlogLabelledSet(setG0,setG0labels);
-    if (!setG1.empty()) addQmlogLabelledSet(setG1,setG1labels);
-    if (!setG2.empty()) addQmlogLabelledSet(setG2,setG2labels);
-    if (!setG3.empty()) addQmlogLabelledSet(setG3,setG3labels);
-    if (!setG4.empty()) addQmlogLabelledSet(setG4,setG4labels);
-
-    if (!setG01.empty() || !setG12.empty() || !setG23.empty() || !setG34.empty()) {
-        booleanFunction->addQmlogLine("Set of size 2 implicants:");
-        if (!setG01.empty()) addQmlogLabelledSet(setG01,setG01labels);
-        if (!setG12.empty()) addQmlogLabelledSet(setG12,setG12labels);
-        if (!setG23.empty()) addQmlogLabelledSet(setG23,setG23labels);
-        if (!setG34.empty()) addQmlogLabelledSet(setG34,setG34labels);
+    for (unsigned int i=0; i<=booleanFunction->getNumVariables(); i++) {
+        if (!setG[0][i].empty()) addQmlogLabelledSet(setG[0][i],setGlabels[0][i]);
     }
 
-    if (!setG012.empty() || !setG123.empty() || !setG234.empty()) {
-        booleanFunction->addQmlogLine("Set of size 4 implicants:");
-        if (!setG012.empty()) addQmlogLabelledSet(setG012,setG012labels);
-        if (!setG123.empty()) addQmlogLabelledSet(setG123,setG123labels);
-        if (!setG234.empty()) addQmlogLabelledSet(setG234,setG234labels);
-    }
-
-    if (!setG0123.empty() || !setG1234.empty()) {
-        booleanFunction->addQmlogLine("Set of size 8 implicants:");
-        if (!setG0123.empty()) addQmlogLabelledSet(setG0123,setG0123labels);
-        if (!setG1234.empty()) addQmlogLabelledSet(setG1234,setG1234labels);
-    }
-
-    if (!setG01234.empty()) {
-        booleanFunction->addQmlogLine("Set of size 16 implicants:");
-        if (!setG01234.empty()) addQmlogLabelledSet(setG01234,setG01234labels);
+    unsigned int thesize = 1;
+    for (unsigned int i=1; i<=booleanFunction->getNumVariables(); i++) {
+        thesize = thesize * 2;
+        bool OK = false;
+        for (unsigned int j=0; j<=booleanFunction->getNumVariables()-i; j++) OK = OK || (!setG[i][j].empty());
+        if (OK) {
+            booleanFunction->addQmlogLine("Set of size " + to_string(thesize) + " implicants:");
+            for (unsigned int j=0; j<=booleanFunction->getNumVariables()-i; j++) {
+                if (!setG[i][j].empty()) addQmlogLabelledSet(setG[i][j],setGlabels[i][j]);
+            }
+        }
     }
 
     //if (setFinal.empty()) cout << "INTERNAL ERROR!" << endl;
@@ -458,7 +314,7 @@ void QuineMcCluskey::minimize()
 
     // CREATE LABELS FOR ALL IMPLICANTS
     // in the Biddy package, the added BDD variables are never removed
-    // thus create also isupport that will be needed during the minterm extract
+    // thus we create also function isupport that will be needed during the minterm extract
     unsigned int num = 0;
     map<Biddy_Edge,Biddy_Variable> implicants;
     Biddy_ClearVariablesData();
