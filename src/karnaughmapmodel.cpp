@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Robert Meolic, SI-2000 Maribor, Slovenia.
+// Copyright (C) 2024,2025 Robert Meolic, SI-2000 Maribor, Slovenia.
 
 // biddy-bff is free software; you can redistribute it and/or modify it under the terms
 // of the GNU General Public License as published by the Free Software Foundation;
@@ -73,22 +73,22 @@ void KarnaughMapModel::refreshCPP()
     if (booleanFunction->getNumVariables() == 2)
     {
         for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
-            booleanFunction->setMinterm(i,elements.at(static_cast<int>(KARNAUGH2x2.at(i))).toStdString());
+            booleanFunction->setMinterm(KARNAUGH2x2.at(i),elements.at(i).toStdString());
         }
     } else if (booleanFunction->getNumVariables() == 3)
     {
         for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
-            booleanFunction->setMinterm(i,elements.at(static_cast<int>(KARNAUGH3x3.at(i))).toStdString());
+            booleanFunction->setMinterm(KARNAUGH3x3.at(i),elements.at(i).toStdString());
         }
     } else if (booleanFunction->getNumVariables() == 4)
     {
         for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
-            booleanFunction->setMinterm(i,elements.at(static_cast<int>(KARNAUGH4x4.at(i))).toStdString());
+            booleanFunction->setMinterm(KARNAUGH4x4.at(i),elements.at(i).toStdString());
         }
     } else if (booleanFunction->getNumVariables() == 5)
     {
         for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
-            booleanFunction->setMinterm(i,elements.at(static_cast<int>(KARNAUGH5x5.at(i))).toStdString());
+            booleanFunction->setMinterm(KARNAUGH5x5.at(i),elements.at(i).toStdString());
         }
     }
     booleanFunction->update();
@@ -105,22 +105,22 @@ void KarnaughMapModel::onModelChanged()
     if (booleanFunction->getNumVariables() == 2)
     {
         for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
-            elements.replace(static_cast<int>(i),QString::fromStdString(booleanFunction->getMinterm(KARNAUGH2x2.at(i))));
+            elements.replace(i,QString::fromStdString(booleanFunction->getMinterm(KARNAUGH2x2.at(i))));
         }
     } else if (booleanFunction->getNumVariables() == 3)
     {
         for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
-            elements.replace(static_cast<int>(i),QString::fromStdString(booleanFunction->getMinterm(KARNAUGH3x3.at(i))));
+            elements.replace(i,QString::fromStdString(booleanFunction->getMinterm(KARNAUGH3x3.at(i))));
         }
     } else if (booleanFunction->getNumVariables() == 4)
     {
         for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
-            elements.replace(static_cast<int>(i),QString::fromStdString(booleanFunction->getMinterm(KARNAUGH4x4.at(i))));
+            elements.replace(i,QString::fromStdString(booleanFunction->getMinterm(KARNAUGH4x4.at(i))));
         }
     } else if (booleanFunction->getNumVariables() == 5)
     {
         for (unsigned int i=0; i<booleanFunction->getNumMinterms(); i++)  {
-            elements.replace(static_cast<int>(i),QString::fromStdString(booleanFunction->getMinterm(KARNAUGH5x5.at(i))));
+            elements.replace(i,QString::fromStdString(booleanFunction->getMinterm(KARNAUGH5x5.at(i))));
         }
     }
     emit dataChanged(index(0),index(elements.count()-1),{Qt::DisplayRole});

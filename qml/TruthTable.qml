@@ -155,11 +155,11 @@ Page {
                     height: truthTablePage.truthtablelines * appwindow.tableRowSize + 2 * appwindow.diagramBorderSize + 1 * appwindow.diagramLegendHeight
                     property alias tableGrid: tableGrid
 
-                    /**/
+                    /*
                     Component.onCompleted: {
                         console.log("TruthTable: Component.onCompleted "+" ("+appwindow.activeVariables+" variables), model.rowCount()="+tableGrid.model.rowCount())
                     }
-                    /**/
+                    */
 
                     // truthTableBorder is now shown but used for positioning of other elements
                     Rectangle {

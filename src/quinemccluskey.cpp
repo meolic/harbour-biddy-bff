@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Robert Meolic, SI-2000 Maribor, Slovenia.
+// Copyright (C) 2024,2025 Robert Meolic, SI-2000 Maribor, Slovenia.
 
 // biddy-bff is free software; you can redistribute it and/or modify it under the terms
 // of the GNU General Public License as published by the Free Software Foundation;
@@ -179,6 +179,7 @@ bool QuineMcCluskey::isRedundant(Biddy_Edge f)
 void QuineMcCluskey::minimize()
 {
     cout << "QuineMcCluskey::minimize() started" << endl;
+    cout << booleanFunction->getBits() << endl;
     cout << booleanFunction2string(booleanFunction->getBdd()) << endl;
 
     booleanFunction->setQmlog("");
@@ -222,7 +223,7 @@ void QuineMcCluskey::minimize()
     vector<vector<set<Biddy_Edge>>> setG(booleanFunction->getNumVariables()+1); // constructor creates vector of empty vectors
     vector<vector<set<Biddy_Edge>>> setGlabels(booleanFunction->getNumVariables()+1); // constructor creates vector of empty vectors
 
-    // STEP 0: create empty structures setG and setGlabels
+    // STEP 1a: create empty structures setG and setGlabels
     for (unsigned int i=0; i<=booleanFunction->getNumVariables(); i++) {
         for (unsigned int j=0; j<=(booleanFunction->getNumVariables()-i); j++) {
           setG[i].push_back(set<Biddy_Edge>());
@@ -230,10 +231,10 @@ void QuineMcCluskey::minimize()
         }
     }
 
-    // STEP 1a: group based on the number of 1s present in their binary equivalents
+    // STEP 1b: group based on the number of 1s present in their binary equivalents
     for (auto elem : setInit) setG[0][numones(elem)].insert(elem);
 
-    // STEP 1b: concatenate groups
+    // STEP 1c: concatenate groups
     for (unsigned int i=0; i<=booleanFunction->getNumVariables()-1; i++) {
         for (unsigned int j=0; j<=booleanFunction->getNumVariables()-i-1; j++) {
             for (auto elem1 : setG[i][j]) {
@@ -265,7 +266,7 @@ void QuineMcCluskey::minimize()
         }
     }
 
-    // STEP 1c: write results to log
+    // STEP 1d: write results to log
 
     booleanFunction->addQmlogLine("Set of cubes:");
     for (unsigned int i=0; i<=booleanFunction->getNumVariables(); i++) {
@@ -292,27 +293,29 @@ void QuineMcCluskey::minimize()
     booleanFunction->addQmlogLine("Final set:");
     addQmlogSet(setFinal);
 
-    // create complete implicants set, this is directly used only to show the covering table, not in the algorithm
-    booleanFunction->clearImplicants();    
+    // STEP 2: create complete implicants set
+    // this is directly used only to show the covering table, not in the algorithm
 
-    // PLAIN ORDER
+    booleanFunction->clearImplicants();
+
+    // VARIANT A: PLAIN ORDER
     /*
     for (auto m : setFinal) {
         booleanFunction->addImplicants(m);
     }
     */
 
-    // ORDERED BY NUMBER OF MINTERMS
+    // VARIANT B: ORDERED BY NUMBER OF MINTERMS
     for (unsigned int n=1; n<=booleanFunction->getNumMinterms(); n=n*2) {
         for (auto m: setFinal) if (Biddy_CountMinterms(m,booleanFunction->getNumVariables()) == n) {
             booleanFunction->addImplicants(m);
         }
     }
 
-    // WE PROCEED IN A SIMILAR WAY AS DESCRIBED BY PETRICK'S METHOD
+    // STEP 3: FIND ALL SOLUTIONS - WE PROCEED IN A SIMILAR WAY AS DESCRIBED BY PETRICK'S METHOD
     // https://en.wikipedia.org/wiki/Petrick's_method
 
-    // CREATE LABELS FOR ALL IMPLICANTS
+    // STEP 3a: CREATE LABELS FOR ALL IMPLICANTS
     // in the Biddy package, the added BDD variables are never removed
     // thus we create also function isupport that will be needed during the minterm extract
     unsigned int num = 0;
@@ -331,13 +334,13 @@ void QuineMcCluskey::minimize()
         //     << "(" << numones(m) << "ones )" << endl;
     }
 
-    // ADD LABELS TO ALL IMPLICANTS
+    // STEP 3b: ADD LABELS TO ALL IMPLICANTS
     Biddy_Edge implicantsMatrix = Biddy_GetConstantZero();
     for (auto m : setFinal) {
         implicantsMatrix = Biddy_Or(implicantsMatrix,Biddy_And(m,Biddy_GetVariableEdge(implicants.find(m)->second)));
     }
 
-    // CALCULATE THE BOOLEAN FUNCTION REPRESENTING SET OF SOLUTIONS - IT IS A PRODUCT OF COMPOUND LABELS
+    // STEP 3c: CALCULATE THE BOOLEAN FUNCTION REPRESENTING SET OF SOLUTIONS - IT IS A PRODUCT OF COMPOUND LABELS
     Biddy_Edge implicantsMatrixWork = implicantsMatrix;
     Biddy_Edge implicantsMatrixTransformed = Biddy_GetConstantOne();
     while (implicantsMatrixWork != Biddy_GetConstantZero()) {
@@ -359,10 +362,11 @@ void QuineMcCluskey::minimize()
     //cout << "implicantsMatrixTransformed:" << booleanFunction2string(implicantsMatrixTransformed) << endl;
 
     if (implicantsMatrixTransformed == Biddy_GetConstantZero()) {
-        //cout << "QuineMcCluskey: ERROR IN THE ALGORITHM, implicantsMatrixTransformed == 0" << endl;
         booleanFunction->addSopImplicant("0");
         return;
     }
+
+    // STEP 4: CREATE RESTRICTED SOLUTIONS
 
     Biddy_Edge allSolutions = implicantsMatrixTransformed;
     Biddy_Edge restrictedSolutions;
@@ -370,14 +374,14 @@ void QuineMcCluskey::minimize()
 
     //cout << "allSolutions before restriction:" << booleanFunction2string(allSolutions) << endl;
 
-    // MINIMIZE TOTAL NUMBER OF RESULTING VARIABLES
+    // STEP 4a: MINIMIZE TOTAL NUMBER OF RESULTING VARIABLES
     n = 1;
     while ((restrictedSolutions = permitsymData(allSolutions,Biddy_GetLowestVariable(),n)) == Biddy_GetConstantZero()) n++;
     allSolutions = restrictedSolutions;
 
     //cout << "allSolutions after restriction to minimal resulting variables:" << booleanFunction2string(allSolutions) << endl;
 
-    // MINIMIZE NUMBER OF PRODUCTS - NOT NEEDED
+    // STEP 4b: MINIMIZE NUMBER OF PRODUCTS - NOT NEEDED
     /*
     n = 1;
     while ((restrictedSolutions = Biddy_Permitsym(allSolutions,n)) == Biddy_GetConstantZero()) n++;
@@ -389,13 +393,11 @@ void QuineMcCluskey::minimize()
 
     booleanFunction->clearSopSolutions();
 
-    // manipulate all solutions
+    // STEP 4c: MANIPULATE ALL SOLUTIONS
     while (allSolutions != Biddy_GetConstantZero()) {
 
         set<Biddy_Edge> essentialImplicants = set<Biddy_Edge>();
-
         Biddy_Edge oneSolution = Biddy_ExtractMintermWithSupport(isupport,allSolutions);
-        allSolutions = Biddy_Gt(allSolutions,oneSolution); // gt(f,g) = and(f,not(g))
 
         //cout << "one solution:" << endl;
         //cout << booleanFunction2string(oneSolution) << endl;
@@ -417,8 +419,13 @@ void QuineMcCluskey::minimize()
         //addQmlogSet(essentialImplicants);
 
         booleanFunction->addSopSolutions(essentialImplicants);
+        allSolutions = Biddy_Gt(allSolutions,oneSolution); // gt(f,g) = and(f,not(g))
 
     }
+
+
+    // STEP 5: THE FIRST SOLUTION BECOMES THE SELECTED SOLUTION
+    // there may exist only one or multiple solutions, but solution 0 should always exists
 
     booleanFunction->setSelectedSopSolution(0);
 

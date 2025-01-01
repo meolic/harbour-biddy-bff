@@ -50,7 +50,7 @@ ApplicationWindow
     // USB: Type-C
     // Other: 3.5mm audio jack, Dual SIM (nano) + microSD
 
-    property string version: "v2024-12-27"
+    property string version: "v2025-01-01"
 
     property int myScreenHeight: _screenHeight
     property int myScreenWidth: _screenWidth

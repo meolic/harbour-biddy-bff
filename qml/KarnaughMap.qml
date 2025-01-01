@@ -253,14 +253,15 @@ Page {
                         property int cww: ((cx < 0) || (cx+cw > 4)) ? 1 : cw
                         property int chh: ((cy < 0) || (cy+ch > 4)) ? 1 : ch
                         color: "transparent"
-                        width: cww*appwindow.diagramCellSize+2*appwindow.diagramBorderSize - 4 // fixed for 4 variables
-                        height: chh*appwindow.diagramCellSize+2*appwindow.diagramBorderSize - 4 // fixed for 4 variables
+                        width: cww*appwindow.diagramCellSize+2*appwindow.diagramBorderSize - 4
+                        height: chh*appwindow.diagramCellSize+2*appwindow.diagramBorderSize - 4
                         x: karnaughMapPage.diagramBorder.x + cxx*appwindow.diagramCellSize + 2
                         y: karnaughMapPage.diagramBorder.y + cyy*appwindow.diagramCellSize + 2
                         Rectangle {
                             radius: circleRadius
                             color: "transparent"
-                            border.color: index === -1 ? "transparent" : colorList[cc%colorList.length]
+                            //border.color: index === -1 ? "transparent" : colorList[cc%colorList.length]
+                            border.color: colorList[cc%colorList.length]
                             border.width: appwindow.diagramCircleBorder
                             anchors
                             {
@@ -894,17 +895,21 @@ Page {
                         width: 2*appwindow.diagramCellSize
                         height: 2*appwindow.diagramCellSize
                         anchors.centerIn: parent
-                        model: (appwindow.activeVariables === 2) ? karnaughMapModel2 : null
-                        //model: {
-                        //    console.log("KarnaughMap: GridView2 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel2.rowCount())
-                        //    return ((appwindow.activeVariables === 2) ? karnaughMapModel2 : null)
-                        //}
+                        //model: (appwindow.activeVariables === 2) ? karnaughMapModel2 : null
+                        /**/
+                        model: {
+                            console.log("KarnaughMap: GridView2 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel2.rowCount())
+                            return ((appwindow.activeVariables === 2) ? karnaughMapModel2 : null)
+                        }
+                        /**/
                         delegate: diagramCell
                         z: 2
 
+                        /*
                         Component.onCompleted: {
                             console.log("KarnaughMap: GridView2 onCompleted visible: "+visible+" ("+appwindow.activeVariables+" variables)")
                         }
+                        */
 
                         MouseArea {
                             anchors.fill: parent
@@ -1061,17 +1066,21 @@ Page {
                         width: 4*appwindow.diagramCellSize
                         height: 2*appwindow.diagramCellSize
                         anchors.centerIn: parent
-                        model: (appwindow.activeVariables === 3) ? karnaughMapModel3 : null
-                        //model: {
-                        //    console.log("KarnaughMap: GridView3 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel3.rowCount())
-                        //    return ((appwindow.activeVariables === 3) ? karnaughMapModel3 : null)
-                        //}
+                        //model: (appwindow.activeVariables === 3) ? karnaughMapModel3 : null
+                        /**/
+                        model: {
+                            console.log("KarnaughMap: GridView3 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel3.rowCount())
+                            return ((appwindow.activeVariables === 3) ? karnaughMapModel3 : null)
+                        }
+                        /**/
                         delegate: diagramCell
                         z: 2
 
+                        /*
                         Component.onCompleted: {
                             console.log("KarnaughMap: GridView3 onCompleted visible: "+visible+" ("+appwindow.activeVariables+" variables)")
                         }
+                        */
 
                         MouseArea {
                             anchors.fill: parent
@@ -1081,7 +1090,7 @@ Page {
 
                             onClicked: {
                                 var value = parent.model.get(index) // we have C++ Model
-                                //console.log("karnaughGrid3.onClicked("+index+"/" + value + ")")
+                                console.log("karnaughGrid3.onClicked("+index+"/" + value + ")")
                                 if (value === " ") {
                                     parent.model.setZero(index)
                                 }
@@ -1230,16 +1239,20 @@ Page {
                         height: 4*appwindow.diagramCellSize
                         anchors.centerIn: parent
                         //model: (appwindow.activeVariables === 4) ? karnaughMapModel4 : null
+                        /**/
                         model: {
                             console.log("KarnaughMap: GridView4 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel4.rowCount())
                             return ((appwindow.activeVariables === 4) ? karnaughMapModel4 : null)
                         }
+                        /**/
                         delegate: diagramCell
                         z: 2
 
+                        /*
                         Component.onCompleted: {
                             console.log("KarnaughMap: GridView4 onCompleted visible: "+visible+" ("+appwindow.activeVariables+" variables)")
                         }
+                        */
 
                         MouseArea {
                             anchors.fill: parent
@@ -1283,13 +1296,13 @@ Page {
 
                 Item {
                     id: diagram5
-                    //visible: (appwindow.activeVariables === 5)
-                    /**/
+                    visible: (appwindow.activeVariables === 5)
+                    /*
                     visible: {
                         console.log("KarnaughMap: diagram5 reevaluating visible: "+(appwindow.activeVariables === 5))
                         return (appwindow.activeVariables === 5)
                     }
-                    /**/
+                    */
                     width: parent.width
                     height: 8*appwindow.diagramCellSize + 4*appwindow.diagramBorderSize + 2*appwindow.diagramLegendHeight + appwindow.diagramGap // fixed for 5 variables
                     property alias karnaughGrid: karnaughGrid5
@@ -1490,9 +1503,11 @@ Page {
                         delegate: diagramCell
                         z: 2
 
+                        /*
                         Component.onCompleted: {
                             console.log("KarnaughMap: GridView5 onCompleted visible: "+visible+" ("+appwindow.activeVariables+" variables)")
                         }
+                        */
 
                         MouseArea {
                             anchors.fill: parent

@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Robert Meolic, SI-2000 Maribor, Slovenia.
+// Copyright (C) 2024,2025 Robert Meolic, SI-2000 Maribor, Slovenia.
 
 // biddy-bff is free software; you can redistribute it and/or modify it under the terms
 // of the GNU General Public License as published by the Free Software Foundation;
@@ -156,7 +156,6 @@ Biddy_Edge permitsymData(Biddy_Edge f, Biddy_Variable lowest, unsigned int n)
 
 // ========= class BooleanFunction
 
-// Boolean function is created only once, thes reused everytime, even if num variables changes
 BooleanFunction::BooleanFunction()
 {
     numVariables = 0;
@@ -280,6 +279,7 @@ void BooleanFunction::update()
     dontcarebdd = Biddy_GetConstantZero();
     bits = "";
     for (unsigned int i=0; i<numMinterms; i++) {
+        cout << "BooleanFunction::update: " << i << "/" <<  minterms.at(i) << endl;
         if (minterms.at(i) == " ") {
             bits += ".";
         } else if (minterms.at(i) == "0") {
@@ -384,6 +384,7 @@ string BooleanFunction::getMinterm(unsigned int i)
 
 void BooleanFunction::setMinterm(unsigned int i, string s)
 {
+    cout << "BooleanFunction: setMinterm(" << i << ")=" << s << endl;
     minterms[i] = s;
 }
 
@@ -499,29 +500,69 @@ void BooleanFunction::clearCircles()
     circles.clear();
 }
 
-// CREATE CIRCLE FOR EVERY IMPLICANT IN THE ESSENTIAL SET - THIS SHOULD BE COMPATIBLE WITH BooleanFunction::createSop
-// booleanFunction->circles IS A VECTOR
+// CREATE CIRCLE FOR EVERY IMPLICANT IN THE ESSENTIAL SET
 void BooleanFunction::createCircles(set<Biddy_Edge> theset)
 {
     clearCircles();
 
     unsigned int idx = 0;
     if (numVariables == 2) {
+        // THIS LOOP MUST ADD CIRCLES IN THE SAME ORDER AS BooleanFunction::createSop - TO ENABLE CORRECT COLORING OF PRIME IMPLICANTS
         for (unsigned int n=0; n<=2; n++)
         {
-
+            for (Biddy_Edge implicant: theset) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
+                //cout << "CREATE CIRCLES: " << booleanFunction2string(implicant) << endl;
+                int i = 0;
+                //find top left index in the model - they are listed left - right first
+                bool OK = false;
+                while (!OK && (i<4)) {
+                    if (Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH2x2.at(i))) != Biddy_GetConstantZero()) OK = true;
+                    else i++;
+                }
+                if (OK) {
+                    unsigned int w = 1;
+                    unsigned int h = 1;
+                    if ((i%2 != 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH2x2.at(i+1))) != Biddy_GetConstantZero()) w = 2;
+                    if ((i < 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH2x2.at(i+2))) != Biddy_GetConstantZero()) h = 2;
+                    addCircle({(int)i%2,(int)i/2,w,h,idx++}); // last argument is color
+                    //cout << "CREATE CIRCLE: " << i << "," << w << "," << h << endl;
+                }
+            }
         }
     } else if (numVariables == 3) {
+        // THIS LOOP MUST ADD CIRCLES IN THE SAME ORDER AS BooleanFunction::createSop - TO ENABLE CORRECT COLORING OF SOP IMPLICANTS
         for (unsigned int n=0; n<=3; n++)
         {
-
+            for (Biddy_Edge implicant: theset) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
+                //cout << "CREATE CIRCLES: " << booleanFunction2string(implicant) << endl;
+                int i = 0;
+                //find top left index in the model - they are listed left - right first
+                bool OK = false;
+                while (!OK && (i<8)) {
+                    if (Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH3x3.at(i))) != Biddy_GetConstantZero()) OK = true;
+                    else i++;
+                }
+                cout << "CREATE CIRCLE: " << i << endl;
+                if (OK) {
+                    unsigned int w = 1;
+                    unsigned int h = 1;
+                    if ((i%4 != 3) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH3x3.at(i+1))) != Biddy_GetConstantZero()) w = 2;
+                    if ((i%4 == 0) && (w == 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH3x3.at(i+3))) != Biddy_GetConstantZero()) w = 4;
+                    if ((i%4 == 0) && (w == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH3x3.at(i+3))) != Biddy_GetConstantZero()) {i = i + 3; w = 2;}
+                    if ((i < 4) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH3x3.at(i+4))) != Biddy_GetConstantZero()) h = 2;
+                    addCircle({(int)i%4,(int)i/4,w,h,idx++}); // last argument is color
+                    //cout << "CREATE CIRCLE: " << i << "," << w << "," << h << endl;
+                }
+            }
         }
     } else if (numVariables == 4) {
+        // THIS LOOP MUST ADD CIRCLES IN THE SAME ORDER AS BooleanFunction::createSop - TO ENABLE CORRECT COLORING OF SOP IMPLICANTS
         for (unsigned int n=0; n<=4; n++)
         {
             for (Biddy_Edge implicant: theset) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
                 //cout << "CREATE CIRCLES: " << booleanFunction2string(implicant) << endl;
                 int i = 0;
+                //find top left index in the model - they are listed left - right first
                 bool OK = false;
                 while (!OK && (i<16)) {
                     if (Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i))) != Biddy_GetConstantZero()) OK = true;
@@ -537,6 +578,7 @@ void BooleanFunction::createCircles(set<Biddy_Edge> theset)
                     if ((i < 4) && (h == 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+12))) != Biddy_GetConstantZero()) h = 4;
                     if ((i < 4) && (h == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+12))) != Biddy_GetConstantZero()) {i = i + 12; h = 2;}
                     addCircle({(int)i%4,(int)i/4,w,h,idx++}); // last argument is color
+                    //cout << "CREATE CIRCLE: " << i << "," << w << "," << h << endl;
                 }
             }
         }
@@ -579,7 +621,9 @@ void BooleanFunction::createSop(set<Biddy_Edge> essentialImplicants)
 {
     clearSop();
 
-    // circles and implicants should be added to final SOP in an ordered way:
+    // THIS LOOP MUST ADD IMPLICANTS IN THE SAME ORDER AS BooleanFunction::createCircles - TO ENABLE CORRECT COLORING OF SOP IMPLICANTS
+
+    // circles and implicants are added to final SOP in an ordered way:
     // 1. regarding the number of dependent variables, those with less variables go first
     // 2. (TO DO) regarding the name of first variables, those with smaller name go first
     // 3. (TO DO) regarding the positivness of first variable, those with positive variable go first

@@ -43,15 +43,20 @@ string implicant2string(Biddy_Edge);
 string implicant2symbol(Biddy_Edge, Biddy_Edge);
 Biddy_Edge permitsymData(Biddy_Edge, Biddy_Variable, unsigned int);
 
-// minterms are listed top-down first (i.e. first values are first column)
-const array<unsigned int,4> KARNAUGH2x2 = {{0,1,2,3}};
-const array<unsigned int,8> KARNAUGH3x3 = {{0,4,1,5,3,7,2,6}};
+// KARNAUGH4x4: horizontal AB, vertical CD
+// for KARNAUGH2x2 and KARNAUGH4x4 this mapping is an involution (wow!), https://en.wikipedia.org/wiki/Involution_(mathematics)
+const array<unsigned int,4> KARNAUGH2x2 = {{0,2,1,3}};
+const array<unsigned int,8> KARNAUGH3x3 = {{0,2,6,4,1,3,7,5}}; // for horizontal diagram
+//const array<unsigned int,8> KARNAUGH3x3 = {{0,4,1,5,3,7,2,6}}; // for vertical diagram
 const array<unsigned int,16> KARNAUGH4x4 = {{0,4,12,8,1,5,13,9,3,7,15,11,2,6,14,10}};
-const array<unsigned int,32> KARNAUGH5x5 = {{0,4,12,8,1,5,13,9,3,7,15,11,2,6,14,10}}; // TO DO: adapt
-const array<unsigned int,4> VEITCH2x2 = {{3,2,1,0}};
-const array<unsigned int,8> VEITCH3x3 = {{6,4,7,5,3,1,2,0}};
-const array<unsigned int,16> VEITCH4x4 = {{12,14,10,8,13,15,11,9,5,7,3,1,4,6,2,0}};
-const array<unsigned int,32> VEITCH5x5 = {{12,14,10,8,13,15,11,9,5,7,3,1,4,6,2,0}};  // TO DO: adapt
+const array<unsigned int,32> KARNAUGH5x5 = {{0,4,12,8,1,5,13,9,3,7,15,11,2,6,14,10}};  // TO DO: adapt
+
+// VEITCH4x4: horizontal AB, vertical CD
+const array<unsigned int,4> VEITCH2x2 = {{3,1,2,0}};
+const array<unsigned int,8> VEITCH3x3 = {{6,7,3,2,4,5,1,0}}; // for horizontal diagram
+//const array<unsigned int,8> VEITCH3x3 = {{6,2,7,3,5,1,4,0}}; // for vertical diagram
+const array<unsigned int,16> VEITCH4x4 = {{12,14,6,4,13,15,7,5,9,11,3,1,8,10,2,0}};
+const array<unsigned int,32> VEITCH5x5 = {{12,14,6,4,13,15,7,5,9,11,3,1,8,10,2,0}};  // TO DO: adapt
 
 struct ImplicantCircle
 {
