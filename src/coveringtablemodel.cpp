@@ -84,7 +84,7 @@ QVariant CoveringTableModel::data(const QModelIndex &index, int role) const
             if (row) {
                 return elementsOnset.value(row-1); // Qt automatically converts returned values to the QVariant type
             } else {
-                return QString("minterms "); // Qt automatically converts returned values to the QVariant type
+                return QString("minterms  "); // Qt automatically converts returned values to the QVariant type
             }
         }
         case ImplicantsRole: {

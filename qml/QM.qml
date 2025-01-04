@@ -198,6 +198,11 @@ Page {
             font.pixelSize: appwindow.titleTextSize
         }
 
+        Item {
+            width: 1 // dummy value != 0
+            height: 0.2 * appwindow.titleTextSize
+        }
+
         Component {
             id: diagramQM
 
@@ -272,7 +277,9 @@ Page {
         }
 
         Row {
+            id: qmrow
             anchors.horizontalCenter: parent.horizontalCenter
+            property real legendFontScale: 1.1 - 0.04 * coveringTableModel.implicantsSize
 
             Column {
 
@@ -283,24 +290,25 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     cellWidth: qmGrid.cellWidth
                     cellHeight: qmGrid.cellHeight
-                    width: coveringTableModel.implicantsSize * cellWidth
+                    width: coveringTableModel.implicantsSize * cellWidth + 2 // we need +2 to compensate rounding drawbacks
                     height: cellHeight
                     model: coveringTableModel
                     delegate:
                         Item {
-                          id: qmGridHorizontalLegendItem
-                          visible: index < coveringTableModel.implicantsSize
-                          width: qmGridHorizontalLegend.cellWidth
-                          height: qmGridHorizontalLegend.cellHeight
-                          Text {
-                              text: implicant ? implicant + "  " : ""
-                              rotation: 90
-                              color: appwindow.textColor2
-                              anchors.centerIn: parent
-                              font.family: "FreeMono"
-                              font.capitalization: Font.SmallCaps
-                              font.pixelSize: 0.8 * appwindow.titleTextSize
-                          }
+                            id: qmGridHorizontalLegendItem
+                            visible: index < coveringTableModel.implicantsSize
+                            width: qmGridHorizontalLegend.cellWidth
+                            height: qmGridHorizontalLegend.cellHeight
+                            Text {
+                                text: implicant ? implicant + "  " : ""
+                                rotation: 90
+                                color: appwindow.textColor2
+                                anchors.centerIn: parent
+                                font.family: "FreeMono"
+                                font.capitalization: Font.SmallCaps
+                                //font.pixelSize: 0.8 * appwindow.titleTextSize
+                                font.pixelSize: qmrow.legendFontScale * appwindow.titleTextSize
+                            }
                         }
                 }
 
@@ -311,8 +319,10 @@ Page {
                     layoutDirection: Qt.RightToLeft
                     verticalLayoutDirection: GridView.TopToBottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    cellWidth: (coveringTableModel.implicantsSize > 10) ? 0.6 * appwindow.diagramCellSize : 0.8 * appwindow.diagramCellSize
-                    cellHeight: 0.8 * appwindow.diagramCellSize
+                    //cellWidth: (coveringTableModel.implicantsSize > 10) ? 0.6 * appwindow.diagramCellSize : 0.8 * appwindow.diagramCellSize
+                    cellWidth:  qmrow.legendFontScale * appwindow.diagramCellSize
+                    //cellHeight: 0.8 * appwindow.diagramCellSize
+                    cellHeight: qmrow.legendFontScale * appwindow.diagramCellSize
                     width: coveringTableModel.implicantsSize * cellWidth
                     height: coveringTableModel.onsetSize * cellHeight
                     model: coveringTableModel
@@ -327,29 +337,44 @@ Page {
                 cellWidth: qmGrid.cellWidth
                 cellHeight: qmGrid.cellHeight
                 width: cellWidth
-                //height: (coveringTableModel.onsetSize + 1) * cellHeight
-                height: 16 * cellHeight
+                height: (coveringTableModel.onsetSize + 2) * cellHeight
                 model: coveringTableModel
+
+                // Force delegate font recalculation when implicantsSize changes - needed because (probably) a bug in QML
+                /**/
+                property int implicantsSize: coveringTableModel.implicantsSize
+                onImplicantsSizeChanged: {
+                    qmGridVerticalLegend.model = null
+                    qmGridVerticalLegend.model = coveringTableModel
+                }
+                /**/
+
                 delegate:
                     Item {
-                      id: qmGridVerticalLegendItem
-                      visible: index <= coveringTableModel.onsetSize
-                      width: qmGridVerticalLegend.cellWidth
-                      height: qmGridVerticalLegend.cellHeight
-                      Text {
-                          text: minterm ? minterm : ""
-                          rotation: 90
-                          color: appwindow.titleTextColor
-                          anchors.centerIn: parent
-                          font.family: "FreeMono"
-                          font.capitalization: Font.SmallCaps
-                          font.pixelSize: 0.66 * appwindow.titleTextSize
-                      }
+                        visible: index <= coveringTableModel.onsetSize
+                        width: qmGridVerticalLegend.cellWidth
+                        height: qmGridVerticalLegend.cellHeight
+                        Text {
+                            text: minterm ? minterm : ""
+                            rotation: 90
+                            color: appwindow.titleTextColor
+                            anchors.centerIn: parent
+                            font.family: "FreeMono"
+                            font.capitalization: Font.SmallCaps
+                            //font.pixelSize: 0.66 * appwindow.titleTextSize
+                            font.pixelSize: qmrow.legendFontScale * appwindow.titleTextSize
+                        }
                     }
             }
 
+            /*
+            Component.onCompleted: {
+                console.log("QM.qmGridVerticalLegend: " + ", onsetSize = " + coveringTableModel.onsetSize
+                                                        + ", implicantsSize = " + coveringTableModel.implicantsSize
+                                                        + ", legendFontScale = " + qmrow.legendFontScale)
+            }
+            */
         }
-
     }
     }
     }

@@ -279,7 +279,7 @@ void BooleanFunction::update()
     dontcarebdd = Biddy_GetConstantZero();
     bits = "";
     for (unsigned int i=0; i<numMinterms; i++) {
-        cout << "BooleanFunction::update: " << i << "/" <<  minterms.at(i) << endl;
+        //cout << "BooleanFunction::update: " << i << "/" <<  minterms.at(i) << endl;
         if (minterms.at(i) == " ") {
             bits += ".";
         } else if (minterms.at(i) == "0") {
@@ -324,7 +324,7 @@ unsigned int BooleanFunction::getNumMinterms()
 // raw variables names are not the same as actual variable names shown in GUI
 void BooleanFunction::setNumVariables(unsigned int num)
 {
-    cout << "BooleanFunction: setNumVariables " << num << endl;
+    //cout << "BooleanFunction: setNumVariables " << num << endl;
     numVariables = num;
 
     if (numVariables == 2) {
@@ -384,7 +384,7 @@ string BooleanFunction::getMinterm(unsigned int i)
 
 void BooleanFunction::setMinterm(unsigned int i, string s)
 {
-    cout << "BooleanFunction: setMinterm(" << i << ")=" << s << endl;
+    //cout << "BooleanFunction: setMinterm(" << i << ")=" << s << endl;
     minterms[i] = s;
 }
 
@@ -465,30 +465,29 @@ void BooleanFunction::setCircle(unsigned int i, ImplicantCircle kc)
 
 void BooleanFunction::addCircle(ImplicantCircle kc)
 {
-    //unsigned int cnum = circles.size();
-    //kc.cc = cnum;
     circles.push_back(kc);
-    if ((kc.cx + kc.cw > 4) && (kc.cy + kc.ch <= 4)) {
+    //for some circles we need additional ones, e.g. those accross the border
+    if ((kc.cx + kc.cw > 4) && (kc.cy%4 + kc.ch <= 4)) {
         // this circle extends from right edge to the left edge
         ImplicantCircle kc1;
         kc1.cc = kc.cc;
         kc1.cx = -1; kc1.cy = kc.cy; kc1.cw = 2; kc1.ch = kc.ch;
         circles.push_back(kc1);
     }
-    if ((kc.cx + kc.cw <= 4) && (kc.cy + kc.ch > 4)) {
+    if ((kc.cx + kc.cw <= 4) && (kc.cy%4 + kc.ch > 4)) {
         // this circle extends from right edge to the down edge
         ImplicantCircle kc1;
         kc1.cc = kc.cc;
-        kc1.cx = kc.cx; kc1.cy = -1; kc1.cw = kc.cw; kc1.ch = 2;
+        kc1.cx = kc.cx; kc1.cy = -1*(1+kc.cy/4); kc1.cw = kc.cw; kc1.ch = 2;
         circles.push_back(kc1);
     }
-    if ((kc.cx + kc.cw > 4) && (kc.cy + kc.ch > 4)) {
+    if ((kc.cx + kc.cw > 4) && (kc.cy%4 + kc.ch > 4)) {
         // this circle extends from both edges
         ImplicantCircle kc1;
         kc1.cc = kc.cc;
-        kc1.cx = -1; kc1.cy = -1; kc1.cw = 2; kc1.ch = 2;
+        kc1.cx = -1; kc1.cy = -1*(1+kc.cy/4); kc1.cw = 2; kc1.ch = 2;
         circles.push_back(kc1);
-        kc1.cx = kc.cx; kc1.cy = -1; kc1.cw = 2; kc1.ch = 2;
+        kc1.cx = kc.cx; kc1.cy = -1*(1+kc.cy/4); kc1.cw = 2; kc1.ch = 2;
         circles.push_back(kc1);
         kc1.cx = -1; kc1.cy = kc.cy; kc1.cw = 2; kc1.ch = 2;
         circles.push_back(kc1);
@@ -511,7 +510,7 @@ void BooleanFunction::createCircles(set<Biddy_Edge> theset)
         for (unsigned int n=0; n<=2; n++)
         {
             for (Biddy_Edge implicant: theset) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
-                //cout << "CREATE CIRCLES: " << booleanFunction2string(implicant) << endl;
+                //cout << "CREATE CIRCLES 2: " << booleanFunction2string(implicant) << endl;
                 int i = 0;
                 //find top left index in the model - they are listed left - right first
                 bool OK = false;
@@ -525,7 +524,7 @@ void BooleanFunction::createCircles(set<Biddy_Edge> theset)
                     if ((i%2 != 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH2x2.at(i+1))) != Biddy_GetConstantZero()) w = 2;
                     if ((i < 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH2x2.at(i+2))) != Biddy_GetConstantZero()) h = 2;
                     addCircle({(int)i%2,(int)i/2,w,h,idx++}); // last argument is color
-                    //cout << "CREATE CIRCLE: " << i << "," << w << "," << h << endl;
+                    //cout << "CREATE CIRCLE 2: " << i << "," << w << "," << h << endl;
                 }
             }
         }
@@ -534,7 +533,7 @@ void BooleanFunction::createCircles(set<Biddy_Edge> theset)
         for (unsigned int n=0; n<=3; n++)
         {
             for (Biddy_Edge implicant: theset) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
-                //cout << "CREATE CIRCLES: " << booleanFunction2string(implicant) << endl;
+                //cout << "CREATE CIRCLES 3: " << booleanFunction2string(implicant) << endl;
                 int i = 0;
                 //find top left index in the model - they are listed left - right first
                 bool OK = false;
@@ -542,7 +541,6 @@ void BooleanFunction::createCircles(set<Biddy_Edge> theset)
                     if (Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH3x3.at(i))) != Biddy_GetConstantZero()) OK = true;
                     else i++;
                 }
-                cout << "CREATE CIRCLE: " << i << endl;
                 if (OK) {
                     unsigned int w = 1;
                     unsigned int h = 1;
@@ -551,7 +549,7 @@ void BooleanFunction::createCircles(set<Biddy_Edge> theset)
                     if ((i%4 == 0) && (w == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH3x3.at(i+3))) != Biddy_GetConstantZero()) {i = i + 3; w = 2;}
                     if ((i < 4) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH3x3.at(i+4))) != Biddy_GetConstantZero()) h = 2;
                     addCircle({(int)i%4,(int)i/4,w,h,idx++}); // last argument is color
-                    //cout << "CREATE CIRCLE: " << i << "," << w << "," << h << endl;
+                    //cout << "CREATE CIRCLE 3: " << i << "," << w << "," << h << endl;
                 }
             }
         }
@@ -560,7 +558,7 @@ void BooleanFunction::createCircles(set<Biddy_Edge> theset)
         for (unsigned int n=0; n<=4; n++)
         {
             for (Biddy_Edge implicant: theset) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
-                //cout << "CREATE CIRCLES: " << booleanFunction2string(implicant) << endl;
+                //cout << "CREATE CIRCLES 4: " << booleanFunction2string(implicant) << endl;
                 int i = 0;
                 //find top left index in the model - they are listed left - right first
                 bool OK = false;
@@ -578,14 +576,40 @@ void BooleanFunction::createCircles(set<Biddy_Edge> theset)
                     if ((i < 4) && (h == 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+12))) != Biddy_GetConstantZero()) h = 4;
                     if ((i < 4) && (h == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH4x4.at(i+12))) != Biddy_GetConstantZero()) {i = i + 12; h = 2;}
                     addCircle({(int)i%4,(int)i/4,w,h,idx++}); // last argument is color
-                    //cout << "CREATE CIRCLE: " << i << "," << w << "," << h << endl;
+                    //cout << "CREATE CIRCLE 4: " << i << "," << w << "," << h << endl;
                 }
             }
         }
     } else if (numVariables == 5) {
+        // THIS LOOP MUST ADD CIRCLES IN THE SAME ORDER AS BooleanFunction::createSop - TO ENABLE CORRECT COLORING OF SOP IMPLICANTS
         for (unsigned int n=0; n<=5; n++)
         {
-
+            for (Biddy_Edge implicant: theset) if (Biddy_DependentVariableNumber(implicant,FALSE) == n) {
+                //cout << "CREATE CIRCLES 5: " << booleanFunction2string(implicant) << endl;
+                int i = 0;
+                //find top left index in the model - they are listed left - right first
+                bool OK = false;
+                while (!OK && (i<32)) {
+                    if (Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH5x5.at(i))) != Biddy_GetConstantZero()) OK = true;
+                    else i++;
+                }
+                if (OK) {
+                    unsigned int w = 1;
+                    unsigned int h = 1;
+                    if ((i%4 != 3) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH5x5.at(i+1))) != Biddy_GetConstantZero()) w = 2;
+                    if ((i%4 == 0) && (w == 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH5x5.at(i+3))) != Biddy_GetConstantZero()) w = 4;
+                    if ((i%4 == 0) && (w == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH5x5.at(i+3))) != Biddy_GetConstantZero()) {i = i + 3; w = 2;}
+                    if ((i%16 < 12) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH5x5.at(i+4))) != Biddy_GetConstantZero()) h = 2;
+                    if ((i%16 < 4) && (h == 2) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH5x5.at(i+12))) != Biddy_GetConstantZero()) h = 4;
+                    if ((i%16 < 4) && (h == 1) && Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH5x5.at(i+12))) != Biddy_GetConstantZero()) {i = i + 12; h = 2;}
+                    addCircle({(int)i%4,(int)i/4,w,h,idx++}); // last argument is color
+                    //cout << "CREATE CIRCLE 5: " << i << "," << w << "," << h << endl;
+                    if ((i < 16) && (Biddy_And(implicant,Biddy_CreateMinterm(support,KARNAUGH5x5.at(i+16))) != Biddy_GetConstantZero())) {
+                        addCircle({(int)(i+16)%4,(int)(i+16)/4,w,h,idx-1}); // last argument is color, it should be the same as previous circle
+                        //cout << "CREATE CIRCLE 5: " << i+16 << "," << w << "," << h << endl;
+                    }
+                }
+            }
         }
     }
 }

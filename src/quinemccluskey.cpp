@@ -53,8 +53,8 @@ void QuineMcCluskey::addQmlogSet(set<Biddy_Edge> theset)
     int v = booleanFunction->getNumVariables();
     for (unsigned int n=1; n<=booleanFunction->getNumMinterms(); n=n*2) {
         for (auto m: theset) if (Biddy_CountMinterms(m,v) == n) {
-            cout << "QuineMcCluskey::addQmlogSet ELEMENT: " << implicant2string(m) << endl;
-            cout << implicant2symbol(booleanFunction->getSupport(),m) << endl;
+            //cout << "QuineMcCluskey::addQmlogSet ELEMENT: " << implicant2string(m) << endl;
+            //cout << implicant2symbol(booleanFunction->getSupport(),m) << endl;
             booleanFunction->addQmlogLine(implicant2symbol(booleanFunction->getSupport(),m));
         }
     }
@@ -178,9 +178,9 @@ bool QuineMcCluskey::isRedundant(Biddy_Edge f)
 // Quine-McCluskey algorithm
 void QuineMcCluskey::minimize()
 {
-    cout << "QuineMcCluskey::minimize() started" << endl;
-    cout << booleanFunction->getBits() << endl;
-    cout << booleanFunction2string(booleanFunction->getBdd()) << endl;
+    //cout << "QuineMcCluskey::minimize() started" << endl;
+    //cout << booleanFunction->getBits() << endl;
+    //cout << booleanFunction2string(booleanFunction->getBdd()) << endl;
 
     booleanFunction->setQmlog("");
 
@@ -210,13 +210,13 @@ void QuineMcCluskey::minimize()
         }
     }
 
-    cout << "QuineMcCluskey::minimize() create init set" << endl;
+    //cout << "QuineMcCluskey::minimize() create init set" << endl;
 
     // HERE COMES THE QUINE-MCCLUSKEY ALGORITHM
     set<Biddy_Edge> setInit = createInitSet();
     set<Biddy_Edge> setFinal;
 
-    debugSet(setInit);
+    //debugSet(setInit);
 
     // STEP 1: finding prime implicants
 

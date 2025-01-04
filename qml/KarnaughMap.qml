@@ -248,19 +248,18 @@ Page {
 
                 Item {
                     Rectangle {
-                        property int cxx: (cx < 0) ? 0 : cx
-                        property int cyy: (cy < 0) ? 0 : cy
-                        property int cww: ((cx < 0) || (cx+cw > 4)) ? 1 : cw
-                        property int chh: ((cy < 0) || (cy+ch > 4)) ? 1 : ch
+                        property int cxx: (cx === -1) ? 0 : cx
+                        property int cyy: (cy === -2) ? 4 : (cy === -1) ? 0 : cy
+                        property int cww: ((cx === -1) || (cx+cw > 4)) ? 1 : cw
+                        property int chh: ((cy < 0) || ((cy%4)+ch > 4)) ? 1 : ch
                         color: "transparent"
                         width: cww*appwindow.diagramCellSize+2*appwindow.diagramBorderSize - 4
                         height: chh*appwindow.diagramCellSize+2*appwindow.diagramBorderSize - 4
                         x: karnaughMapPage.diagramBorder.x + cxx*appwindow.diagramCellSize + 2
-                        y: karnaughMapPage.diagramBorder.y + cyy*appwindow.diagramCellSize + 2
+                        y: karnaughMapPage.diagramBorder.y + cyy*appwindow.diagramCellSize + 2 + ((cy === -2 || cy > 3) ? appwindow.diagramGap : 0)
                         Rectangle {
                             radius: circleRadius
                             color: "transparent"
-                            //border.color: index === -1 ? "transparent" : colorList[cc%colorList.length]
                             border.color: colorList[cc%colorList.length]
                             border.width: appwindow.diagramCircleBorder
                             anchors
@@ -270,11 +269,16 @@ Page {
                                 top: parent.top
                                 bottom: parent.bottom
                                 topMargin    : (cy < 0) ? -40 : 0
-                                bottomMargin : (cy+ch > 4) ? -40 : 0
+                                bottomMargin : ((cy%4)+ch > 4) ? -40 : 0
                                 leftMargin   : (cx < 0) ? -40 : 0
                                 rightMargin  : (cx+cw > 4) ? -40 : 0
                             }
                         }
+                        /*
+                        Component.onCompleted: {
+                            console.log("KarnaughMap: diagramCircle, " + ", cx = " + cx + ", cy = " + cy + ", cxx = " + cxx + ", cyy = " + cyy + ", cww " + cww + ", chh " + chh)
+                        }
+                        */
                     }
                 }
             }
@@ -895,13 +899,13 @@ Page {
                         width: 2*appwindow.diagramCellSize
                         height: 2*appwindow.diagramCellSize
                         anchors.centerIn: parent
-                        //model: (appwindow.activeVariables === 2) ? karnaughMapModel2 : null
-                        /**/
+                        model: (appwindow.activeVariables === 2) ? karnaughMapModel2 : null
+                        /*
                         model: {
                             console.log("KarnaughMap: GridView2 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel2.rowCount())
                             return ((appwindow.activeVariables === 2) ? karnaughMapModel2 : null)
                         }
-                        /**/
+                        */
                         delegate: diagramCell
                         z: 2
 
@@ -1066,13 +1070,13 @@ Page {
                         width: 4*appwindow.diagramCellSize
                         height: 2*appwindow.diagramCellSize
                         anchors.centerIn: parent
-                        //model: (appwindow.activeVariables === 3) ? karnaughMapModel3 : null
-                        /**/
+                        model: (appwindow.activeVariables === 3) ? karnaughMapModel3 : null
+                        /*
                         model: {
                             console.log("KarnaughMap: GridView3 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel3.rowCount())
                             return ((appwindow.activeVariables === 3) ? karnaughMapModel3 : null)
                         }
-                        /**/
+                        */
                         delegate: diagramCell
                         z: 2
 
@@ -1137,12 +1141,12 @@ Page {
                     property alias karnaughGrid: karnaughGrid4
                     property alias diagramBorder: diagramBorder4
 
-                    /**/
+                    /*
                     Component.onCompleted: {
                         console.log("KarnaughMap: diagram4 Component.onCompleted, visible: "+visible+" ("+appwindow.activeVariables+" variables), model.rowCount()="+karnaughGrid.model.rowCount())
                         //coveringTableModel.sopChanged() // TO DO: MOVE THIS TO TOP SECTION IF NEEDED
                     }
-                    /**/
+                    */
 
                     // diagramBorder4 is not shown but used for positioning of other elements
                     Rectangle {
@@ -1238,13 +1242,13 @@ Page {
                         width: 4*appwindow.diagramCellSize
                         height: 4*appwindow.diagramCellSize
                         anchors.centerIn: parent
-                        //model: (appwindow.activeVariables === 4) ? karnaughMapModel4 : null
-                        /**/
+                        model: (appwindow.activeVariables === 4) ? karnaughMapModel4 : null
+                        /*
                         model: {
                             console.log("KarnaughMap: GridView4 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel4.rowCount())
                             return ((appwindow.activeVariables === 4) ? karnaughMapModel4 : null)
                         }
-                        /**/
+                        */
                         delegate: diagramCell
                         z: 2
 
@@ -1493,13 +1497,13 @@ Page {
                         width: 4*appwindow.diagramCellSize
                         height: 8*appwindow.diagramCellSize + appwindow.diagramGap
                         anchors.centerIn: parent
-                        //model: (appwindow.activeVariables === 5) ? karnaughMapModel5 : null
-                        /**/
+                        model: (appwindow.activeVariables === 5) ? karnaughMapModel5 : null
+                        /*
                         model: {
                             console.log("KarnaughMap: GridView5 reevaluating model, "+appwindow.activeVariables+" variables, model.rowCount()="+karnaughMapModel5.rowCount())
                             return ((appwindow.activeVariables === 5) ? karnaughMapModel5 : null)
                         }
-                        /**/
+                        */
                         delegate: diagramCell
                         z: 2
 
@@ -1520,7 +1524,7 @@ Page {
                                 var value = parent.model.get(index) // we have C++ Model
                                 //console.log("karnaughGrid5.onClicked: " + x + "/" + y + "/" + width + "/" + height)
                                 //console.log("karnaughGrid5.onClicked: "+ mouseX + "/" + mouseY)
-                                console.log("karnaughGrid5.onClicked("+ index + "/" + value + ")")
+                                //console.log("karnaughGrid5.onClicked("+ index + "/" + value + ")")
                                 if (value === " ") {
                                     parent.model.setZero(index)
                                 }

@@ -165,12 +165,14 @@ ApplicationWindow
             contentWidth: mainColumn.width
             VerticalScrollDecorator {}
 
+            /*
             Component.onCompleted: {
                 console.log("Main: SilicaFlickable started")
                 console.log("Main: myScreenHeight = " + myScreenHeight)
                 console.log("Main: myScreenWidth = " + myScreenWidth)
                 console.log("Main: activeVariables = " + activeVariables)
             }
+            */
 
             // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
             PullDownMenu {
@@ -536,7 +538,7 @@ ApplicationWindow
                             font.pixelSize: appwindow.largeTextSize
                         }
                         onClicked: {
-                            console.log("BUTTON 2 variables")
+                            //console.log("BUTTON 2 variables")
                             activeVariables = 2
                             numvar2.border.color = appwindow.titleTextColor
                             numvar3.border.color = "transparent"
@@ -559,7 +561,7 @@ ApplicationWindow
                             font.pixelSize: appwindow.largeTextSize
                         }
                         onClicked: {
-                            console.log("BUTTON 3 variables")
+                            //console.log("BUTTON 3 variables")
                             activeVariables = 3
                             numvar2.border.color = "transparent"
                             numvar3.border.color = appwindow.titleTextColor
@@ -582,7 +584,7 @@ ApplicationWindow
                             font.pixelSize: appwindow.largeTextSize
                         }
                         onClicked: {
-                            console.log("BUTTON 4 variables")
+                            //console.log("BUTTON 4 variables")
                             activeVariables = 4
                             numvar2.border.color = "transparent"
                             numvar3.border.color = "transparent"
@@ -605,7 +607,7 @@ ApplicationWindow
                             font.pixelSize: appwindow.largeTextSize
                         }
                         onClicked: {
-                            console.log("BUTTON 5 variables")
+                            //console.log("BUTTON 5 variables")
                             activeVariables = 5
                             numvar2.border.color = "transparent"
                             numvar3.border.color = "transparent"
