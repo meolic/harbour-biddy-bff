@@ -36,9 +36,43 @@ Page {
         (appwindow.activeVariables === 4) ? coveringTableModel4 :
         (appwindow.activeVariables === 5) ? coveringTableModel5 : null
 
+    property int coveringTableFontSize: (coveringTableModel.implicantsSize < 16)
+                                        ? (1.1 - 0.04 * coveringTableModel.implicantsSize) * appwindow.titleTextSize
+                                        : (coveringTableModel.implicantsSize < 24)
+                                          ? (0.95 - 0.02 * coveringTableModel.implicantsSize) * appwindow.titleTextSize
+                                          : (0.7 - 0.01 * coveringTableModel.implicantsSize) * appwindow.titleTextSize
+    property int coveringTableCellSize: (coveringTableModel.implicantsSize < 16)
+                                        ? (1.1 - 0.04 * coveringTableModel.implicantsSize) * appwindow.diagramCellSize
+                                        : (coveringTableModel.implicantsSize < 24)
+                                          ? (0.8 - 0.02 * coveringTableModel.implicantsSize) * appwindow.diagramCellSize
+                                          : (0.56 - 0.01 * coveringTableModel.implicantsSize) * appwindow.diagramCellSize
+
     onStatusChanged: {
         if (status == PageStatus.Active) {
             pageStack.pushAttached(Qt.resolvedUrl("About.qml"))
+
+            // force recalculation of all dependent variables when model change - needed because (probably) a bug in QML
+            /**/
+            qmGridHorizontalLegend.model = null
+            qmGridHorizontalLegend.model = coveringTableModel
+            qmGrid.model = null
+            qmGrid.model = coveringTableModel
+            qmGridVerticalLegend.model = null
+            qmGridVerticalLegend.model = coveringTableModel
+            /**/
+
+            /*
+            console.log("QM:" + "onsetSize = " + coveringTableModel.onsetSize + ", implicantsSize = " + coveringTableModel.implicantsSize
+                              + ", qmPage.coveringTableFontSize = " + qmPage.coveringTableFontSize
+                              + ", qmPage.coveringTableCellSize = " + qmPage.coveringTableCellSize
+                              + ", qmGridHorizontalLegend.width = " + qmGridHorizontalLegend.width
+                              + ", qmGridHorizontalLegend.height = " + qmGridHorizontalLegend.height
+                              + ", qmGrid.width = " + qmGrid.width
+                              + ", qmGrid.height = " + qmGrid.heigh
+                              + ", qmGridVerticalLegend.width = " + qmGridVerticalLegend.width
+                              + ", qmGridVerticalLegend.height = " + qmGridVerticalLegend.height
+                       )
+            */
         }
     }
 
@@ -279,7 +313,6 @@ Page {
         Row {
             id: qmrow
             anchors.horizontalCenter: parent.horizontalCenter
-            property real legendFontScale: 1.1 - 0.04 * coveringTableModel.implicantsSize
 
             Column {
 
@@ -290,7 +323,7 @@ Page {
                     anchors.horizontalCenter: parent.horizontalCenter
                     cellWidth: qmGrid.cellWidth
                     cellHeight: qmGrid.cellHeight
-                    width: coveringTableModel.implicantsSize * cellWidth + 2 // we need +2 to compensate rounding drawbacks
+                    width: coveringTableModel.implicantsSize * cellWidth // we may need +2 to compensate rounding drawbacks
                     height: cellHeight
                     model: coveringTableModel
                     delegate:
@@ -306,8 +339,7 @@ Page {
                                 anchors.centerIn: parent
                                 font.family: "FreeMono"
                                 font.capitalization: Font.SmallCaps
-                                //font.pixelSize: 0.8 * appwindow.titleTextSize
-                                font.pixelSize: qmrow.legendFontScale * appwindow.titleTextSize
+                                font.pixelSize: qmPage.coveringTableFontSize
                             }
                         }
                 }
@@ -319,16 +351,13 @@ Page {
                     layoutDirection: Qt.RightToLeft
                     verticalLayoutDirection: GridView.TopToBottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    //cellWidth: (coveringTableModel.implicantsSize > 10) ? 0.6 * appwindow.diagramCellSize : 0.8 * appwindow.diagramCellSize
-                    cellWidth:  qmrow.legendFontScale * appwindow.diagramCellSize
-                    //cellHeight: 0.8 * appwindow.diagramCellSize
-                    cellHeight: qmrow.legendFontScale * appwindow.diagramCellSize
+                    cellWidth:  qmPage.coveringTableCellSize
+                    cellHeight: qmPage.coveringTableCellSize
                     width: coveringTableModel.implicantsSize * cellWidth
                     height: coveringTableModel.onsetSize * cellHeight
                     model: coveringTableModel
                     delegate: diagramQM
                 }
-
             }
 
             GridView {
@@ -337,18 +366,8 @@ Page {
                 cellWidth: qmGrid.cellWidth
                 cellHeight: qmGrid.cellHeight
                 width: cellWidth
-                height: (coveringTableModel.onsetSize + 2) * cellHeight
+                height: coveringTableModel.onsetSize * cellHeight + qmGrid.implicitHeight
                 model: coveringTableModel
-
-                // Force delegate font recalculation when implicantsSize changes - needed because (probably) a bug in QML
-                /**/
-                property int implicantsSize: coveringTableModel.implicantsSize
-                onImplicantsSizeChanged: {
-                    qmGridVerticalLegend.model = null
-                    qmGridVerticalLegend.model = coveringTableModel
-                }
-                /**/
-
                 delegate:
                     Item {
                         visible: index <= coveringTableModel.onsetSize
@@ -361,19 +380,11 @@ Page {
                             anchors.centerIn: parent
                             font.family: "FreeMono"
                             font.capitalization: Font.SmallCaps
-                            //font.pixelSize: 0.66 * appwindow.titleTextSize
-                            font.pixelSize: qmrow.legendFontScale * appwindow.titleTextSize
+                            font.pixelSize: qmPage.coveringTableFontSize
                         }
                     }
             }
 
-            /*
-            Component.onCompleted: {
-                console.log("QM.qmGridVerticalLegend: " + ", onsetSize = " + coveringTableModel.onsetSize
-                                                        + ", implicantsSize = " + coveringTableModel.implicantsSize
-                                                        + ", legendFontScale = " + qmrow.legendFontScale)
-            }
-            */
         }
     }
     }

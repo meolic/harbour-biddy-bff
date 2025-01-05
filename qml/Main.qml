@@ -77,7 +77,7 @@ ApplicationWindow
     property color bgColor2: '#040616' // background second color
     property color bgDiagramColor: '#d3e2f8' // diagram background
     property color bgDiagramLegendColor: '#07162c' // diagram legend background
-    property color titleTextColor: '#01A7DD' // logo and title text color
+    property color titleTextColor: '#00aaff' //'#01A7DD' // logo and title text color
     property color textColor1: '#eee9fb' // regular text color
     property color textColor2: '#d3f8f8' // emphasized text color
     property color diagramTextColor: '#2c1d07' // diagram text color
