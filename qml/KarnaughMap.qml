@@ -66,7 +66,7 @@ Page {
 
     property var colorList: [
          "indigo", "blue", "orchid", "orange", "green", "red", "mediumturquoise", "greenyellow",
-         "indigo", "blue", "orchid", "orange", "green", "red", "mediumturquoise", "greenyellow"
+         "khaki", "indianred", "rosybrown", "deeppink", "chartreuse", "cornflowerblue", "moccasin", "lightsteelblue"
     ]
 
     onStatusChanged: {
@@ -762,8 +762,8 @@ Page {
             Column {
                 id: karnaughColumn
                 anchors.centerIn: parent
-                width: Screen.width
-                height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight
+                width: appwindow.myScreenWidth
+                height: (implicitHeight < appwindow.myScreenHeight) ? appwindow.myScreenHeight : implicitHeight
                 spacing: appwindow.textSpacingSize
 
                 Row {
@@ -1684,7 +1684,7 @@ Page {
                 /*
                 Row {
                     id: bottomrowspace
-                    property int size: Screen.height - y - bottomrow.height - appwindow.titleTextSize
+                    property int size: appwindow.myScreenHeight - y - bottomrow.height - appwindow.titleTextSize
                     Item {
                         width: 1 // dummy value != 0
                         height: (bottomrowspace.size < appwindow.titleTextSize) ? appwindow.titleTextSize : bottomrowspace.size

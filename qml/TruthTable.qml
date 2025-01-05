@@ -129,8 +129,8 @@ Page {
             Column {
                 id: truthTableColumn
                 anchors.centerIn: parent
-                width: Screen.width
-                height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight
+                width: appwindow.myScreenWidth
+                height: (implicitHeight < appwindow.myScreenHeight) ? appwindow.myScreenHeight : implicitHeight
                 spacing: appwindow.textSpacingSize
 
                 Row {

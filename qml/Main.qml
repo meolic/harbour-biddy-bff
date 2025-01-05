@@ -50,7 +50,7 @@ ApplicationWindow
     // USB: Type-C
     // Other: 3.5mm audio jack, Dual SIM (nano) + microSD
 
-    property string version: "v2025-01-01"
+    property string version: "v2025-01-05"
 
     property int myScreenHeight: _screenHeight
     property int myScreenWidth: _screenWidth
@@ -168,9 +168,19 @@ ApplicationWindow
             /*
             Component.onCompleted: {
                 console.log("Main: SilicaFlickable started")
-                console.log("Main: myScreenHeight = " + myScreenHeight)
+                console.log("Main: Screen.width = " + Screen.width)
+                console.log("Main: Screen.height = " + Screen.height)
                 console.log("Main: myScreenWidth = " + myScreenWidth)
+                console.log("Main: myScreenHeight = " + myScreenHeight)
                 console.log("Main: activeVariables = " + activeVariables)
+                console.log("Main: diagramCellSize = " + diagramCellSize)
+                console.log("Main: textSize = " + textSize)
+                console.log("Main: logoTextSize = " + logoTextSize)
+                console.log("Main: largeTextSize = " + largeTextSize)
+                console.log("Main: titleTextSize = " + titleTextSize)
+                console.log("Main: regularTextSize = " + regularTextSize)
+                console.log("Main: smallTextSize = " + smallTextSize)
+                console.log("Main: tinyTextSize = " + tinyTextSize)
             }
             */
 
@@ -233,8 +243,8 @@ ApplicationWindow
             Column {
                 id: mainColumn
                 anchors.centerIn: parent
-                width: Screen.width
-                height: (implicitHeight < Screen.height) ? Screen.height : implicitHeight
+                width: myScreenWidth
+                height: (implicitHeight < myScreenHeight) ? myScreenHeight : implicitHeight
                 spacing: appwindow.textSpacingSize
 
                 Row {
@@ -864,7 +874,7 @@ ApplicationWindow
 
                 Row {
                     id: datespace
-                    property int size: Screen.height - y - date.height - appwindow.titleTextSize
+                    property int size: myScreenHeight - y - date.height - appwindow.titleTextSize
                     Item {
                         width: 1 // dummy value != 0
                         height: (datespace.size < appwindow.titleTextSize) ? appwindow.titleTextSize : datespace.size
