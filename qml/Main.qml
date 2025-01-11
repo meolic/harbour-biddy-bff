@@ -50,7 +50,7 @@ ApplicationWindow
     // USB: Type-C
     // Other: 3.5mm audio jack, Dual SIM (nano) + microSD
 
-    property string version: "v2025-01-05"
+    property string version: "v2025-01-11"
 
     property int myScreenHeight: _screenHeight
     property int myScreenWidth: _screenWidth
@@ -62,7 +62,7 @@ ApplicationWindow
     property int diagramGap: 2 * diagramLegendHeight
     property int diagramCircleBorder: diagramCellSize / 10
 
-    property int tableRowSize: (activeVariables < 5) ? myScreenWidth / 12 : myScreenWidth / 20
+    property int tableRowSize: (activeVariables < 5) ? myScreenWidth / 16 : myScreenWidth / 20
 
     property int textSize: diagramCellSize
     property int logoTextSize: textSize
@@ -277,13 +277,13 @@ ApplicationWindow
                 Label {
                     id: mainContent
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: qsTr("Boolean Functions Forever")
+                    text: qsTr("BOOLEAN FUNCTIONS FOREVER")
                     color: appwindow.textColor2
                     font.bold : true
-                    //font.italic: true
                     font.capitalization: Font.SmallCaps
-                    font.family: "TypeWriter"
-                    font.pixelSize: appwindow.titleTextSize
+                    //font.family: "TypeWriter"
+                    font.family: "FreeSans"
+                    font.pixelSize: appwindow.regularTextSize // appwindow.titleTextSize
                 }
 
                 Row {
